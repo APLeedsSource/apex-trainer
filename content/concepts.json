@@ -172,82 +172,82 @@
   "soql": {
     "title": "SOQL",
     "reminder": "[SELECT field FROM Object WHERE ... LIMIT n] — Apex's database query syntax. Always inside square brackets.",
-    "introducedIn": "11-soql"
+    "introducedIn": "07-soql"
   },
   "where-clause": {
     "title": "WHERE clause",
     "reminder": "Filters SOQL results. Operators: = != > < >= <= LIKE IN. Combine with AND / OR.",
-    "introducedIn": "11-soql"
+    "introducedIn": "07-soql"
   },
   "soql-limit": {
     "title": "LIMIT",
     "reminder": "Caps the number of rows a SOQL query returns. Always include one when you don't need every row.",
-    "introducedIn": "11-soql"
+    "introducedIn": "07-soql"
   },
   "soql-bind-variable": {
     "title": "Bind variable",
     "reminder": "Use :myVar to inject an Apex value into SOQL. NEVER concatenate strings into a query — that's SOQL injection.",
-    "introducedIn": "11-soql"
+    "introducedIn": "07-soql"
   },
   "relationship-query": {
     "title": "Relationship query",
     "reminder": "Walk parent→child via subquery: SELECT (SELECT Email FROM Contacts) FROM Account. Walk child→parent via dot: SELECT Account.Name FROM Contact.",
-    "introducedIn": "11-soql"
+    "introducedIn": "07-soql"
   },
   "dml-insert": {
     "title": "insert",
     "reminder": "DML verb — creates new records and stamps Ids onto your Apex variable.",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "dml-update": {
     "title": "update",
     "reminder": "DML verb — modifies existing records (must already have an Id).",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "dml-upsert": {
     "title": "upsert",
     "reminder": "DML verb — insert OR update based on whether the record matches an Id (or external Id).",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "dml-delete": {
     "title": "delete",
     "reminder": "DML verb — soft-deletes records to the Recycle Bin. undelete brings them back.",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "bulk-dml": {
     "title": "Bulk DML",
     "reminder": "Always DML on a List, not one record at a time. ONE 'insert listOfLeads;' = ONE DML statement (not N).",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "database-class": {
     "title": "Database class",
     "reminder": "Database.insert(records, allOrNone=false) returns SaveResults — partial-success DML for imports.",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "all-or-none": {
     "title": "allOrNone",
     "reminder": "Database DML option. true (default) = whole batch fails on any error. false = save what's valid, return errors per failure.",
-    "introducedIn": "12-dml"
+    "introducedIn": "08-dml"
   },
   "trigger": {
     "title": "Trigger",
     "reminder": "trigger Name on Object (events) { } — Apex code that fires on database events.",
-    "introducedIn": "07-triggers"
+    "introducedIn": "09-triggers"
   },
   "trigger-event": {
     "title": "Trigger events",
     "reminder": "before/after × insert/update/delete (+ after undelete). Choose based on whether you need the record's Id and whether you want free DML.",
-    "introducedIn": "07-triggers"
+    "introducedIn": "09-triggers"
   },
   "trigger-context": {
     "title": "Trigger context",
     "reminder": "Trigger.new (list of new versions), Trigger.old (old versions), Trigger.newMap / oldMap (keyed by Id), Trigger.isInsert / isBefore / etc.",
-    "introducedIn": "07-triggers"
+    "introducedIn": "09-triggers"
   },
   "trigger-handler-pattern": {
     "title": "Trigger handler pattern",
     "reminder": "Best practice: thin trigger delegates ALL logic to a regular Apex class for testability.",
-    "introducedIn": "07-triggers"
+    "introducedIn": "09-triggers"
   },
   "test-annotation": {
     "title": "@isTest",
@@ -282,32 +282,32 @@
   "future-annotation": {
     "title": "@future",
     "reminder": "Marks a static void method to run async in a separate transaction. Params must be primitives or collections of primitives.",
-    "introducedIn": "09-async"
+    "introducedIn": "11-async"
   },
   "interfaces": {
     "title": "Interface",
     "reminder": "Pure contract — only method signatures. Classes 'implements' an interface and provide bodies.",
-    "introducedIn": "09-async"
+    "introducedIn": "11-async"
   },
   "extends-keyword": {
     "title": "extends",
     "reminder": "'class B extends A' — B inherits A's properties and methods. Single inheritance only in Apex.",
-    "introducedIn": "08-oop-pillars"
+    "introducedIn": "10-oop-pillars"
   },
   "virtual-keyword": {
     "title": "virtual",
     "reminder": "Modifier on a parent class or method that opts in to being subclassed/overridden.",
-    "introducedIn": "08-oop-pillars"
+    "introducedIn": "10-oop-pillars"
   },
   "override-keyword": {
     "title": "override",
     "reminder": "Modifier on a child method explicitly replacing the parent's behavior. Required, not optional.",
-    "introducedIn": "08-oop-pillars"
+    "introducedIn": "10-oop-pillars"
   },
   "abstract-keyword": {
     "title": "abstract",
     "reminder": "abstract class can't be instantiated; abstract method has no body and must be overridden by subclasses.",
-    "introducedIn": "08-oop-pillars"
+    "introducedIn": "10-oop-pillars"
   },
   "named-credential": {
     "title": "Named Credential",

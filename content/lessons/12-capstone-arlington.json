@@ -1,6 +1,6 @@
 {
-  "id": "10-capstone-arlington",
-  "title": "Lesson 10 — Capstone: Arlington Property Management",
+  "id": "12-capstone-arlington",
+  "title": "Lesson 12 — Capstone: Arlington Property Management",
   "slides": [
     {
       "type": "concept",
@@ -174,7 +174,7 @@
       "type": "concept",
       "title": "What's next",
       "body": [
-        "You've finished the core course (matching Ari's original curriculum). The trainer continues with extra topics: SOQL, DML, Test Classes, Governor Limits, APIs, and Caching — each one a deeper dive into a skill you'll use every day in real consulting work.",
+        "You've finished the core course (matching Ari's original curriculum). The trainer continues with extra topics: Test Classes, Governor Limits, APIs, and Caching — each one a deeper dive into a skill you'll use every day in real consulting work.",
         "Pair the trainer with hands-on work in a real Salesforce sandbox. Type-memorized patterns become muscle when you apply them to actual problems."
       ]
     }

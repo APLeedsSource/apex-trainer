@@ -1,6 +1,6 @@
 {
-  "id": "12-dml",
-  "title": "Lesson 12 — DML: Writing Salesforce Data",
+  "id": "08-dml",
+  "title": "Lesson 8 — DML: Writing Salesforce Data",
   "slides": [
     {
       "type": "concept",
@@ -252,7 +252,7 @@
       "title": "What you now know",
       "body": [
         "Insert / update / upsert / delete / undelete, bulk DML on Lists, Database.insert with allOrNone for partial success.",
-        "Next: Test Classes — required for every Apex deployment to production, with a 75% coverage minimum."
+        "Next: Triggers — Apex code that runs automatically when records are inserted, updated, or deleted on a Salesforce object."
       ]
     }
   ]
