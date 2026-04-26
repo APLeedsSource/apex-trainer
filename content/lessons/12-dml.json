@@ -1,6 +1,6 @@
 {
-  "id": "08-dml",
-  "title": "Lesson 8 — DML: Writing Salesforce Data",
+  "id": "12-dml",
+  "title": "Lesson 12 — DML: Writing Salesforce Data",
   "slides": [
     {
       "type": "concept",
@@ -10,7 +10,10 @@
         "Real example: every Apex trigger, every async batch, every API endpoint that persists data ultimately performs DML. SOQL reads — DML writes."
       ],
       "vocabulary": [
-        { "word": "DML", "def": "Data Manipulation Language — Apex's verbs for changing records (insert/update/upsert/delete/undelete)." }
+        {
+          "word": "DML",
+          "def": "Data Manipulation Language — Apex's verbs for changing records (insert/update/upsert/delete/undelete)."
+        }
       ]
     },
     {
@@ -34,9 +37,15 @@
         "Print the new Id — proof that the record exists in the database now."
       ],
       "lineConcepts": [
-        ["new-keyword"],
-        ["string-quotes"],
-        ["dml-insert"],
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "dml-insert"
+        ],
         []
       ]
     },
@@ -60,9 +69,16 @@
         "DML: update. The platform writes the new Name to the database row matching a.Id."
       ],
       "lineConcepts": [
-        ["soql", "soql-limit"],
-        ["string-quotes"],
-        ["dml-update"]
+        [
+          "soql",
+          "soql-limit"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "dml-update"
+        ]
       ]
     },
     {
@@ -73,7 +89,10 @@
         "Real example: an integration that imports 5,000 leads. Looping 'insert lead;' 5,000 times = 5,000 DML statements = governor-limit failure. One bulk insert = 1 DML statement."
       ],
       "vocabulary": [
-        { "word": "bulk DML", "def": "DML applied to a List of records in a single call — the bulkified pattern that respects governor limits." }
+        {
+          "word": "bulk DML",
+          "def": "DML applied to a List of records in a single call — the bulkified pattern that respects governor limits."
+        }
       ]
     },
     {
@@ -89,11 +108,18 @@
         "ONE DML statement creates all three records in one round-trip."
       ],
       "lineConcepts": [
-        ["new-keyword", "list-collection"],
-        ["bulk-dml"],
+        [
+          "new-keyword",
+          "list-collection"
+        ],
+        [
+          "bulk-dml"
+        ],
         [],
         [],
-        ["dml-insert"]
+        [
+          "dml-insert"
+        ]
       ]
     },
     {
@@ -119,12 +145,16 @@
         "upsert l External_Id__c — match on the external id; insert if no match, update if there is one."
       ],
       "lineConcepts": [
-        ["new-keyword"],
+        [
+          "new-keyword"
+        ],
         [],
         [],
         [],
         [],
-        ["dml-upsert"]
+        [
+          "dml-upsert"
+        ]
       ]
     },
     {
@@ -146,8 +176,14 @@
         "DML: delete. The record moves to the Recycle Bin and disappears from active queries."
       ],
       "lineConcepts": [
-        ["soql", "where-clause", "soql-limit"],
-        ["dml-delete"]
+        [
+          "soql",
+          "where-clause",
+          "soql-limit"
+        ],
+        [
+          "dml-delete"
+        ]
       ]
     },
     {
@@ -158,7 +194,10 @@
         "Real example: an import of 1,000 records where 3 have bad data. With allOrNone=false, you save 997 and log the 3 failures. With the default, you save zero."
       ],
       "vocabulary": [
-        { "word": "allOrNone", "def": "DML option — false means partial success allowed, true (default) means the whole batch fails on any single error." }
+        {
+          "word": "allOrNone",
+          "def": "DML option — false means partial success allowed, true (default) means the whole batch fails on any single error."
+        }
       ]
     },
     {
@@ -175,9 +214,16 @@
         "Close."
       ],
       "lineConcepts": [
-        ["database-class", "all-or-none"],
-        ["for-each-loop"],
-        ["block"],
+        [
+          "database-class",
+          "all-or-none"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "block"
+        ],
         [],
         [],
         []
@@ -206,7 +252,7 @@
       "title": "What you now know",
       "body": [
         "Insert / update / upsert / delete / undelete, bulk DML on Lists, Database.insert with allOrNone for partial success.",
-        "Next: Triggers — Apex code that runs automatically when records are inserted, updated, or deleted."
+        "Next: Test Classes — required for every Apex deployment to production, with a 75% coverage minimum."
       ]
     }
   ]

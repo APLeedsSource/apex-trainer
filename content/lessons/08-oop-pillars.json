@@ -1,6 +1,6 @@
 {
-  "id": "13-oop-pillars",
-  "title": "Lesson 13 — Inheritance, Polymorphism, Interfaces",
+  "id": "08-oop-pillars",
+  "title": "Lesson 8 — Inheritance, Polymorphism, Interfaces",
   "slides": [
     {
       "type": "concept",
@@ -298,7 +298,7 @@
       "title": "What you now know",
       "body": [
         "Encapsulation, inheritance (extends + virtual + override), polymorphism (parent type holding subclass), abstraction (abstract classes), and interfaces.",
-        "Next: APIs — making outbound HTTP calls and exposing your own Apex as REST endpoints."
+        "Next: Async Apex — push work to the background when synchronous limits aren't enough."
       ]
     }
   ]

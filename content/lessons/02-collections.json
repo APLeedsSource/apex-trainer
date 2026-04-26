@@ -183,7 +183,7 @@
       "title": "Why this matters in Salesforce",
       "body": [
         "Apex governor limits cap how many database queries you can run per transaction (100 SOQL queries). The trick: query ONCE into a collection, then loop over the collection.",
-        "This pattern — query then loop — is how every well-built Salesforce trigger scales. We'll go deep on it in Lesson 3 (Classes) and again in the Triggers lesson."
+        "This pattern — query once, then loop — is how every well-built Salesforce trigger scales. We'll go deep on it in the Triggers lesson and again in the Governor Limits extras."
       ],
       "vocabulary": [
         { "word": "governor limit", "def": "Salesforce-imposed cap on resource usage per transaction (queries, DML, CPU time, etc.)." }

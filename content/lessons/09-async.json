@@ -1,6 +1,6 @@
 {
-  "id": "12-async",
-  "title": "Lesson 12 — Async Apex",
+  "id": "09-async",
+  "title": "Lesson 9 — Async Apex",
   "slides": [
     {
       "type": "concept",
@@ -256,7 +256,7 @@
       "title": "What you now know",
       "body": [
         "@future, Queueable, Batchable, Schedulable — and when to choose each.",
-        "Next: Inheritance, Polymorphism, and Interfaces — how Apex classes extend and substitute for one another."
+        "Next: the Capstone — bringing every concept from the core course onto a real consulting scenario (Arlington Property Management)."
       ]
     }
   ]

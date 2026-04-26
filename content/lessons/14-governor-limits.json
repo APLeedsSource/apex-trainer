@@ -1,6 +1,6 @@
 {
-  "id": "11-governor-limits",
-  "title": "Lesson 11 — Governor Limits & Bulkification",
+  "id": "14-governor-limits",
+  "title": "Lesson 14 — Governor Limits & Bulkification",
   "slides": [
     {
       "type": "concept",
@@ -225,7 +225,7 @@
       "title": "What you now know",
       "body": [
         "Why governor limits exist (multitenancy), the five you'll hit most, the bulkification pattern (collect → one query → one DML), and Limits.* introspection.",
-        "Next: Async Apex — when synchronous limits aren't enough, push work to the background."
+        "Next: APIs — making outbound HTTP calls and exposing your own Apex as REST endpoints."
       ]
     }
   ]

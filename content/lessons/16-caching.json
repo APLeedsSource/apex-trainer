@@ -1,6 +1,6 @@
 {
-  "id": "15-caching",
-  "title": "Lesson 15 — Caching",
+  "id": "16-caching",
+  "title": "Lesson 16 — Caching",
   "slides": [
     {
       "type": "concept",
@@ -251,7 +251,7 @@
       "title": "What you now know",
       "body": [
         "Cache fundamentals (TTL, invalidation, cache-aside), Apex's transaction-scoped static cache, Platform Cache (Org/Session), @AuraEnabled(cacheable=true), Custom Metadata as config cache.",
-        "Next: the Capstone — bringing every concept from Lessons 0-15 together on a real-world consulting scenario."
+        "You've completed the entire trainer — original course (through the Arlington Capstone) plus all six extra topics. From here, pair what you've typed with hands-on Salesforce work; ship something small end-to-end and the patterns will cement."
       ]
     }
   ]

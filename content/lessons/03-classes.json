@@ -269,7 +269,7 @@
       "title": "What you now know",
       "body": [
         "You can define a class with properties, methods, a constructor, static utilities, and constants. You can construct instances and call methods on them.",
-        "Next lessons: Loops, Methods deep-dive, then Triggers — where every concept from Lessons 0–3 finally clicks together in production-grade Apex."
+        "Next lessons: Loops, Methods, Properties, then Triggers — where every concept clicks together in production-grade Apex."
       ]
     }
   ]

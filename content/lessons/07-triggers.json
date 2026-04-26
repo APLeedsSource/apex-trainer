@@ -1,6 +1,6 @@
 {
-  "id": "09-triggers",
-  "title": "Lesson 9 — Triggers",
+  "id": "07-triggers",
+  "title": "Lesson 7 — Triggers",
   "slides": [
     {
       "type": "concept",
@@ -248,7 +248,7 @@
       "title": "What you now know",
       "body": [
         "Trigger anatomy, before vs after, context variables, bulkification, and the handler-delegation pattern.",
-        "Next: Test Classes — required for every Apex deployment to production. 75% coverage minimum."
+        "Next: Inheritance, Polymorphism & Interfaces — the OOP pillars that let classes extend, override, and substitute for one another."
       ]
     }
   ]

@@ -1,6 +1,6 @@
 {
-  "id": "14-apis",
-  "title": "Lesson 14 — APIs",
+  "id": "15-apis",
+  "title": "Lesson 15 — APIs",
   "slides": [
     {
       "type": "concept",
@@ -292,7 +292,7 @@
       "type": "concept",
       "title": "Governor limits on callouts",
       "body": [
-        "100 callouts per transaction. 120-second timeout per callout. Triggers can NEVER make callouts directly — must go async (we covered this in Lesson 12).",
+        "100 callouts per transaction. 120-second timeout per callout. Triggers can NEVER make callouts directly — must go async (covered in the Async Apex lesson).",
         "Real example: forgetting the trigger-can't-callout rule is the #1 'why doesn't this work' question for new Apex devs."
       ]
     },

@@ -223,7 +223,7 @@
       "title": "What you now know",
       "body": [
         "Auto-properties, read-only properties, custom getter/setter for validation, and computed properties.",
-        "Next: SOQL — how Apex talks to the Salesforce database. The most-used skill in any real Apex codebase."
+        "Next: Triggers — Apex code that runs automatically when records are inserted, updated, or deleted on a Salesforce object."
       ]
     }
   ]
