@@ -1,15 +1,15 @@
 {
   "userName": "Arthur",
   "currentLesson": "02-collections",
-  "currentSlide": 0,
+  "currentSlide": 7,
   "lessonsCompleted": [
     "00-foundations",
     "01-data-types"
   ],
   "stats": {
-    "totalKeystrokes": 1088,
-    "totalTimeSeconds": 5163,
-    "exercisesCompleted": 12
+    "totalKeystrokes": 1557,
+    "totalTimeSeconds": 6051,
+    "exercisesCompleted": 15
   },
   "exerciseHistory": [
     {
@@ -95,9 +95,30 @@
       "accuracy": 90,
       "seconds": 30,
       "completedAt": "2026-04-26T14:29:59.653Z"
+    },
+    {
+      "slideTitle": "Building a List",
+      "wpm": 28,
+      "accuracy": 90,
+      "seconds": 59,
+      "completedAt": "2026-04-26T14:34:24.872Z"
+    },
+    {
+      "slideTitle": "Building a Set",
+      "wpm": 7,
+      "accuracy": 91,
+      "seconds": 258,
+      "completedAt": "2026-04-26T14:39:44.941Z"
+    },
+    {
+      "slideTitle": "Building a Map",
+      "wpm": 26,
+      "accuracy": 91,
+      "seconds": 86,
+      "completedAt": "2026-04-26T14:41:53.962Z"
     }
   ],
   "weakConcepts": [],
-  "lastSavedAt": "2026-04-26T14:31:31.722Z",
+  "lastSavedAt": "2026-04-26T14:43:18.919Z",
   "mutedConcepts": []
 }
