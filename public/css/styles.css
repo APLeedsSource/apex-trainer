@@ -337,6 +337,16 @@ a:hover { text-decoration: underline; }
 }
 .reminders-link:hover { color: var(--text); border-color: var(--accent); }
 
+/* Dev mode toggle — visually loud when active so it can't be left on by accident. */
+.reminders-link.dev-active {
+  background: var(--bad);
+  color: #fff;
+  border-color: var(--bad);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.reminders-link.dev-active:hover { background: #c0413a; border-color: #c0413a; }
+
 /* Recall card */
 .recall-card {
   background: var(--panel);

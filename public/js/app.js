@@ -82,6 +82,7 @@ export async function initLesson() {
   });
 
   setupRemindersUI(progress, concepts);
+  const devMode = setupDevMode();
 
   // resume from saved slide if user navigated here without explicit slide param
   let idx = !isNaN(startSlide) && startSlide >= 0 ? startSlide : 0;
@@ -139,6 +140,9 @@ export async function initLesson() {
       reminders.showFor([]);
     }
 
+    // Dev mode: skip the completion gate so any slide can be advanced past.
+    if (devMode.isOn()) nextBtn.disabled = false;
+
     progress.currentLesson = lessonId;
     progress.currentSlide = i;
     saveProgress(progress).catch(console.error);
@@ -182,6 +186,31 @@ function formatTime(s) {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   return h ? `${h}h ${m}m` : `${m}m`;
+}
+
+// ---- Dev mode toggle: skips completion gate so any slide can be advanced
+// past, for testing/debugging. State lives in localStorage only — never
+// touches progress.json or git.
+function setupDevMode() {
+  const STORAGE_KEY = 'apex-trainer:devMode';
+  const btn = document.getElementById('dev-toggle');
+  const nextBtn = document.getElementById('next-btn');
+  let on = localStorage.getItem(STORAGE_KEY) === 'true';
+  function render() {
+    if (!btn) return;
+    btn.textContent = on ? 'DEV ✓' : 'Dev mode';
+    btn.classList.toggle('dev-active', on);
+    if (on && nextBtn) nextBtn.disabled = false;
+  }
+  if (btn) {
+    btn.onclick = () => {
+      on = !on;
+      localStorage.setItem(STORAGE_KEY, on ? 'true' : 'false');
+      render();
+    };
+  }
+  render();
+  return { isOn: () => on };
 }
 
 // ---- Concept reminders: floating sticky-note cards bottom-right ----
