@@ -129,11 +129,12 @@ function renderTypeAlong(slide, wrap, ctx) {
       stats.textContent = `${Math.round(frac * 100)}%`;
     },
     onLineStart: (lineIndex) => {
+      // Reveal the explanation for the line the user is ABOUT to type, so
+      // they see what they're doing before doing it (not as post-hoc
+      // narration). Also drives per-line concept reminder cards.
       if (ctx.showLineConcepts) {
         ctx.showLineConcepts(lineConcepts[lineIndex] || []);
       }
-    },
-    onLineComplete: (lineIndex) => {
       if (explainItems[lineIndex]) {
         explainItems[lineIndex].classList.remove('locked');
         explainItems[lineIndex].classList.add('revealed');
