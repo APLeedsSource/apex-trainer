@@ -14,12 +14,24 @@ export class TypingEngine {
     this.errors = 0;
     this.lineEndIndices = [];
     this.lastLineCompleted = -1;
+    this.activeLine = -1;
     this.onLineComplete = opts.onLineComplete || (() => {});
+    this.onLineStart = opts.onLineStart || (() => {});
     this.onComplete = opts.onComplete || (() => {});
     this.onProgress = opts.onProgress || (() => {});
     this.render();
     this.bindKeys();
     this.maybeAutoSkip();
+    this.updateActiveLine();
+  }
+
+  updateActiveLine() {
+    if (this.cursor >= this.spans.length) return;
+    const newLine = parseInt(this.spans[this.cursor].dataset.line, 10);
+    if (newLine !== this.activeLine) {
+      this.activeLine = newLine;
+      this.onLineStart(newLine);
+    }
   }
 
   render() {
@@ -150,6 +162,7 @@ export class TypingEngine {
       this.onLineComplete(lineOfThis);
     }
     this.maybeAutoSkip();
+    this.updateActiveLine();
     this.placeCursor();
     this.onProgress(this.cursor / this.code.length);
     if (this.cursor >= this.code.length) {

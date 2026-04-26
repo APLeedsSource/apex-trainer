@@ -43,7 +43,9 @@
       "lineExplanations": [
         "System.debug() prints a message. 'System' is a class Salesforce gives you. 'debug' is a method on it. The text in single quotes is what you want printed. Semicolon ; ends the statement."
       ],
-      "concepts": ["statement", "semicolon", "string-quotes"]
+      "lineConcepts": [
+        ["statement", "semicolon", "string-quotes"]
+      ]
     },
     {
       "type": "concept",
@@ -79,7 +81,11 @@
         "String holds text. Apex strings use SINGLE quotes — never double quotes (a common bug from other languages).",
         "Boolean holds only two possible values: true or false. No quotes — true and false are language keywords."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "string-quotes", "assignment-operator", "type"]
+      "lineConcepts": [
+        ["variable-declaration", "type"],
+        ["string-quotes"],
+        []
+      ]
     },
     {
       "type": "recall",
@@ -121,7 +127,12 @@
         "This line runs ONLY if the test was true. The four spaces are for humans — Apex ignores them.",
         "The closing } ends the if-block. Anything after this } runs regardless of the score."
       ],
-      "concepts": ["block", "variable-declaration", "semicolon", "string-quotes"]
+      "lineConcepts": [
+        ["variable-declaration"],
+        ["block"],
+        ["string-quotes"],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -204,7 +215,13 @@
         "Print 'Hello, ' joined to whatever was passed in. The + operator joins (concatenates) two strings.",
         "This } closes the method. The next } closes the class. Always match opens with closes."
       ],
-      "concepts": ["method-shape", "public-modifier", "static-vs-instance", "void", "parameter-vs-argument", "string-concat", "block", "class-vs-object", "string-quotes", "semicolon"]
+      "lineConcepts": [
+        ["class-vs-object", "public-modifier"],
+        ["method-shape", "void", "parameter-vs-argument"],
+        ["string-concat", "string-quotes"],
+        [],
+        ["block"]
+      ]
     },
     {
       "type": "concept",

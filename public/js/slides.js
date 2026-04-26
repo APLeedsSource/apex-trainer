@@ -117,9 +117,21 @@ function renderTypeAlong(slide, wrap, ctx) {
   const code = slide.code;
   const stats = wrap.querySelector('#ta-stats');
 
+  // Per-line concept reveal — instead of dumping every concept on slide load,
+  // surface only the ones relevant to the line the user is currently on.
+  // Schema: slide.lineConcepts is an array of arrays, one entry per code line.
+  // Fallback for older slides that didn't have lineConcepts: stage everything
+  // on line 0.
+  const lineConcepts = slide.lineConcepts || [slide.concepts || []];
+
   const engine = new TypingEngine(editor, code, {
     onProgress: (frac) => {
       stats.textContent = `${Math.round(frac * 100)}%`;
+    },
+    onLineStart: (lineIndex) => {
+      if (ctx.showLineConcepts) {
+        ctx.showLineConcepts(lineConcepts[lineIndex] || []);
+      }
     },
     onLineComplete: (lineIndex) => {
       if (explainItems[lineIndex]) {

@@ -36,7 +36,12 @@
         "Add another. The list is now ordered: index 0 is Bohemian Rhapsody, index 1 is Hotel California.",
         "playlist[0] reads the first item. Square brackets are how you access by index. Prints 'Bohemian Rhapsody'."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "new-keyword", "list-collection", "string-quotes"]
+      "lineConcepts": [
+        ["list-collection", "new-keyword"],
+        ["string-quotes"],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -60,7 +65,12 @@
         "Add the SAME email again. Apex silently ignores it — the Set still has 1 entry. This is exactly the dedup behavior you want for an email campaign list.",
         "Prints 1, not 2. .size() returns the count."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "new-keyword", "set-collection", "string-quotes"]
+      "lineConcepts": [
+        ["set-collection", "new-keyword"],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "recall",
@@ -91,7 +101,12 @@
         "Add another mapping. The Map now has 2 entries.",
         "get('abc') returns the value for that key. Prints 'https://salesforce.com'. This is the magic of Maps — instant lookup by key."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "new-keyword", "map-collection", "string-quotes"]
+      "lineConcepts": [
+        ["map-collection", "new-keyword"],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -121,7 +136,12 @@
         "for (String name : names) — for each name in names. 'name' is a fresh variable that holds one item per iteration.",
         "Runs once per name. Prints 'Hello Arthur', then 'Hello Ari', then 'Hello Tuan'. The order matches the List's order."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "list-collection", "block", "string-concat"]
+      "lineConcepts": [
+        ["list-collection"],
+        ["block"],
+        ["string-concat"],
+        []
+      ]
     },
     {
       "type": "type-along",
@@ -133,7 +153,12 @@
         "scores.keySet() returns a Set of all keys. Loop over the keys, then use .get() to fetch each value.",
         "Prints 'Alice: 90' and 'Bob: 85'. Map iteration order isn't guaranteed — don't rely on it."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "map-collection", "set-collection", "block"]
+      "lineConcepts": [
+        ["map-collection"],
+        ["set-collection", "block"],
+        [],
+        []
+      ]
     },
     {
       "type": "recall",
@@ -174,7 +199,12 @@
         "Walk the list with for-each. The variable 'a' holds one Account per iteration.",
         "Read the Name field off each Account. No additional queries — we already have all the data."
       ],
-      "concepts": ["statement", "semicolon", "list-collection", "block"]
+      "lineConcepts": [
+        ["list-collection"],
+        ["block"],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",

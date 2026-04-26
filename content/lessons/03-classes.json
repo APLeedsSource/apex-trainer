@@ -33,7 +33,12 @@
         "Declare a property: every Car instance has its own 'model' String. 'public' means anyone can read/write it. The semicolon ends the property declaration.",
         "Another property: 'year' as an Integer. The } below closes the class. That's it — a class with two pieces of data."
       ],
-      "concepts": ["block", "statement", "semicolon", "variable-declaration", "type", "public-modifier", "class-vs-object"]
+      "lineConcepts": [
+        ["class-vs-object", "public-modifier"],
+        ["variable-declaration"],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -57,7 +62,12 @@
         "Set the year. Each Car instance has its OWN model and year — independent of every other Car ever created.",
         "Read both properties and concatenate. Prints 'Model 3 2024'."
       ],
-      "concepts": ["statement", "semicolon", "new-keyword", "variable-declaration", "string-concat", "string-quotes"]
+      "lineConcepts": [
+        ["new-keyword"],
+        ["string-quotes"],
+        [],
+        ["string-concat"]
+      ]
     },
     {
       "type": "concept",
@@ -82,7 +92,15 @@
         "Inside the method: 'return' produces a value back to whoever called the method. We concatenate year and model and return that String.",
         "} closes the method body. } closes the class. Two opens, two closes — always match them."
       ],
-      "concepts": ["statement", "semicolon", "method-shape", "public-modifier", "block", "string-concat", "type"]
+      "lineConcepts": [
+        ["class-vs-object"],
+        ["variable-declaration"],
+        [],
+        ["method-shape", "public-modifier"],
+        ["string-concat"],
+        [],
+        []
+      ]
     },
     {
       "type": "type-along",
@@ -96,7 +114,13 @@
         "Call myCar.describe(). The method runs against THIS specific car and returns a String. Assign that to a variable.",
         "Prints '2024 Model 3'."
       ],
-      "concepts": ["statement", "semicolon", "new-keyword", "method-shape", "string-quotes"]
+      "lineConcepts": [
+        ["new-keyword"],
+        ["string-quotes"],
+        [],
+        ["method-shape"],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -121,7 +145,16 @@
         "Inside the constructor: assign the parameter m to the property model.",
         "Assign y to year. Two } below close constructor and class."
       ],
-      "concepts": ["statement", "semicolon", "method-shape", "public-modifier", "block", "parameter-vs-argument", "type"]
+      "lineConcepts": [
+        ["class-vs-object"],
+        ["variable-declaration"],
+        [],
+        ["method-shape", "parameter-vs-argument"],
+        [],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "type-along",
@@ -133,7 +166,11 @@
         "Prints 'Model 3'.",
         "Prints 2024. Both properties were set by the constructor."
       ],
-      "concepts": ["statement", "semicolon", "new-keyword", "string-quotes", "parameter-vs-argument"]
+      "lineConcepts": [
+        ["new-keyword", "parameter-vs-argument", "string-quotes"],
+        [],
+        []
+      ]
     },
     {
       "type": "recall",
@@ -163,7 +200,12 @@
         "Prints ~31.4 (PI * 10).",
         "Prints 42. abs (absolute value) strips the negative sign."
       ],
-      "concepts": ["statement", "semicolon", "static-vs-instance", "variable-declaration", "method-shape", "type"]
+      "lineConcepts": [
+        ["static-vs-instance"],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "recall",
@@ -194,7 +236,13 @@
         "Another constant.",
         "Integer constants work the same way. Reading: CarFactory.MAX_DOORS gives 4 — anywhere in the codebase."
       ],
-      "concepts": ["statement", "semicolon", "static-vs-instance", "public-modifier", "type"]
+      "lineConcepts": [
+        ["class-vs-object"],
+        ["static-vs-instance"],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "quiz",

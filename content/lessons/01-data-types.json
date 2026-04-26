@@ -44,7 +44,11 @@
         "Configuration values often live in Integers — 'max retries', 'page size', 'timeout in seconds'.",
         "Long is for very large numbers. The trailing L tells Apex 'this number is a Long, not an Integer.' Twitter/X's tweet IDs and Facebook's user IDs are this big."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "type", "assignment-operator"]
+      "lineConcepts": [
+        ["variable-declaration", "type"],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -69,7 +73,12 @@
         "+ on numbers does addition. The result type is Decimal because both operands are Decimal.",
         "Print the total. In a real system this might write to the Order.TotalAmount field on a Salesforce record."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "type", "decimal-vs-double"]
+      "lineConcepts": [
+        ["decimal-vs-double", "variable-declaration"],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "recall",
@@ -96,7 +105,12 @@
         "if (someBoolean) is the most common conditional shape — no comparison needed, the Boolean IS the test.",
         "Runs only when isActive is true. If it were false, this block is skipped entirely."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "block", "type"]
+      "lineConcepts": [
+        ["variable-declaration"],
+        ["block"],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -118,7 +132,12 @@
         "Concatenation: join two Strings with +. The ' ' is a literal space. Without it you'd get 'ArthurPapernik'.",
         "Print 'Arthur Papernik'."
       ],
-      "concepts": ["statement", "semicolon", "string-quotes", "string-concat", "variable-declaration"]
+      "lineConcepts": [
+        ["string-quotes", "variable-declaration"],
+        [],
+        ["string-concat"],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -142,7 +161,11 @@
         "Datetime.now() returns the current moment, including hours and minutes. This is what gets stamped on every record's LastModifiedDate.",
         "addDays(7) returns a NEW Date one week from today. The original 'today' variable is unchanged. This is a method on the Date class."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "method-shape"]
+      "lineConcepts": [
+        ["variable-declaration"],
+        [],
+        ["method-shape"]
+      ]
     },
     {
       "type": "concept",
@@ -165,7 +188,11 @@
         "Inline SOQL — bracketed query that fetches a record. The :accountId is bind syntax — 'use the value of this variable here.' This is how Apex talks to the Salesforce database.",
         "Read the Name field off the fetched Account. acct.Name is the standard 'object dot field' syntax."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "type"]
+      "lineConcepts": [
+        ["variable-declaration"],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",
@@ -186,7 +213,12 @@
         "Guard with != null before using the value. != means 'not equal to'. Calling a method on a null variable would crash.",
         "Safe to call .toLowerCase() now — we know email is a real String inside this block."
       ],
-      "concepts": ["statement", "semicolon", "variable-declaration", "block", "method-shape"]
+      "lineConcepts": [
+        ["variable-declaration"],
+        ["block"],
+        [],
+        []
+      ]
     },
     {
       "type": "quiz",

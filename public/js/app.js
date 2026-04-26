@@ -103,6 +103,7 @@ export async function initLesson() {
 
   const ctx = {
     enableNext() { nextBtn.disabled = false; },
+    showLineConcepts(conceptIds) { reminders.showFor(conceptIds); },
     recordExercise(slide, result) {
       progress.stats.totalKeystrokes += (slide.code || '').length;
       progress.stats.exercisesCompleted += 1;
@@ -124,8 +125,19 @@ export async function initLesson() {
     prevBtn.disabled = i === 0;
     if (i === lesson.slides.length - 1) nextBtn.textContent = 'Finish lesson';
     else nextBtn.textContent = 'Next →';
-    renderSlide(lesson.slides[i], host, ctx);
-    reminders.showFor(lesson.slides[i].concepts || []);
+    const slide = lesson.slides[i];
+    renderSlide(slide, host, ctx);
+    // Type-along slides drive their own per-line reminders via the typing
+    // engine's onLineStart callback. For other slide types, stage the
+    // slide-level concepts now (or clear if none).
+    if (slide.type !== 'type-along') {
+      reminders.showFor(slide.concepts || []);
+    } else {
+      // Engine will fire onLineStart(0) immediately and call showFor for
+      // line 0's concepts — but if the slide is missing lineConcepts entirely,
+      // we still want to clear stale cards from a prior slide.
+      reminders.showFor([]);
+    }
 
     progress.currentLesson = lessonId;
     progress.currentSlide = i;

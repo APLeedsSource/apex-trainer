@@ -213,13 +213,23 @@ a:hover { text-decoration: underline; }
   position: fixed;
   right: 20px;
   bottom: 88px; /* clears the lesson footer */
+  /* Cap height so a tall stack can never overflow the viewport into the
+     topbar. Enough room for ~3-4 cards; any beyond that scroll within the
+     stack. The pointer-events trick lets the empty area pass clicks
+     through to the editor underneath, while the cards themselves remain
+     interactive. */
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
   gap: 10px;
   z-index: 50;
-  max-width: 320px;
+  width: 320px;
   pointer-events: none;
+  scrollbar-width: thin;
 }
+.concept-stack::-webkit-scrollbar { width: 6px; }
+.concept-stack::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
 .concept-card {
   background: #fff7d6;
   color: #3a2f10;
