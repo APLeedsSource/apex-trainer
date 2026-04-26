@@ -1,5 +1,5 @@
 import { renderSlide } from './slides.js';
-import { loadProgress, saveProgress, syncToGitHub, loadLessonsIndex, loadLesson } from './progress-client.js';
+import { loadProgress, saveProgress, syncToGitHub, loadLessonsIndex, loadLesson, loadConcepts } from './progress-client.js';
 
 // ---- Dashboard ----
 export async function initDashboard() {
@@ -66,6 +66,22 @@ export async function initLesson() {
   }
   const lesson = await loadLesson(meta.file);
   const progress = await loadProgress();
+  const concepts = await loadConcepts();
+  if (!Array.isArray(progress.mutedConcepts)) progress.mutedConcepts = [];
+  const sessionMuted = new Set();
+  const reminders = new ConceptReminders({
+    concepts,
+    currentLessonId: lessonId,
+    isPermanentlyMuted: id => progress.mutedConcepts.includes(id),
+    isSessionMuted: id => sessionMuted.has(id),
+    onMutePermanent: id => {
+      if (!progress.mutedConcepts.includes(id)) progress.mutedConcepts.push(id);
+      saveProgress(progress);
+    },
+    onMuteSession: id => sessionMuted.add(id)
+  });
+
+  setupRemindersUI(progress, concepts);
 
   // resume from saved slide if user navigated here without explicit slide param
   let idx = !isNaN(startSlide) && startSlide >= 0 ? startSlide : 0;
@@ -109,6 +125,7 @@ export async function initLesson() {
     if (i === lesson.slides.length - 1) nextBtn.textContent = 'Finish lesson';
     else nextBtn.textContent = 'Next →';
     renderSlide(lesson.slides[i], host, ctx);
+    reminders.showFor(lesson.slides[i].concepts || []);
 
     progress.currentLesson = lessonId;
     progress.currentSlide = i;
@@ -153,4 +170,128 @@ function formatTime(s) {
   const h = Math.floor(s / 3600);
   const m = Math.floor((s % 3600) / 60);
   return h ? `${h}h ${m}m` : `${m}m`;
+}
+
+// ---- Concept reminders: floating sticky-note cards bottom-right ----
+class ConceptReminders {
+  constructor(opts) {
+    this.opts = opts;
+    this.stack = document.getElementById('concept-stack');
+    if (!this.stack) {
+      this.stack = document.createElement('div');
+      this.stack.id = 'concept-stack';
+      this.stack.className = 'concept-stack';
+      document.body.appendChild(this.stack);
+    }
+    this.activeCards = new Map(); // id -> element
+  }
+
+  showFor(conceptIds) {
+    // Drop cards that are no longer relevant for this slide
+    for (const [id, el] of this.activeCards.entries()) {
+      if (!conceptIds.includes(id)) this.dismiss(id);
+    }
+    // Add cards for new concepts
+    for (const id of conceptIds) {
+      if (this.activeCards.has(id)) continue;
+      const c = this.opts.concepts[id];
+      if (!c) continue;
+      // Don't show a reminder while the user is in the lesson where the
+      // concept was first introduced — they're learning it for the first time.
+      if (c.introducedIn === this.opts.currentLessonId) continue;
+      if (this.opts.isPermanentlyMuted(id)) continue;
+      if (this.opts.isSessionMuted(id)) continue;
+      this.spawn(id, c);
+    }
+  }
+
+  spawn(id, c) {
+    const el = document.createElement('div');
+    el.className = 'concept-card';
+    el.innerHTML = `
+      <div class="concept-head">💡 Reminder · from ${c.introducedIn || 'earlier'}</div>
+      <div class="concept-title">${escapeHtml(c.title)}</div>
+      <div class="concept-text">${escapeHtml(c.reminder)}</div>
+      <div class="concept-actions">
+        <button class="know-btn" data-action="know">I know this</button>
+        <button data-action="hide">Hide for now</button>
+      </div>
+    `;
+    el.querySelector('[data-action="know"]').onclick = () => {
+      this.opts.onMutePermanent(id);
+      this.dismiss(id);
+    };
+    el.querySelector('[data-action="hide"]').onclick = () => {
+      this.opts.onMuteSession(id);
+      this.dismiss(id);
+    };
+    this.stack.appendChild(el);
+    this.activeCards.set(id, el);
+  }
+
+  dismiss(id) {
+    const el = this.activeCards.get(id);
+    if (!el) return;
+    el.classList.add('fading');
+    this.activeCards.delete(id);
+    setTimeout(() => el.remove(), 220);
+  }
+}
+
+function setupRemindersUI(progress, concepts) {
+  const link = document.getElementById('manage-reminders');
+  if (!link) return;
+  const updateLabel = () => {
+    const n = (progress.mutedConcepts || []).length;
+    link.textContent = n ? `Reminders muted (${n})` : 'Manage reminders';
+  };
+  updateLabel();
+  link.onclick = () => openRemindersModal(progress, concepts, updateLabel);
+}
+
+function openRemindersModal(progress, concepts, onChange) {
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  const muted = progress.mutedConcepts || [];
+  const items = muted.length
+    ? muted.map(id => {
+        const c = concepts[id] || { title: id, reminder: '' };
+        return `
+          <div class="muted-item" data-id="${escapeHtml(id)}">
+            <div>
+              <div class="muted-name">${escapeHtml(c.title)}</div>
+              <div class="muted-desc">${escapeHtml(c.reminder)}</div>
+            </div>
+            <button class="btn unmute-btn">Unmute</button>
+          </div>`;
+      }).join('')
+    : '<div class="muted-empty">You haven\'t muted any concept reminders yet.</div>';
+  modal.innerHTML = `
+    <h2>Concept reminders</h2>
+    <div class="modal-sub">Reminders you've marked as known. Unmute any to start seeing them again on relevant slides.</div>
+    <div class="muted-list">${items}</div>
+    <div class="modal-footer"><button class="btn btn-primary close-btn">Done</button></div>
+  `;
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+  modal.querySelectorAll('.unmute-btn').forEach(btn => {
+    btn.onclick = (e) => {
+      const id = e.target.closest('.muted-item').dataset.id;
+      progress.mutedConcepts = (progress.mutedConcepts || []).filter(x => x !== id);
+      saveProgress(progress);
+      e.target.closest('.muted-item').remove();
+      onChange();
+      if (!progress.mutedConcepts.length) {
+        modal.querySelector('.muted-list').innerHTML = '<div class="muted-empty">You haven\'t muted any concept reminders yet.</div>';
+      }
+    };
+  });
+  modal.querySelector('.close-btn').onclick = () => backdrop.remove();
+  backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }

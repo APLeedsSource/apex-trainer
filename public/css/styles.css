@@ -125,7 +125,7 @@ a:hover { text-decoration: underline; }
 .intro { color: var(--muted); margin-top: -8px; }
 .split {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1fr 1.2fr;
   gap: 20px;
   align-items: start;
 }
@@ -163,25 +163,169 @@ a:hover { text-decoration: underline; }
   border-radius: 2px;
 }
 
+/* Explain column — warm parchment card, deliberately light to break up the
+   dark UI and signal "read this, this is the lesson". */
 .explain-col {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
+  background: #f5f0e3;
+  color: #2b2419;
+  border: 1px solid #d8cfba;
+  border-radius: 10px;
+  padding: 18px;
   max-height: 60vh;
   overflow-y: auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
-.explain-col h3 { margin: 0 0 12px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.explain-col h3 {
+  margin: 0 0 14px;
+  font-size: 12px;
+  color: #8a7a4c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
 .explain-item {
-  padding: 12px;
-  border-left: 3px solid var(--border);
-  margin-bottom: 8px;
-  transition: all 200ms ease;
+  padding: 12px 14px;
+  border-left: 3px solid #d8cfba;
+  margin-bottom: 10px;
+  border-radius: 0 6px 6px 0;
+  transition: all 220ms ease;
+  background: rgba(255,255,255,0.4);
 }
-.explain-item.locked { opacity: 0.25; filter: blur(2px); }
-.explain-item.revealed { opacity: 1; filter: none; border-left-color: var(--accent); background: rgba(88,166,255,0.06); }
-.line-num { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-.line-text { font-size: 14px; line-height: 1.5; }
+.explain-item.locked { opacity: 0.28; filter: blur(2.5px); }
+.explain-item.revealed {
+  opacity: 1;
+  filter: none;
+  border-left-color: #c9871f;
+  background: #fff8e8;
+}
+.line-num {
+  font-size: 11px;
+  color: #b09657;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.line-text { font-size: 14px; line-height: 1.55; color: #2b2419; }
+
+/* Floating concept reminders — sticky-note style, bottom-right of the screen. */
+.concept-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 88px; /* clears the lesson footer */
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  z-index: 50;
+  max-width: 320px;
+  pointer-events: none;
+}
+.concept-card {
+  background: #fff7d6;
+  color: #3a2f10;
+  border: 1px solid #e8d27a;
+  border-left: 4px solid #d4a017;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  pointer-events: auto;
+  animation: slideInRight 280ms ease-out;
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: none; }
+}
+.concept-card.fading {
+  animation: fadeOut 200ms ease-in forwards;
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(20px); }
+}
+.concept-card .concept-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8a6a0a;
+  margin-bottom: 4px;
+}
+.concept-card .concept-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #2a1f04; }
+.concept-card .concept-text { color: #3a2f10; }
+.concept-card .concept-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.concept-card .concept-actions button {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #d4a017;
+  background: transparent;
+  color: #5a3f00;
+  cursor: pointer;
+  font-family: inherit;
+}
+.concept-card .concept-actions button:hover { background: #f0c95e; }
+.concept-card .concept-actions .know-btn {
+  background: #d4a017;
+  color: #1f1a08;
+  font-weight: 600;
+}
+.concept-card .concept-actions .know-btn:hover { background: #b8870b; }
+
+/* Manage-reminders modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  width: min(520px, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal h2 { margin: 0 0 8px; font-size: 18px; }
+.modal .modal-sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+.muted-list { display: flex; flex-direction: column; gap: 8px; }
+.muted-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.muted-item .muted-name { font-weight: 500; }
+.muted-item .muted-desc { color: var(--muted); font-size: 12px; }
+.modal-footer { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
+.muted-empty { color: var(--muted); font-style: italic; padding: 12px; }
+
+.reminders-link {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.reminders-link:hover { color: var(--text); border-color: var(--accent); }
 
 /* Recall card */
 .recall-card {

@@ -1,0 +1,87 @@
+{
+  "statement": {
+    "title": "Statement",
+    "reminder": "A statement is one instruction. It almost always ends with a semicolon ;",
+    "introducedIn": "00-foundations"
+  },
+  "semicolon": {
+    "title": "Semicolon ;",
+    "reminder": "Ends a statement. Forget one and Apex will refuse to compile.",
+    "introducedIn": "00-foundations"
+  },
+  "variable-declaration": {
+    "title": "Variable shape",
+    "reminder": "TYPE name = value;  — three parts in order. Example: Integer count = 0;",
+    "introducedIn": "00-foundations"
+  },
+  "type": {
+    "title": "Type",
+    "reminder": "What KIND of value a variable holds. Apex requires you to declare the type.",
+    "introducedIn": "00-foundations"
+  },
+  "string-quotes": {
+    "title": "String quotes",
+    "reminder": "Apex strings use SINGLE quotes only — 'hello', not \"hello\".",
+    "introducedIn": "00-foundations"
+  },
+  "camel-case": {
+    "title": "camelCase",
+    "reminder": "Variables and methods: lowercase first word, capitalize each next word. myAge, isLearning.",
+    "introducedIn": "00-foundations"
+  },
+  "pascal-case": {
+    "title": "PascalCase",
+    "reminder": "Types and class names: capitalize EVERY word, including the first. Integer, Account, MyHelper.",
+    "introducedIn": "00-foundations"
+  },
+  "case-insensitive": {
+    "title": "Apex is case-insensitive",
+    "reminder": "myVariable and MyVariable are the same to the compiler — but pick one style and be consistent.",
+    "introducedIn": "00-foundations"
+  },
+  "block": {
+    "title": "Block { }",
+    "reminder": "Curly braces group code that runs together — class bodies, method bodies, if-blocks, loops.",
+    "introducedIn": "00-foundations"
+  },
+  "assignment-operator": {
+    "title": "= is assignment",
+    "reminder": "A single = puts the value on the right INTO the variable on the left. == is comparison (later).",
+    "introducedIn": "00-foundations"
+  },
+  "string-concat": {
+    "title": "+ joins strings",
+    "reminder": "Use + to concatenate strings: 'Hello, ' + name. Same operator that adds numbers.",
+    "introducedIn": "00-foundations"
+  },
+  "method-shape": {
+    "title": "Method anatomy",
+    "reminder": "modifier static? returnType name(params) { body } — e.g. public static void doIt() { ... }",
+    "introducedIn": "00-foundations"
+  },
+  "void": {
+    "title": "void",
+    "reminder": "A method whose return type is void returns nothing — it just runs.",
+    "introducedIn": "00-foundations"
+  },
+  "public-modifier": {
+    "title": "public",
+    "reminder": "An access modifier — public means any other class can use this. Alternatives: private, protected.",
+    "introducedIn": "00-foundations"
+  },
+  "static-vs-instance": {
+    "title": "static vs instance",
+    "reminder": "static = belongs to the class itself, called as ClassName.method(). Instance = belongs to one object, called as obj.method().",
+    "introducedIn": "00-foundations"
+  },
+  "parameter-vs-argument": {
+    "title": "Parameter vs Argument",
+    "reminder": "Parameter = the named slot in the method definition. Argument = the actual value you pass when calling.",
+    "introducedIn": "00-foundations"
+  },
+  "class-vs-object": {
+    "title": "Class vs Object",
+    "reminder": "Class = the blueprint. Object (instance) = one actual thing built from it.",
+    "introducedIn": "00-foundations"
+  }
+}

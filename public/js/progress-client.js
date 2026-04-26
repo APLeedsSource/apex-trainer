@@ -30,3 +30,9 @@ export async function loadLesson(file) {
   const res = await fetch(`/content/lessons/${file}`);
   return res.json();
 }
+
+export async function loadConcepts() {
+  const res = await fetch('/content/concepts.json');
+  if (!res.ok) return {};
+  return res.json();
+}

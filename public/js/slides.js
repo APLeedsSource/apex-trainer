@@ -42,12 +42,29 @@ function renderConcept(slide, wrap, ctx) {
 }
 
 function highlightVocab(text, vocab) {
-  let out = escapeHtml(text);
+  if (!vocab || !vocab.length) return escapeHtml(text);
+  // Single-pass tokenizer. Iterating replacements over an already-escaped
+  // string would re-match injected HTML attributes (e.g. "class" inside
+  // class="vocab"), corrupting the markup. Walk the original text once,
+  // escaping the in-between segments and emitting raw spans for matches.
+  const map = new Map();
   for (const term of vocab) {
     const t = (typeof term === 'string') ? { word: term, def: '' } : term;
-    const re = new RegExp(`\\b(${escapeRegex(t.word)})\\b`, 'gi');
-    out = out.replace(re, `<span class="vocab" title="${escapeAttr(t.def || t.word)}">$1</span>`);
+    map.set(t.word.toLowerCase(), t);
   }
+  const sorted = [...map.values()].sort((a, b) => b.word.length - a.word.length);
+  const pattern = new RegExp(`\\b(${sorted.map(t => escapeRegex(t.word)).join('|')})\\b`, 'gi');
+  let out = '';
+  let lastIndex = 0;
+  let m;
+  while ((m = pattern.exec(text)) !== null) {
+    out += escapeHtml(text.slice(lastIndex, m.index));
+    const matched = m[1];
+    const t = map.get(matched.toLowerCase());
+    out += `<span class="vocab" title="${escapeAttr((t && t.def) || matched)}">${escapeHtml(matched)}</span>`;
+    lastIndex = m.index + matched.length;
+  }
+  out += escapeHtml(text.slice(lastIndex));
   return out;
 }
 
@@ -67,19 +84,8 @@ function renderTypeAlong(slide, wrap, ctx) {
   split.className = 'split';
   wrap.appendChild(split);
 
-  const editorWrap = document.createElement('div');
-  editorWrap.className = 'editor-wrap';
-  split.appendChild(editorWrap);
-
-  const meta = document.createElement('div');
-  meta.className = 'editor-meta';
-  meta.innerHTML = '<span class="hint">Click the code area, then start typing. Tab skips indentation. Backspace deletes.</span><span class="stats" id="ta-stats"></span>';
-  editorWrap.appendChild(meta);
-
-  const editor = document.createElement('div');
-  editor.className = 'editor';
-  editorWrap.appendChild(editor);
-
+  // LEFT column: line-by-line explanations (the lesson content — the primary
+  // surface). Cream/parchment styled so it visually leads the eye.
   const explainCol = document.createElement('div');
   explainCol.className = 'explain-col';
   explainCol.innerHTML = '<h3>Line-by-line</h3>';
@@ -93,6 +99,20 @@ function renderTypeAlong(slide, wrap, ctx) {
     explainCol.appendChild(item);
     return item;
   });
+
+  // RIGHT column: the practice surface (code editor).
+  const editorWrap = document.createElement('div');
+  editorWrap.className = 'editor-wrap';
+  split.appendChild(editorWrap);
+
+  const meta = document.createElement('div');
+  meta.className = 'editor-meta';
+  meta.innerHTML = '<span class="hint">Click the code area, then start typing. Tab skips indentation. Backspace deletes.</span><span class="stats" id="ta-stats"></span>';
+  editorWrap.appendChild(meta);
+
+  const editor = document.createElement('div');
+  editor.className = 'editor';
+  editorWrap.appendChild(editor);
 
   const code = slide.code;
   const stats = wrap.querySelector('#ta-stats');
