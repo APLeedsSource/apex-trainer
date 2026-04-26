@@ -1,14 +1,15 @@
 {
   "userName": "Arthur",
-  "currentLesson": "00-foundations",
-  "currentSlide": 18,
+  "currentLesson": "02-collections",
+  "currentSlide": 0,
   "lessonsCompleted": [
-    "00-foundations"
+    "00-foundations",
+    "01-data-types"
   ],
   "stats": {
-    "totalKeystrokes": 408,
-    "totalTimeSeconds": 2971,
-    "exercisesCompleted": 5
+    "totalKeystrokes": 1088,
+    "totalTimeSeconds": 5163,
+    "exercisesCompleted": 12
   },
   "exerciseHistory": [
     {
@@ -45,9 +46,58 @@
       "accuracy": 91,
       "seconds": 49,
       "completedAt": "2026-04-26T03:32:22.489Z"
+    },
+    {
+      "slideTitle": "Declaring Integers",
+      "wpm": 30,
+      "accuracy": 88,
+      "seconds": 32,
+      "completedAt": "2026-04-26T14:20:44.764Z"
+    },
+    {
+      "slideTitle": "Money math with Decimal",
+      "wpm": 30,
+      "accuracy": 86,
+      "seconds": 37,
+      "completedAt": "2026-04-26T14:22:13.128Z"
+    },
+    {
+      "slideTitle": "Booleans control flow",
+      "wpm": 29,
+      "accuracy": 97,
+      "seconds": 34,
+      "completedAt": "2026-04-26T14:25:05.434Z"
+    },
+    {
+      "slideTitle": "String basics",
+      "wpm": 34,
+      "accuracy": 90,
+      "seconds": 45,
+      "completedAt": "2026-04-26T14:26:18.838Z"
+    },
+    {
+      "slideTitle": "Working with dates",
+      "wpm": 36,
+      "accuracy": 92,
+      "seconds": 30,
+      "completedAt": "2026-04-26T14:27:23.597Z"
+    },
+    {
+      "slideTitle": "Working with Ids",
+      "wpm": 27,
+      "accuracy": 92,
+      "seconds": 56,
+      "completedAt": "2026-04-26T14:29:08.980Z"
+    },
+    {
+      "slideTitle": "Defending against null",
+      "wpm": 33,
+      "accuracy": 90,
+      "seconds": 30,
+      "completedAt": "2026-04-26T14:29:59.653Z"
     }
   ],
   "weakConcepts": [],
-  "lastSavedAt": "2026-04-26T03:33:46.608Z",
+  "lastSavedAt": "2026-04-26T14:31:31.722Z",
   "mutedConcepts": []
 }
