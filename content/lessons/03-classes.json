@@ -265,6 +265,50 @@
       ]
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Account Summary class",
+      "intro": "Sales reps want a one-line pitch summary built from any Account they open. Build an AccountSummary class with a constructor, an instance method, and a static factory — the kind of helper every Salesforce org has dozens of for triggers, screen flows, and Agentforce actions.",
+      "code": "public class AccountSummary {\n    public String name;\n    public Decimal revenue;\n    public AccountSummary(Account a) {\n        this.name = a.Name;\n        this.revenue = a.AnnualRevenue;\n    }\n    public String pitch() {\n        return name + ' ($' + revenue + ')';\n    }\n    public static AccountSummary fromAccount(Account a) {\n        return new AccountSummary(a);\n    }\n}\nAccount a = new Account(Name='Acme', AnnualRevenue=1000000);\nAccountSummary s = AccountSummary.fromAccount(a);\nSystem.debug(s.pitch());",
+      "lineExplanations": [
+        "Declare a public class named AccountSummary — the wrapper we're building.",
+        "Property to hold the account's name. Public so callers can read it directly.",
+        "Property for revenue. Decimal (not Double) because financial values demand exact precision.",
+        "Constructor takes an Account SObject — the most common Apex pattern for wrapping a record.",
+        "Pull the Name field off the Account onto our property. 'this' disambiguates the property from any local variable.",
+        "Same for AnnualRevenue.",
+        "Close the constructor.",
+        "An instance method that produces the pitch string. Returns a String.",
+        "Concatenate the formatted pitch and return it. + on Strings joins them.",
+        "Close the pitch method.",
+        "A static factory method — call without an instance. Common alternative to direct 'new Class(...)' usage.",
+        "Inside the factory, just construct and return.",
+        "Close the factory method.",
+        "Close the class body. Two opens (constructor + class) needed two closes.",
+        "Now USE the class. Construct an in-memory Account with Name and AnnualRevenue set via constructor shorthand.",
+        "Call the static factory to wrap the Account in an AccountSummary instance.",
+        "Call the instance method on s and print the result. This is what a downstream trigger or LWC would render."
+      ],
+      "lineConcepts": [
+        ["class-vs-object", "public-modifier"],
+        ["variable-declaration"],
+        ["decimal-vs-double"],
+        ["method-shape", "parameter-vs-argument"],
+        ["this-keyword"],
+        [],
+        [],
+        ["method-shape"],
+        ["return-statement", "string-concat"],
+        [],
+        ["static-vs-instance", "method-shape"],
+        ["new-keyword", "return-statement"],
+        [],
+        [],
+        ["new-keyword"],
+        ["static-vs-instance"],
+        ["method-shape"]
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [
