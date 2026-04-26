@@ -1,14 +1,45 @@
 {
   "userName": "Arthur",
   "currentLesson": "00-foundations",
-  "currentSlide": 0,
-  "lessonsCompleted": [],
+  "currentSlide": 12,
+  "lessonsCompleted": [
+    "00-foundations"
+  ],
   "stats": {
-    "totalKeystrokes": 0,
-    "totalTimeSeconds": 0,
-    "exercisesCompleted": 0
+    "totalKeystrokes": 291,
+    "totalTimeSeconds": 2669,
+    "exercisesCompleted": 4
   },
-  "exerciseHistory": [],
+  "exerciseHistory": [
+    {
+      "slideTitle": "Your very first line of code",
+      "wpm": 22,
+      "accuracy": 72,
+      "seconds": 16,
+      "completedAt": "2026-04-26T02:23:13.842Z"
+    },
+    {
+      "slideTitle": "Declaring variables of three types",
+      "wpm": 24,
+      "accuracy": 77,
+      "seconds": 36,
+      "completedAt": "2026-04-26T02:24:16.722Z"
+    },
+    {
+      "slideTitle": "Your first if-statement",
+      "wpm": 21,
+      "accuracy": 82,
+      "seconds": 41,
+      "completedAt": "2026-04-26T02:26:26.462Z"
+    },
+    {
+      "slideTitle": "Putting it together — a tiny method",
+      "wpm": 37,
+      "accuracy": 95,
+      "seconds": 38,
+      "completedAt": "2026-04-26T02:35:30.823Z"
+    }
+  ],
   "weakConcepts": [],
-  "lastSavedAt": null
+  "lastSavedAt": "2026-04-26T02:35:47.152Z"
 }
