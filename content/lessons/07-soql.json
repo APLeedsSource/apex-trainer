@@ -292,6 +292,74 @@
       "explanation": "Subquery in the SELECT: SELECT Name, (SELECT Email FROM Contacts) FROM Account. One round-trip, no governor-limit pressure from looping queries."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Account 360 query",
+      "intro": "Sales reps want a one-shot account-360 view — the Account's industry context PLUS its child contacts ordered by last name, all in a single round-trip. Build the query and unpack the results without making a second SOQL call.",
+      "code": "Id accountId = '001D000000IqhSL';\nList<Account> results = [\n    SELECT\n        Id,\n        Name,\n        Industry,\n        BillingCity,\n        (SELECT Id, Email FROM Contacts ORDER BY LastName)\n    FROM Account\n    WHERE Id = :accountId\n    LIMIT 1\n];\nif (!results.isEmpty()) {\n    Account acct = results[0];\n    System.debug(acct.Name + ' (' + acct.Industry + ')');\n    for (Contact c : acct.Contacts) {\n        System.debug(' - ' + c.Email);\n    }\n}",
+      "lineExplanations": [
+        "An Account Id — could be passed in, looked up, or hardcoded for testing.",
+        "Multi-line SOQL inside square brackets. Use a List<Account> even when you expect 0 or 1 rows.",
+        "SELECT clause begins.",
+        "Id is always implicitly required.",
+        "Name field.",
+        "Industry — one of the most-used picklists for segmentation.",
+        "BillingCity — typical address field.",
+        "Subquery for child Contacts. 'Contacts' (plural) is the relationship name on Account. ORDER BY sorts the children.",
+        "FROM clause.",
+        "Bind the Apex variable into the query with :accountId. NEVER concatenate.",
+        "Cap at 1 row — we expect a single Account.",
+        "Close the SOQL statement.",
+        "Guard before reading from the list — empty results would NPE on results[0].",
+        "Pull the single Account out.",
+        "Print 'Acme (Technology)'-style header.",
+        "Walk the child Contacts — already loaded by the subquery, no additional SOQL.",
+        "Print each email indented.",
+        "Close the inner loop.",
+        "Close the outer if."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration"
+        ],
+        [
+          "soql",
+          "list-collection"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+          "relationship-query"
+        ],
+        [],
+        [
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [
+          "soql-limit"
+        ],
+        [],
+        [
+          "block"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

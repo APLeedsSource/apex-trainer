@@ -294,6 +294,78 @@
       "explanation": "Queueable is an interface. Your class implements Queueable, provides execute(), and the platform calls it on schedule."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Notification interface (Email + Slack)",
+      "intro": "Your platform needs to send notifications via either email OR Slack. Use an interface so the same calling code works for both — the textbook strategy pattern, which is exactly how Salesforce's own framework code stays swappable for different integrations.",
+      "code": "public interface Sender {\n    void send(String to, String message);\n}\npublic class EmailSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Email -> ' + to + ': ' + message);\n    }\n}\npublic class SlackSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Slack -> ' + to + ': ' + message);\n    }\n}\nList<Sender> senders = new List<Sender>{new EmailSender(), new SlackSender()};\nfor (Sender s : senders) {\n    s.send('arthur@leedssource.com', 'Welcome to Salesforce!');\n}",
+      "lineExplanations": [
+        "Define the contract — interfaces have only signatures, no bodies.",
+        "Every implementer must provide this method.",
+        "Close the interface.",
+        "EmailSender promises to satisfy the Sender contract.",
+        "Provide the send method — same signature as the interface declared.",
+        "EmailSender's actual logic. Real code would call SingleEmailMessage.",
+        "Close send.",
+        "Close EmailSender.",
+        "SlackSender — same contract, different impl.",
+        "Same signature.",
+        "Slack's logic. Real code would HTTP POST to a webhook.",
+        "Close send.",
+        "Close SlackSender.",
+        "Polymorphism in action: a List of Senders can hold any implementer.",
+        "Walk the list — calling code doesn't know or care which class it's holding.",
+        "Each .send() dispatches to the actual class's implementation. Email runs Email's, Slack runs Slack's.",
+        "Close the loop."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape"
+        ],
+        [],
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        [],
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        [],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "method-shape"
+        ],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

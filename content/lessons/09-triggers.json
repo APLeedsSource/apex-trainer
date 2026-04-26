@@ -244,6 +244,72 @@
       "explanation": "before insert. Set the field on Trigger.new and Salesforce persists the change as part of the insert — no DML needed, no governor-limit cost."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Bulkified Case trigger",
+      "intro": "When Cases come in, we want to default Priority='Medium' if blank AND queue an async Slack notification — but the trigger can fire on up to 200 records. Build a bulkified trigger that handles before-insert defaults synchronously and queues the slow notification job for after-insert.",
+      "code": "trigger CaseTrigger on Case (before insert, after insert) {\n    if (Trigger.isBefore && Trigger.isInsert) {\n        for (Case c : Trigger.new) {\n            if (c.Priority == null) {\n                c.Priority = 'Medium';\n            }\n        }\n    }\n    if (Trigger.isAfter && Trigger.isInsert) {\n        Set<Id> caseIds = new Set<Id>();\n        for (Case c : Trigger.new) {\n            caseIds.add(c.Id);\n        }\n        System.enqueueJob(new CaseNotificationJob(caseIds));\n    }\n}",
+      "lineExplanations": [
+        "Trigger declaration: name, object, two events.",
+        "Before-insert branch — for field defaulting (no DML cost; mutations to Trigger.new persist for free).",
+        "Walk the new Cases.",
+        "Only set the default if the user didn't supply one.",
+        "Set Priority. The change persists automatically as part of the insert.",
+        "Close the if.",
+        "Close the loop.",
+        "Close the before-insert branch.",
+        "After-insert branch — runs once records have Ids.",
+        "Set to collect the new ids — Set deduplicates if the same Id ever shows up twice.",
+        "Walk the new Cases.",
+        "Add each id to the set.",
+        "Close the loop.",
+        "Enqueue ONE Queueable holding all 200 ids — the work runs async, off the critical path of the user's save.",
+        "Close the after-insert branch.",
+        "Close the trigger."
+      ],
+      "lineConcepts": [
+        [
+          "trigger",
+          "trigger-event"
+        ],
+        [
+          "trigger-context",
+          "block"
+        ],
+        [
+          "for-each-loop",
+          "trigger-context"
+        ],
+        [
+          "block"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        [],
+        [],
+        [
+          "trigger-context",
+          "block"
+        ],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop",
+          "trigger-context"
+        ],
+        [],
+        [],
+        [
+          "new-keyword"
+        ],
+        [],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

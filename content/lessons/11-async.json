@@ -252,6 +252,83 @@
       "explanation": "Batchable processes large datasets in 200-row chunks (each with fresh limits); Schedulable wraps it with a cron. Together: nightly recompute, no governor blowup."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Queueable revenue updater",
+      "intro": "After a periodic price-list change, you need to bump every relevant Account's AnnualRevenue by 3%. Build a Queueable that does the SOQL + DML async — the standard pattern for any post-trigger background work in Salesforce.",
+      "code": "public class RevenueUpdateJob implements Queueable {\n    private List<Id> accountIds;\n    public RevenueUpdateJob(List<Id> ids) {\n        this.accountIds = ids;\n    }\n    public void execute(QueueableContext ctx) {\n        List<Account> toUpdate = [\n            SELECT Id, AnnualRevenue\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n        for (Account a : toUpdate) {\n            a.AnnualRevenue = a.AnnualRevenue * 1.03;\n        }\n        update toUpdate;\n    }\n}\nList<Id> sampleIds = new List<Id>{'001D000000IqhSL'};\nSystem.enqueueJob(new RevenueUpdateJob(sampleIds));",
+      "lineExplanations": [
+        "Class implements Queueable — that's the Apex contract for an async job.",
+        "Field to hold the work — the list of ids the job will process.",
+        "Constructor takes the ids the caller wants processed.",
+        "Store on the instance. 'this' disambiguates from the parameter.",
+        "Close the constructor.",
+        "execute() is what the platform calls when the job runs. Returns void; receives a context object.",
+        "Query the relevant Accounts in one SOQL call.",
+        "Get the field we'll modify.",
+        "From the Account object.",
+        "Bind the list of ids — single query for all of them.",
+        "Close the SOQL.",
+        "Walk the records.",
+        "Apply the 3% bump. Decimal arithmetic preserves precision.",
+        "Close the loop.",
+        "ONE bulk DML — never inside the loop. This is the bulkified pattern again.",
+        "Close execute.",
+        "Close the class.",
+        "Build a tiny test list of ids.",
+        "Enqueue the job. Returns a job Id; the work runs in the background."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "private-modifier",
+          "list-collection"
+        ],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "soql",
+          "list-collection"
+        ],
+        [],
+        [],
+        [
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [],
+        [],
+        [
+          "dml-update",
+          "bulk-dml"
+        ],
+        [],
+        [],
+        [
+          "new-keyword"
+        ],
+        [
+          "new-keyword"
+        ]
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

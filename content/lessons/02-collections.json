@@ -10,7 +10,10 @@
         "Apex gives you three collection types: List, Set, and Map. Pick the right one and code stays simple. Pick the wrong one and you'll be writing extra logic forever."
       ],
       "vocabulary": [
-        { "word": "collection", "def": "A variable that holds many values, not just one — List, Set, or Map." }
+        {
+          "word": "collection",
+          "def": "A variable that holds many values, not just one — List, Set, or Map."
+        }
       ]
     },
     {
@@ -21,8 +24,14 @@
         "Real example: a Spotify playlist (order matters, same song can repeat). A Twitter/X feed (newest tweet first). The line at the DMV (first in, first served)."
       ],
       "vocabulary": [
-        { "word": "List", "def": "Ordered, indexed collection. Allows duplicate values. Zero-based index." },
-        { "word": "index", "def": "The position number of an item in a List, starting at 0." }
+        {
+          "word": "List",
+          "def": "Ordered, indexed collection. Allows duplicate values. Zero-based index."
+        },
+        {
+          "word": "index",
+          "def": "The position number of an item in a List, starting at 0."
+        }
       ]
     },
     {
@@ -37,8 +46,13 @@
         "playlist[0] reads the first item. Square brackets are how you access by index. Prints 'Bohemian Rhapsody'."
       ],
       "lineConcepts": [
-        ["list-collection", "new-keyword"],
-        ["string-quotes"],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
         [],
         []
       ]
@@ -51,7 +65,10 @@
         "Real example: your Twitter/X followers (you can only follow someone once). The set of unique email addresses for a marketing campaign. The set of distinct product IDs in a shopping cart."
       ],
       "vocabulary": [
-        { "word": "Set", "def": "Unordered collection of unique values. Adding a duplicate is silently ignored." }
+        {
+          "word": "Set",
+          "def": "Unordered collection of unique values. Adding a duplicate is silently ignored."
+        }
       ]
     },
     {
@@ -66,7 +83,10 @@
         "Prints 1, not 2. .size() returns the count."
       ],
       "lineConcepts": [
-        ["set-collection", "new-keyword"],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
         [],
         [],
         []
@@ -86,8 +106,14 @@
         "Real example: a URL shortener (short code → long URL). Salesforce trigger code constantly uses Map<Id, Account> to look up records by their Id without re-querying the database."
       ],
       "vocabulary": [
-        { "word": "Map", "def": "Collection of key-value pairs. Each key is unique; each maps to a value." },
-        { "word": "key", "def": "The unique identifier in a map entry — what you look up by." }
+        {
+          "word": "Map",
+          "def": "Collection of key-value pairs. Each key is unique; each maps to a value."
+        },
+        {
+          "word": "key",
+          "def": "The unique identifier in a map entry — what you look up by."
+        }
       ]
     },
     {
@@ -102,7 +128,10 @@
         "get('abc') returns the value for that key. Prints 'https://salesforce.com'. This is the magic of Maps — instant lookup by key."
       ],
       "lineConcepts": [
-        ["map-collection", "new-keyword"],
+        [
+          "map-collection",
+          "new-keyword"
+        ],
         [],
         [],
         []
@@ -137,9 +166,15 @@
         "Runs once per name. Prints 'Hello Arthur', then 'Hello Ari', then 'Hello Tuan'. The order matches the List's order."
       ],
       "lineConcepts": [
-        ["list-collection"],
-        ["block"],
-        ["string-concat"],
+        [
+          "list-collection"
+        ],
+        [
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
         []
       ]
     },
@@ -154,8 +189,13 @@
         "Prints 'Alice: 90' and 'Bob: 85'. Map iteration order isn't guaranteed — don't rely on it."
       ],
       "lineConcepts": [
-        ["map-collection"],
-        ["set-collection", "block"],
+        [
+          "map-collection"
+        ],
+        [
+          "set-collection",
+          "block"
+        ],
         [],
         []
       ]
@@ -186,7 +226,10 @@
         "This pattern — query once, then loop — is how every well-built Salesforce trigger scales. We'll go deep on it in the Triggers lesson and again in the Governor Limits extras."
       ],
       "vocabulary": [
-        { "word": "governor limit", "def": "Salesforce-imposed cap on resource usage per transaction (queries, DML, CPU time, etc.)." }
+        {
+          "word": "governor limit",
+          "def": "Salesforce-imposed cap on resource usage per transaction (queries, DML, CPU time, etc.)."
+        }
       ]
     },
     {
@@ -200,9 +243,70 @@
         "Read the Name field off each Account. No additional queries — we already have all the data."
       ],
       "lineConcepts": [
-        ["list-collection"],
-        ["block"],
+        [
+          "list-collection"
+        ],
+        [
+          "block"
+        ],
         [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Capstone: Campaign bounce dedupe",
+      "intro": "Marketing wants to know which UNIQUE emails bounced from yesterday's campaign and how many times each one bounced. Combine a List (raw events), a Set (unique addresses), and a Map (counts) — the three collections working together as they do in real Salesforce trigger code.",
+      "code": "List<String> bounced = new List<String>{\n    'arthur@example.com',\n    'sara@example.com',\n    'arthur@example.com',\n    'tim@example.com'\n};\nSet<String> uniqueBounced = new Set<String>(bounced);\nMap<String, Integer> bounceCount = new Map<String, Integer>();\nfor (String email : bounced) {\n    Integer count = bounceCount.get(email);\n    if (count == null) { count = 0; }\n    bounceCount.put(email, count + 1);\n}\nSystem.debug('Unique bouncers: ' + uniqueBounced.size());\nSystem.debug('Counts: ' + bounceCount);",
+      "lineExplanations": [
+        "Declare a List of Strings using the inline literal syntax — opens with new List<String>{",
+        "First email entry.",
+        "Second.",
+        "Third — note 'arthur' appears twice, simulating a duplicated bounce event.",
+        "Fourth.",
+        "Close the list literal with };",
+        "Set constructor takes the List directly — duplicates are silently dropped, so this Set has 3 unique entries.",
+        "Empty Map<String, Integer> — keys are emails, values will be counts.",
+        "Walk every email in the original list (including duplicates).",
+        "Look up the current count for this email. Returns null if the key isn't in the map yet.",
+        "Initialize to 0 if not yet present. The single-line if avoids a NullPointerException on count + 1.",
+        "Store the new count back into the map.",
+        "Close the loop.",
+        "Print how many unique bouncers there are.",
+        "Print the full count map."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "map-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [],
+        [
+          "block"
+        ],
+        [],
+        [],
+        [
+          "string-concat"
+        ],
         []
       ]
     },

@@ -231,6 +231,67 @@
       "vocabulary": []
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Retry with attempts cap",
+      "intro": "An external integration occasionally returns a transient error. Build the universal retry pattern: keep trying up to N attempts, break out the moment one succeeds, log the outcome either way. This shape shows up in every async job that talks to a flaky service.",
+      "code": "Integer maxAttempts = 5;\nInteger attempt = 0;\nBoolean succeeded = false;\nwhile (attempt < maxAttempts) {\n    attempt++;\n    Boolean ok = Math.random() > 0.7;\n    if (ok) {\n        succeeded = true;\n        System.debug('Succeeded on attempt ' + attempt);\n        break;\n    }\n    System.debug('Attempt ' + attempt + ' failed; retrying...');\n}\nif (!succeeded) {\n    System.debug('All ' + maxAttempts + ' attempts failed.');\n}",
+      "lineExplanations": [
+        "Cap the number of attempts.",
+        "Counter that increments on each pass.",
+        "Outcome flag — flips to true if any attempt succeeds.",
+        "while-loop runs until the counter hits the cap.",
+        "Increment first thing — guarantees the counter advances every pass (no accidental infinite loop).",
+        "Simulate a flaky operation: ~30% success rate.",
+        "If this attempt succeeded, handle and exit.",
+        "Set the success flag so the post-loop check knows.",
+        "Log which attempt won.",
+        "break exits the while-loop entirely. No more attempts.",
+        "Close the success branch.",
+        "Otherwise log the failure and the loop continues.",
+        "Close the loop body.",
+        "After the loop, if we never succeeded...",
+        "...log that we exhausted all retries.",
+        "Close the failure branch."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration"
+        ],
+        [],
+        [],
+        [
+          "while-loop",
+          "block"
+        ],
+        [],
+        [
+          "variable-declaration"
+        ],
+        [
+          "block"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        [
+          "break"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        [],
+        [
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

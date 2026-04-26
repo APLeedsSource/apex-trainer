@@ -248,6 +248,67 @@
       "explanation": "upsert. It keys on a field you choose (External Id) and does the right thing per record."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Bulk lead import with partial success",
+      "intro": "An overnight integration drops a batch of leads into Salesforce — some rows are missing required fields. Use Database.insert(records, false) to save what's valid, capture the failures, and log a clean summary. The standard data-import pattern in any Salesforce org.",
+      "code": "List<Lead> toInsert = new List<Lead>();\ntoInsert.add(new Lead(LastName='Doe', Company='Acme', Email='doe@acme.com'));\ntoInsert.add(new Lead(LastName='Smith', Company='Beta'));\ntoInsert.add(new Lead(Company='Missing Required'));\nList<Database.SaveResult> results = Database.insert(toInsert, false);\nInteger successes = 0;\nInteger failures = 0;\nfor (Database.SaveResult r : results) {\n    if (r.isSuccess()) {\n        successes++;\n    } else {\n        failures++;\n        System.debug('Failed: ' + r.getErrors()[0].getMessage());\n    }\n}\nSystem.debug('Saved ' + successes + ', failed ' + failures);",
+      "lineExplanations": [
+        "Empty list to fill with leads to insert.",
+        "Valid lead — has LastName, Company, Email.",
+        "Also valid — minimum required fields for Lead.",
+        "INVALID — missing LastName, which is required on Lead.",
+        "Database.insert with allOrNone=false. Returns one SaveResult per record. Valid leads still save; invalid ones come back as failures.",
+        "Counter for successes.",
+        "Counter for failures.",
+        "Walk the SaveResults — same order as toInsert.",
+        "Branch on success.",
+        "Increment success count.",
+        "Otherwise it's a failure.",
+        "Increment failure count.",
+        "Log the FIRST error message. SaveResult can carry multiple errors per record.",
+        "Close the failure branch.",
+        "Close the loop.",
+        "Print the summary."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [
+          "new-keyword",
+          "string-quotes"
+        ],
+        [],
+        [],
+        [
+          "database-class",
+          "all-or-none"
+        ],
+        [
+          "variable-declaration"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [
+          "block"
+        ],
+        [],
+        [],
+        [],
+        [
+          "string-concat"
+        ],
+        [],
+        [],
+        [
+          "string-concat"
+        ]
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

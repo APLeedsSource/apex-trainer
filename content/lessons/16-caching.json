@@ -247,6 +247,83 @@
       "explanation": "@AuraEnabled(cacheable=true). Read-only, deterministic per input — perfect for client-side caching."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: UserContext two-tier cache",
+      "intro": "Build a getCurrentUser() helper that's smart about caching: first check the in-transaction static cache, then fall back to Platform Cache (Org Cache, 10-minute TTL), and only as a last resort run the SOQL. The two-tier pattern any high-volume Salesforce util uses.",
+      "code": "public class UserContext {\n    private static User cachedUser;\n    public static User getCurrent() {\n        if (cachedUser != null) {\n            return cachedUser;\n        }\n        Cache.OrgPartition partition = Cache.Org.getPartition('local.userCache');\n        User fromCache = (User) partition.get('current');\n        if (fromCache != null) {\n            cachedUser = fromCache;\n            return cachedUser;\n        }\n        cachedUser = [\n            SELECT Id, Name, Email\n            FROM User\n            WHERE Id = :UserInfo.getUserId()\n        ];\n        partition.put('current', cachedUser, 600);\n        return cachedUser;\n    }\n}",
+      "lineExplanations": [
+        "Declare the helper class.",
+        "Static field — lives for the duration of one transaction. Tier 1 cache.",
+        "Public static getter — anywhere in the codebase, UserContext.getCurrent().",
+        "Tier-1 hit check.",
+        "Return the in-memory User. No work done, no SOQL.",
+        "Close the tier-1 hit branch.",
+        "Get a handle on the Platform Cache partition. Tier 2 — survives across transactions.",
+        "Look up by key. Returns Object; cast back to User. Returns null on miss.",
+        "Tier-2 hit check.",
+        "Promote the value into tier-1 so subsequent calls in this transaction skip Platform Cache too.",
+        "Return.",
+        "Close the tier-2 hit branch.",
+        "Both caches missed — do the slow work. SOQL.",
+        "Just the fields the caller needs.",
+        "From the User SObject.",
+        "Bind the current user's id from UserInfo. Static method on a Salesforce-provided class.",
+        "Close the SOQL.",
+        "Store in Platform Cache with a 10-minute TTL (600 seconds).",
+        "Return the freshly-fetched User.",
+        "Close the method.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "static-vs-instance",
+          "private-modifier"
+        ],
+        [
+          "method-shape",
+          "public-modifier"
+        ],
+        [
+          "block"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        [],
+        [],
+        [
+          "block"
+        ],
+        [],
+        [
+          "return-statement"
+        ],
+        [],
+        [
+          "soql"
+        ],
+        [],
+        [],
+        [
+          "soql-bind-variable",
+          "static-vs-instance"
+        ],
+        [],
+        [
+          "ttl"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

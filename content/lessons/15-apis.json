@@ -315,6 +315,60 @@
       "explanation": "Named Credentials. Centralized, secrets never appear in code, rotating keys is an admin change."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Stripe charge POST via Named Credential",
+      "intro": "A customer just clicked 'Pay' in your storefront. Build the Apex callout that posts the charge to Stripe — using a Named Credential so the secret never lives in code, parsing the JSON response, and branching on the status code. The exact shape every payment integration uses.",
+      "code": "HttpRequest req = new HttpRequest();\nreq.setEndpoint('callout:Stripe/v1/charges');\nreq.setMethod('POST');\nreq.setHeader('Content-Type', 'application/x-www-form-urlencoded');\nString body = 'amount=2500&currency=usd&source=tok_visa&description=Order+1234';\nreq.setBody(body);\nHttpResponse res = new Http().send(req);\nif (res.getStatusCode() == 200) {\n    Map<String, Object> parsed = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());\n    String chargeId = (String) parsed.get('id');\n    System.debug('Charge succeeded: ' + chargeId);\n} else {\n    System.debug('Charge failed: ' + res.getStatusCode() + ' - ' + res.getBody());\n}",
+      "lineExplanations": [
+        "Build a fresh HttpRequest. Empty so far.",
+        "Endpoint via Named Credential — 'callout:Stripe' resolves to the real URL with auth attached. No secrets in code.",
+        "POST verb — we're creating a charge.",
+        "Stripe's charge endpoint expects form-encoded, not JSON.",
+        "Build the form-encoded body. amount is in cents (2500 = $25.00).",
+        "Attach the body to the request.",
+        "Send. Returns an HttpResponse holding status, headers, body.",
+        "Check status. 200 = OK, 4xx = client error, 5xx = server error.",
+        "Parse the JSON body into a generic map. Cast because deserializeUntyped returns Object.",
+        "Pull the charge id out of the parsed response. Cast back to String.",
+        "Log the successful charge.",
+        "Otherwise fall to the failure branch.",
+        "Log the status and body for diagnosis.",
+        "Close the else."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword"
+        ],
+        [
+          "named-credential"
+        ],
+        [],
+        [],
+        [
+          "variable-declaration"
+        ],
+        [],
+        [
+          "new-keyword"
+        ],
+        [
+          "block"
+        ],
+        [
+          "map-collection"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

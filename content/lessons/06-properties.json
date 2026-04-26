@@ -219,6 +219,84 @@
       "explanation": "Public get + private set. Anyone can read it; only this class (including its constructor) can write it."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Order with computed total + normalized email",
+      "intro": "Build an Order class with two properties that do real work: customerEmail normalizes input on every set (trim + lowercase), and total computes itself from subtotal + taxRate on every read. The same getter/setter pattern Salesforce uses on its own validation-heavy fields.",
+      "code": "public class Order {\n    private String emailValue;\n    public String customerEmail {\n        get { return emailValue; }\n        set {\n            emailValue = value;\n            if (emailValue != null) emailValue = emailValue.toLowerCase().trim();\n        }\n    }\n    public Decimal subtotal { get; set; }\n    public Decimal taxRate { get; set; }\n    public Decimal total {\n        get { return subtotal + (subtotal * taxRate); }\n    }\n}\nOrder o = new Order();\no.customerEmail = '  ARTHUR@LEEDSSOURCE.COM  ';\no.subtotal = 100;\no.taxRate = 0.08;\nSystem.debug(o.customerEmail);\nSystem.debug(o.total);",
+      "lineExplanations": [
+        "Declare the Order class.",
+        "Backing field for the normalized email — private so callers can't bypass the property.",
+        "Public property with custom getter and setter.",
+        "Getter just returns the backing field.",
+        "Setter starts.",
+        "Store whatever the caller passed.",
+        "If non-null, normalize: lowercase + strip whitespace.",
+        "Close the setter.",
+        "Close the customerEmail property.",
+        "Auto-property — Apex generates trivial get/set for simple values.",
+        "Same pattern for tax rate.",
+        "Computed read-only property — no backing field needed.",
+        "Getter computes on every read; never stale because the inputs are read fresh each time.",
+        "Close the total property.",
+        "Close the class.",
+        "Construct an order to demo the properties.",
+        "Set the email — note the messy whitespace and uppercase. The setter will clean it.",
+        "Set subtotal.",
+        "Set tax rate.",
+        "Print: 'arthur@leedssource.com' (normalized).",
+        "Print: 108 (computed: 100 + 100*0.08)."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "private-modifier",
+          "variable-declaration"
+        ],
+        [
+          "auto-property",
+          "public-modifier"
+        ],
+        [
+          "custom-getter",
+          "return-statement"
+        ],
+        [
+          "custom-setter"
+        ],
+        [],
+        [
+          "block"
+        ],
+        [],
+        [],
+        [
+          "auto-property"
+        ],
+        [],
+        [
+          "auto-property"
+        ],
+        [
+          "custom-getter",
+          "return-statement"
+        ],
+        [],
+        [],
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

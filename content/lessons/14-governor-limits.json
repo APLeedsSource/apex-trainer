@@ -221,6 +221,78 @@
       "explanation": "One bulk DML after the loop. The first option = 200 DML statements, well past the 150 cap."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Bulkified contact rollup",
+      "intro": "A junior dev's 'count contacts per account' code blew up on the first 200-record import — they put a SOQL inside the trigger loop. Build the bulkified version: collect ids first, ONE query, ONE DML, no governor explosions.",
+      "code": "List<Contact> incomingContacts = Trigger.new;\nSet<Id> acctIds = new Set<Id>();\nfor (Contact c : incomingContacts) {\n    if (c.AccountId != null) {\n        acctIds.add(c.AccountId);\n    }\n}\nMap<Id, Account> accountsById = new Map<Id, Account>(\n    [SELECT Id, NumContacts__c FROM Account WHERE Id IN :acctIds]\n);\nfor (Contact c : incomingContacts) {\n    Account parent = accountsById.get(c.AccountId);\n    if (parent == null) continue;\n    if (parent.NumContacts__c == null) parent.NumContacts__c = 0;\n    parent.NumContacts__c++;\n}\nupdate accountsById.values();\nSystem.debug('SOQL used: ' + Limits.getQueries());",
+      "lineExplanations": [
+        "Pull the new Contacts off the trigger context.",
+        "Set to collect parent Account ids — Set dedupes automatically.",
+        "First pass: walk Contacts, gathering ids only.",
+        "Skip null AccountIds.",
+        "Add the AccountId. Duplicates are silently ignored.",
+        "Close the if.",
+        "Close the first loop.",
+        "Map<Id, Account> built directly from a SOQL result. ONE query.",
+        "Bind the set of ids — IN :acctIds is the bulk lookup pattern.",
+        "Close the map construction.",
+        "Second pass: walk Contacts, working from the map (no per-iteration query).",
+        "Look up the parent in the map by Id.",
+        "Skip if the parent isn't in our result set.",
+        "Initialize counter if null.",
+        "Increment. ++ adds 1.",
+        "Close the second loop.",
+        "ONE bulk DML — update everything at once. accountsById.values() is the parent List<Account>.",
+        "Inspect runtime SOQL usage. Should print 1, well under the 100 limit."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection",
+          "trigger-context"
+        ],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "block"
+        ],
+        [],
+        [],
+        [],
+        [
+          "map-collection",
+          "new-keyword"
+        ],
+        [
+          "soql",
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [],
+        [
+          "continue"
+        ],
+        [],
+        [],
+        [],
+        [
+          "dml-update",
+          "bulk-dml"
+        ],
+        [
+          "string-concat"
+        ]
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

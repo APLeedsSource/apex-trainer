@@ -302,6 +302,90 @@
       "explanation": "Test.startTest() / Test.stopTest() force async jobs (futures, queueables, batches) to actually execute by the time stopTest returns. Without it, the future never ran during the test."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Test class for CustomerService",
+      "intro": "Write a complete test class for the CustomerService.register method from Lesson 5 — a happy path that registers a valid customer and a negative path that rejects bad input. This is exactly the shape every Apex deploy needs to clear the 75% coverage gate.",
+      "code": "@isTest\npublic class CustomerServiceTest {\n    @TestSetup\n    static void setup() {\n        Account a = new Account(Name='Test Co');\n        insert a;\n    }\n    @isTest\n    static void registersValidCustomer() {\n        Test.startTest();\n        Boolean result = CustomerService.register('arthur@example.com', 'Arthur');\n        Test.stopTest();\n        System.assertEquals(true, result, 'Valid input should register');\n    }\n    @isTest\n    static void rejectsInvalidEmail() {\n        Boolean result = CustomerService.register('not-an-email', 'Arthur');\n        System.assertEquals(false, result, 'Bad email should be rejected');\n    }\n}",
+      "lineExplanations": [
+        "Class-level @isTest marks the whole class as test-only — doesn't count toward your code limit.",
+        "Class declaration.",
+        "@TestSetup creates shared data once for the whole class run.",
+        "Setup method must be static, void, no params.",
+        "Build a sample Account.",
+        "Insert it. Visible to every test method below.",
+        "Close setup.",
+        "Marks this method as a runnable test.",
+        "Test method: static, void, descriptive name.",
+        "Wraps the code under test. Resets governor limits at start; flushes async at stop.",
+        "Call the method under test, capture the return.",
+        "End the measured window.",
+        "Assert the boolean result. Third arg is the failure message.",
+        "Close the happy-path test.",
+        "Second test annotation.",
+        "Negative path — bad email should return false.",
+        "Call with malformed email.",
+        "Assert the rejection. No startTest/stopTest needed since there's no async.",
+        "Close the negative test.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "test-annotation"
+        ],
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "test-setup"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "void"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "dml-insert"
+        ],
+        [],
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance"
+        ],
+        [
+          "test-startStop"
+        ],
+        [
+          "variable-declaration"
+        ],
+        [
+          "test-startStop"
+        ],
+        [
+          "assert-equals"
+        ],
+        [],
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape"
+        ],
+        [],
+        [
+          "assert-equals"
+        ],
+        [],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [

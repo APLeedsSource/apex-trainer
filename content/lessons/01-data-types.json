@@ -10,7 +10,10 @@
         "Real example: a banking app that mixes up a String '100.00' with a Decimal 100.00 will fail in subtle ways. Strong typing prevents this — Stripe and Plaid lean on typed languages partly for this reason."
       ],
       "vocabulary": [
-        { "word": "type", "def": "What kind of value a variable holds — Integer, String, Boolean, etc." }
+        {
+          "word": "type",
+          "def": "What kind of value a variable holds — Integer, String, Boolean, etc."
+        }
       ]
     },
     {
@@ -21,8 +24,14 @@
         "Plus the special value 'null' — meaning 'no value yet'. Every variable holds either a real value or null."
       ],
       "vocabulary": [
-        { "word": "primitive", "def": "A built-in atomic type — Integer, String, Boolean, Decimal, Date, etc." },
-        { "word": "null", "def": "A special value meaning 'no value' — the absence of a real value." }
+        {
+          "word": "primitive",
+          "def": "A built-in atomic type — Integer, String, Boolean, Decimal, Date, etc."
+        },
+        {
+          "word": "null",
+          "def": "A special value meaning 'no value' — the absence of a real value."
+        }
       ]
     },
     {
@@ -45,7 +54,10 @@
         "Long is for very large numbers. The trailing L tells Apex 'this number is a Long, not an Integer.' Twitter/X's tweet IDs and Facebook's user IDs are this big."
       ],
       "lineConcepts": [
-        ["variable-declaration", "type"],
+        [
+          "variable-declaration",
+          "type"
+        ],
         [],
         []
       ]
@@ -58,8 +70,14 @@
         "Real example: Stripe, banks, and Salesforce's Currency field always use Decimal. A Double would silently turn $0.10 + $0.20 into $0.30000000004 — fine for graphics, catastrophic for accounting."
       ],
       "vocabulary": [
-        { "word": "Decimal", "def": "Exact-precision number type — required for currency and any value where rounding errors matter." },
-        { "word": "Double", "def": "Approximate-precision number type — fast for math, but loses precision over time." }
+        {
+          "word": "Decimal",
+          "def": "Exact-precision number type — required for currency and any value where rounding errors matter."
+        },
+        {
+          "word": "Double",
+          "def": "Approximate-precision number type — fast for math, but loses precision over time."
+        }
       ]
     },
     {
@@ -74,7 +92,10 @@
         "Print the total. In a real system this might write to the Order.TotalAmount field on a Salesforce record."
       ],
       "lineConcepts": [
-        ["decimal-vs-double", "variable-declaration"],
+        [
+          "decimal-vs-double",
+          "variable-declaration"
+        ],
         [],
         [],
         []
@@ -106,8 +127,12 @@
         "Runs only when isActive is true. If it were false, this block is skipped entirely."
       ],
       "lineConcepts": [
-        ["variable-declaration"],
-        ["block"],
+        [
+          "variable-declaration"
+        ],
+        [
+          "block"
+        ],
         [],
         []
       ]
@@ -133,9 +158,14 @@
         "Print 'Arthur Papernik'."
       ],
       "lineConcepts": [
-        ["string-quotes", "variable-declaration"],
+        [
+          "string-quotes",
+          "variable-declaration"
+        ],
         [],
-        ["string-concat"],
+        [
+          "string-concat"
+        ],
         []
       ]
     },
@@ -147,8 +177,14 @@
         "Real example: Salesforce stores every CreatedDate, every Opportunity CloseDate, every meeting reminder as Datetime in UTC, then renders in each user's local timezone. This is how a global CRM stays consistent."
       ],
       "vocabulary": [
-        { "word": "Datetime", "def": "Year, month, day, hour, minute, second — all stored together, in UTC." },
-        { "word": "UTC", "def": "Coordinated Universal Time — the timezone-neutral baseline used by databases worldwide." }
+        {
+          "word": "Datetime",
+          "def": "Year, month, day, hour, minute, second — all stored together, in UTC."
+        },
+        {
+          "word": "UTC",
+          "def": "Coordinated Universal Time — the timezone-neutral baseline used by databases worldwide."
+        }
       ]
     },
     {
@@ -162,9 +198,13 @@
         "addDays(7) returns a NEW Date one week from today. The original 'today' variable is unchanged. This is a method on the Date class."
       ],
       "lineConcepts": [
-        ["variable-declaration"],
+        [
+          "variable-declaration"
+        ],
         [],
-        ["method-shape"]
+        [
+          "method-shape"
+        ]
       ]
     },
     {
@@ -175,7 +215,10 @@
         "Real example: every relationship in Salesforce is just one record's Id stored on another record. Contact.AccountId points to the Account. This is exactly how foreign keys work in any relational database."
       ],
       "vocabulary": [
-        { "word": "Id", "def": "Apex type for an 18-character Salesforce record identifier." }
+        {
+          "word": "Id",
+          "def": "Apex type for an 18-character Salesforce record identifier."
+        }
       ]
     },
     {
@@ -189,7 +232,9 @@
         "Read the Name field off the fetched Account. acct.Name is the standard 'object dot field' syntax."
       ],
       "lineConcepts": [
-        ["variable-declaration"],
+        [
+          "variable-declaration"
+        ],
         [],
         []
       ]
@@ -214,8 +259,12 @@
         "Safe to call .toLowerCase() now — we know email is a real String inside this block."
       ],
       "lineConcepts": [
-        ["variable-declaration"],
-        ["block"],
+        [
+          "variable-declaration"
+        ],
+        [
+          "block"
+        ],
         [],
         []
       ]
@@ -237,6 +286,53 @@
       "front": "Why does Salesforce store every Datetime in UTC instead of the user's local time?",
       "back": "So records stay consistent across timezones. Each user's UI converts UTC into their local time on display.",
       "detail": "Same pattern at any global system — Slack, Uber, Airbnb. Store one canonical timestamp; convert at the edges."
+    },
+    {
+      "type": "type-along",
+      "title": "Capstone: Invoice line item",
+      "intro": "Finance wants to compute an invoice line item — product, quantity, unit price, tax, and total — before saving to a Salesforce custom object. Build a tiny calculation that uses the right primitive for each value (Decimal for money, Integer for counts, Date for the issue date).",
+      "code": "String productName = 'Salesforce Premium License';\nInteger quantity = 12;\nDecimal unitPrice = 99.99;\nDecimal taxRate = 0.0825;\nDate issueDate = Date.today();\nDecimal subtotal = unitPrice * quantity;\nDecimal tax = subtotal * taxRate;\nDecimal total = subtotal + tax;\nBoolean isPaid = false;\nString summary = productName + ' x' + quantity + ' = $' + total;\nSystem.debug('Issued: ' + issueDate);\nSystem.debug(summary);\nSystem.debug('Paid? ' + isPaid);",
+      "lineExplanations": [
+        "Declare the product name as a String — single-quoted text.",
+        "Quantity is a whole number — Integer is the right primitive.",
+        "Unit price uses Decimal (NOT Double) — money requires exact precision.",
+        "Tax rate also Decimal. 0.0825 = 8.25%.",
+        "Date.today() is a static method on the Date class — returns today's calendar date in the org's timezone.",
+        "Multiply Decimal by Integer — Apex auto-promotes; result is Decimal.",
+        "Apply tax rate to subtotal.",
+        "Sum the two Decimals.",
+        "Boolean for the paid flag — no quotes, true/false are language keywords.",
+        "Build a human-readable summary line. + on Strings concatenates; numbers are auto-converted.",
+        "Print the issue date.",
+        "Print the summary.",
+        "Print the paid status."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "string-quotes"
+        ],
+        [
+          "variable-declaration"
+        ],
+        [
+          "decimal-vs-double"
+        ],
+        [],
+        [
+          "static-vs-instance"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [
+          "string-concat"
+        ],
+        [],
+        [],
+        []
+      ]
     },
     {
       "type": "concept",

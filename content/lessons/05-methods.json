@@ -236,6 +236,87 @@
       "explanation": "private. The method has no caller outside the class, so exposing it just adds noise and makes refactoring harder."
     },
     {
+      "type": "type-along",
+      "title": "Capstone: Customer service public façade",
+      "intro": "Build a CustomerService.register() method that's the single public entry point for customer signup. Behind it, two private helpers do the validation and logging work. This 'thin public API, fat private internals' shape is how every well-built Apex class in production is structured.",
+      "code": "public class CustomerService {\n    public static Boolean register(String email, String name) {\n        if (!isValidEmail(email)) {\n            log('Invalid email: ' + email);\n            return false;\n        }\n        if (String.isBlank(name)) {\n            log('Name required');\n            return false;\n        }\n        log('Registered ' + email);\n        return true;\n    }\n    private static Boolean isValidEmail(String email) {\n        return email != null && email.contains('@');\n    }\n    private static void log(String msg) {\n        System.debug('[CustomerService] ' + msg);\n    }\n}",
+      "lineExplanations": [
+        "Declare the service class — public so callers anywhere can use it.",
+        "Public entry point. Boolean return signals success/failure to the caller.",
+        "Validation #1: delegate to a private helper. ! is logical NOT.",
+        "On failure, log via another private helper.",
+        "Return false — the caller can decide what to do.",
+        "Close the email-invalid branch.",
+        "Validation #2: name is required. String.isBlank handles null and empty in one call.",
+        "Log the failure reason.",
+        "Return false.",
+        "Close the name-blank branch.",
+        "Both validations passed — log success.",
+        "Return true.",
+        "Close the public method.",
+        "Private helper — only this class can call it. Hides the email-validation rule from callers.",
+        "Quick null-safe check. && short-circuits, so contains('@') only runs if email != null.",
+        "Close the validation helper.",
+        "Private helper for logging. Centralizing the prefix means changing the format is a one-line edit.",
+        "Print the prefixed message.",
+        "Close the logger.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "parameter-vs-argument"
+        ],
+        [
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        [
+          "block"
+        ],
+        [],
+        [
+          "return-statement"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        [
+          "private-modifier",
+          "method-shape"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        [
+          "private-modifier",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "What you now know",
       "body": [
