@@ -83,5 +83,30 @@
     "title": "Class vs Object",
     "reminder": "Class = the blueprint. Object (instance) = one actual thing built from it.",
     "introducedIn": "00-foundations"
+  },
+  "decimal-vs-double": {
+    "title": "Decimal vs Double",
+    "reminder": "Money → Decimal (exact). Decimal preserves precision; Double approximates and accumulates rounding error.",
+    "introducedIn": "01-data-types"
+  },
+  "list-collection": {
+    "title": "List",
+    "reminder": "Ordered, indexed, allows duplicates. Like a Spotify playlist. Access by [index], starting at 0.",
+    "introducedIn": "02-collections"
+  },
+  "set-collection": {
+    "title": "Set",
+    "reminder": "Unordered, unique values. Adding a duplicate is silently ignored. Use for dedup.",
+    "introducedIn": "02-collections"
+  },
+  "map-collection": {
+    "title": "Map",
+    "reminder": "Key → value pairs. Look up by key with .get(key). Like a phone book.",
+    "introducedIn": "02-collections"
+  },
+  "new-keyword": {
+    "title": "new keyword",
+    "reminder": "'new ClassName(...)' creates a fresh instance. Used for collections (new List<...>()) and your own classes.",
+    "introducedIn": "02-collections"
   }
 }

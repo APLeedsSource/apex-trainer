@@ -1,14 +1,14 @@
 {
   "userName": "Arthur",
   "currentLesson": "00-foundations",
-  "currentSlide": 12,
+  "currentSlide": 18,
   "lessonsCompleted": [
     "00-foundations"
   ],
   "stats": {
-    "totalKeystrokes": 291,
-    "totalTimeSeconds": 2669,
-    "exercisesCompleted": 4
+    "totalKeystrokes": 408,
+    "totalTimeSeconds": 2971,
+    "exercisesCompleted": 5
   },
   "exerciseHistory": [
     {
@@ -38,8 +38,16 @@
       "accuracy": 95,
       "seconds": 38,
       "completedAt": "2026-04-26T02:35:30.823Z"
+    },
+    {
+      "slideTitle": "Putting it together — a tiny method",
+      "wpm": 28,
+      "accuracy": 91,
+      "seconds": 49,
+      "completedAt": "2026-04-26T03:32:22.489Z"
     }
   ],
   "weakConcepts": [],
-  "lastSavedAt": "2026-04-26T02:35:47.152Z"
+  "lastSavedAt": "2026-04-26T03:33:46.608Z",
+  "mutedConcepts": []
 }

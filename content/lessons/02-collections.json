@@ -1,0 +1,188 @@
+{
+  "id": "02-collections",
+  "title": "Lesson 2 — Collections (List, Set, Map)",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "Why collections exist",
+      "body": [
+        "A single variable holds one value. But real apps work with MANY values at once — every contact in your CRM, every track in a Spotify playlist, every message in a Slack channel.",
+        "Apex gives you three collection types: List, Set, and Map. Pick the right one and code stays simple. Pick the wrong one and you'll be writing extra logic forever."
+      ],
+      "vocabulary": [
+        { "word": "collection", "def": "A variable that holds many values, not just one — List, Set, or Map." }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "List — ordered, allows duplicates",
+      "body": [
+        "A List is an ordered sequence of values. First item is at index 0, second at index 1, and so on. You can have duplicates.",
+        "Real example: a Spotify playlist (order matters, same song can repeat). A Twitter/X feed (newest tweet first). The line at the DMV (first in, first served)."
+      ],
+      "vocabulary": [
+        { "word": "List", "def": "Ordered, indexed collection. Allows duplicate values. Zero-based index." },
+        { "word": "index", "def": "The position number of an item in a List, starting at 0." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Building a List",
+      "intro": "Type this. Notice the angle brackets <String> — they tell Apex what type of values this List holds.",
+      "code": "List<String> playlist = new List<String>();\nplaylist.add('Bohemian Rhapsody');\nplaylist.add('Hotel California');\nSystem.debug(playlist[0]);",
+      "lineExplanations": [
+        "Declare a List of Strings. List<String> is the type. 'new List<String>()' constructs an empty list. The new keyword always means 'create me a new instance.'",
+        "Append a String to the list. 'add' is a method on List that puts a value at the end.",
+        "Add another. The list is now ordered: index 0 is Bohemian Rhapsody, index 1 is Hotel California.",
+        "playlist[0] reads the first item. Square brackets are how you access by index. Prints 'Bohemian Rhapsody'."
+      ],
+      "concepts": ["statement", "semicolon", "variable-declaration", "new-keyword", "list-collection", "string-quotes"]
+    },
+    {
+      "type": "concept",
+      "title": "Set — unique, unordered",
+      "body": [
+        "A Set is a bag of unique values. No duplicates allowed. No guaranteed order — you can't ask for 'the third item.'",
+        "Real example: your Twitter/X followers (you can only follow someone once). The set of unique email addresses for a marketing campaign. The set of distinct product IDs in a shopping cart."
+      ],
+      "vocabulary": [
+        { "word": "Set", "def": "Unordered collection of unique values. Adding a duplicate is silently ignored." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Building a Set",
+      "intro": "Type this. Watch what happens when we try to add a duplicate.",
+      "code": "Set<String> emails = new Set<String>();\nemails.add('arthur@leedssource.com');\nemails.add('arthur@leedssource.com');\nSystem.debug(emails.size());",
+      "lineExplanations": [
+        "Declare a Set of Strings. Same shape as List, just the word changes.",
+        "Add an email. The set now has 1 entry.",
+        "Add the SAME email again. Apex silently ignores it — the Set still has 1 entry. This is exactly the dedup behavior you want for an email campaign list.",
+        "Prints 1, not 2. .size() returns the count."
+      ],
+      "concepts": ["statement", "semicolon", "variable-declaration", "new-keyword", "set-collection", "string-quotes"]
+    },
+    {
+      "type": "recall",
+      "front": "Your code collects every email that just bounced from a campaign. Some bounce twice. List or Set?",
+      "back": "Set.",
+      "detail": "Set automatically deduplicates. With a List you'd have to write extra logic to filter duplicates yourself."
+    },
+    {
+      "type": "concept",
+      "title": "Map — key to value",
+      "body": [
+        "A Map stores key→value pairs. Look up a value by its key — like a phone book: name is the key, number is the value.",
+        "Real example: a URL shortener (short code → long URL). Salesforce trigger code constantly uses Map<Id, Account> to look up records by their Id without re-querying the database."
+      ],
+      "vocabulary": [
+        { "word": "Map", "def": "Collection of key-value pairs. Each key is unique; each maps to a value." },
+        { "word": "key", "def": "The unique identifier in a map entry — what you look up by." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Building a Map",
+      "intro": "Type this. Two type parameters: Map<KeyType, ValueType>.",
+      "code": "Map<String, String> shortener = new Map<String, String>();\nshortener.put('abc', 'https://salesforce.com');\nshortener.put('xyz', 'https://github.com');\nSystem.debug(shortener.get('abc'));",
+      "lineExplanations": [
+        "Map<String, String>: keys are Strings, values are Strings. Construction follows the same new-keyword pattern.",
+        "put(key, value) inserts a pair. 'abc' now maps to 'https://salesforce.com'.",
+        "Add another mapping. The Map now has 2 entries.",
+        "get('abc') returns the value for that key. Prints 'https://salesforce.com'. This is the magic of Maps — instant lookup by key."
+      ],
+      "concepts": ["statement", "semicolon", "variable-declaration", "new-keyword", "map-collection", "string-quotes"]
+    },
+    {
+      "type": "concept",
+      "title": "Choosing between them",
+      "body": [
+        "Order matters and duplicates allowed? List. Need to dedupe but order doesn't matter? Set. Need to look up by a key? Map.",
+        "Real example: a Salesforce trigger that processes 200 leads might use ALL THREE — a List of leads to update, a Set of unique account names already seen, and a Map of email→Lead for fast lookup."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "Iterating with for-each",
+      "body": [
+        "The for-each loop walks every item in a collection. Shape: for (Type item : collection) { ... }.",
+        "Real example: every email-blast Apex job, every nightly batch process, every Salesforce trigger handler walks a collection like this."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Looping a List",
+      "intro": "Type this. The for-each loop reads cleanly: 'for each name in names, do X.'",
+      "code": "List<String> names = new List<String>{'Arthur', 'Ari', 'Tuan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
+      "lineExplanations": [
+        "Inline list literal — { 'a', 'b' } seeds the list with values right at construction. Cleaner than three separate .add() calls.",
+        "for (String name : names) — for each name in names. 'name' is a fresh variable that holds one item per iteration.",
+        "Runs once per name. Prints 'Hello Arthur', then 'Hello Ari', then 'Hello Tuan'. The order matches the List's order."
+      ],
+      "concepts": ["statement", "semicolon", "variable-declaration", "list-collection", "block", "string-concat"]
+    },
+    {
+      "type": "type-along",
+      "title": "Looping a Map",
+      "intro": "Type this. To loop a Map, iterate its keys and use .get() inside the loop.",
+      "code": "Map<String, Integer> scores = new Map<String, Integer>{'Alice' => 90, 'Bob' => 85};\nfor (String person : scores.keySet()) {\n    System.debug(person + ': ' + scores.get(person));\n}",
+      "lineExplanations": [
+        "Inline Map literal: 'Alice' => 90 means key 'Alice' maps to value 90. The fat arrow => is just for map literals.",
+        "scores.keySet() returns a Set of all keys. Loop over the keys, then use .get() to fetch each value.",
+        "Prints 'Alice: 90' and 'Bob: 85'. Map iteration order isn't guaranteed — don't rely on it."
+      ],
+      "concepts": ["statement", "semicolon", "variable-declaration", "map-collection", "set-collection", "block"]
+    },
+    {
+      "type": "recall",
+      "front": "Your trigger needs to update each Lead by its Id. You already fetched 50 Leads from the database. What's the fastest way to look one up by Id?",
+      "back": "Put them in a Map<Id, Lead>, then leadMap.get(someId).",
+      "detail": "Looking up by Id in a Map is essentially instant. Searching a List for a matching Id requires walking it — slow with 50,000 records."
+    },
+    {
+      "type": "quiz",
+      "question": "You're storing the unique tags applied to a blog post (each tag can appear at most once). Which collection?",
+      "options": [
+        "List<String>",
+        "Set<String>",
+        "Map<String, String>",
+        "Integer"
+      ],
+      "correct": 1,
+      "explanation": "Set guarantees uniqueness automatically. List would let duplicates in. Map needs a value per key — overkill for a tag list."
+    },
+    {
+      "type": "concept",
+      "title": "Why this matters in Salesforce",
+      "body": [
+        "Apex governor limits cap how many database queries you can run per transaction (100 SOQL queries). The trick: query ONCE into a collection, then loop over the collection.",
+        "This pattern — query then loop — is how every well-built Salesforce trigger scales. We'll go deep on it in Lesson 3 (Classes) and again in the Triggers lesson."
+      ],
+      "vocabulary": [
+        { "word": "governor limit", "def": "Salesforce-imposed cap on resource usage per transaction (queries, DML, CPU time, etc.)." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "The bulk pattern in miniature",
+      "intro": "Type this. It's the heart of every well-bulkified Apex trigger.",
+      "code": "List<Account> accts = [SELECT Id, Name FROM Account LIMIT 10];\nfor (Account a : accts) {\n    System.debug(a.Name);\n}",
+      "lineExplanations": [
+        "ONE query to the database. Returns up to 10 Accounts as a List. This counts as 1 SOQL query against the governor limit.",
+        "Walk the list with for-each. The variable 'a' holds one Account per iteration.",
+        "Read the Name field off each Account. No additional queries — we already have all the data."
+      ],
+      "concepts": ["statement", "semicolon", "list-collection", "block"]
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "List for ordered/duplicates, Set for unique, Map for key-lookup. for-each loops walk all three.",
+        "Next: Classes — how to define your OWN types. Once you know classes, all of Apex (and Salesforce's entire SObject system) starts making sense."
+      ]
+    }
+  ]
+}
