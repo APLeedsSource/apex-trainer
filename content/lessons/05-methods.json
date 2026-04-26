@@ -1,0 +1,247 @@
+{
+  "id": "05-methods",
+  "title": "Lesson 5 — Methods & Modifiers",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "Why methods matter",
+      "body": [
+        "A method is a named, reusable block of code. Define it once, call it as many times as you need.",
+        "Real example: Stripe's Apex SDK exposes a tiny set of public methods — Charge.create(), Customer.update(), Refund.list(). Behind each, hundreds of lines of internal logic. The user only sees the clean entry points."
+      ],
+      "vocabulary": [
+        {
+          "word": "method",
+          "def": "A named, reusable block of code defined inside a class."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Method anatomy revisited",
+      "body": [
+        "Six parts: access modifier (public/private), optional static, return type, name, parameter list, body.",
+        "Example: 'public static String greet(String name) { return ... }'. Memorize this shape — every Apex method follows it."
+      ],
+      "vocabulary": [
+        {
+          "word": "signature",
+          "def": "The method's name and parameter list — together they uniquely identify a method."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A method that returns a value",
+      "intro": "Type this. Notice the return statement — that's how the value gets back to the caller.",
+      "code": "public class Greeter {\n    public static String hello(String name) {\n        return 'Hi ' + name;\n    }\n}",
+      "lineExplanations": [
+        "Class declaration.",
+        "public static String hello(String name) — public, static (no instance needed), returns String, takes one parameter.",
+        "return ends the method and ships back the resulting String.",
+        "Two closes: method body, class body."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "parameter-vs-argument"
+        ],
+        [
+          "return-statement",
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Calling the method",
+      "intro": "Type this. Static methods are called as ClassName.method(...).",
+      "code": "String msg = Greeter.hello('Arthur');\nSystem.debug(msg);",
+      "lineExplanations": [
+        "Greeter.hello('Arthur') invokes the static method. 'Arthur' is the argument; the parameter 'name' inside the method receives this value.",
+        "Prints 'Hi Arthur'."
+      ],
+      "lineConcepts": [
+        [
+          "static-vs-instance",
+          "parameter-vs-argument"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "void — methods that don't return",
+      "body": [
+        "If a method just runs (logging, sending an email, updating a record) and has no value to return, mark its return type 'void'.",
+        "Real example: notifySlack(message) sends a Slack message and returns nothing. The 'work' is the side effect, not a return value."
+      ],
+      "vocabulary": [
+        {
+          "word": "void",
+          "def": "A return type meaning 'this method returns no value.'"
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A void method",
+      "intro": "Type this. No return statement needed — void methods just run.",
+      "code": "public class Logger {\n    public static void info(String msg) {\n        System.debug('[INFO] ' + msg);\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "void return type — this method does work (printing) but has no value to give back.",
+        "Body just runs. No return statement.",
+        "Method and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Access modifiers",
+      "body": [
+        "public = anyone can call. private = only this class can call. protected = this class and subclasses. global = anyone, even from outside the package.",
+        "Real example: Stripe's SDK keeps internals private. Only the small public API is exposed. This is encapsulation — the principle that powers every clean codebase."
+      ],
+      "vocabulary": [
+        {
+          "word": "private",
+          "def": "Access modifier — only the same class can call this method."
+        },
+        {
+          "word": "protected",
+          "def": "Access modifier — this class and its subclasses can call."
+        },
+        {
+          "word": "global",
+          "def": "Access modifier — visible everywhere, including code outside the managed package."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Public façade, private internals",
+      "intro": "Type this. Public callers only see process(). The helper validate() is private.",
+      "code": "public class OrderService {\n    public static void process(Decimal amount) {\n        validate(amount);\n        System.debug('Processed ' + amount);\n    }\n    private static void validate(Decimal amount) {\n        if (amount <= 0) { return; }\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "public process — the entry point any caller can hit.",
+        "Calls the private helper. Inside the same class, private methods are reachable directly.",
+        "Print confirmation.",
+        "Method close.",
+        "private validate — only this class can call it. Keeps the public API clean.",
+        "Inside validator: if invalid, return early.",
+        "Method close. Class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "method-shape",
+          "public-modifier"
+        ],
+        [],
+        [
+          "string-concat"
+        ],
+        [],
+        [
+          "private-modifier"
+        ],
+        [
+          "block",
+          "return-statement"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Multiple parameters",
+      "body": [
+        "Methods can take many parameters, separated by commas. Order matters at the call site.",
+        "Real example: HttpRequest's setHeader(String key, String value) — order matters. Calling setHeader('value', 'key') would compile but produce a broken header."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Method with multiple parameters",
+      "intro": "Type this. Two parameters separated by commas; arguments line up by position.",
+      "code": "public class MathUtils {\n    public static Integer max(Integer a, Integer b) {\n        if (a > b) { return a; }\n        return b;\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "public static Integer max(Integer a, Integer b) — two parameters, returns an Integer.",
+        "if a is bigger, return a immediately. The method exits here.",
+        "Otherwise return b. (Reached only if the if was false.)",
+        "Closes."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "block",
+          "return-statement"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "What's the difference between a method declared 'public' and one declared 'private'?",
+      "back": "public can be called from any class. private can only be called from inside the SAME class.",
+      "detail": "Most internal helper methods should be private — it keeps the class's external surface small and intentional."
+    },
+    {
+      "type": "quiz",
+      "question": "You wrote a helper method only called by one method in the same class. What modifier should it have?",
+      "options": [
+        "global — make it visible everywhere.",
+        "public — keep it open just in case.",
+        "private — hide it inside the class.",
+        "static — that's a modifier, not visibility."
+      ],
+      "correct": 2,
+      "explanation": "private. The method has no caller outside the class, so exposing it just adds noise and makes refactoring harder."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Method anatomy, return values vs void, all four access modifiers, multi-parameter methods.",
+        "Next: Properties — the pattern Apex uses to expose data on classes with optional validation in the get/set."
+      ]
+    }
+  ]
+}

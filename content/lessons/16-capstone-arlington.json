@@ -1,0 +1,182 @@
+{
+  "id": "16-capstone-arlington",
+  "title": "Lesson 16 — Capstone: Arlington Property Management",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "The capstone scenario",
+      "body": [
+        "Arlington Property Management (APM) manages condo associations across New England. They've outgrown spreadsheets and want a real Salesforce implementation.",
+        "Your job as the consultant: design the data model, decide what's automated in Apex vs. config, plan integrations, plan tests."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "What APM tracks",
+      "body": [
+        "Associations (each condo building's HOA), Buildings, Units, Owners, Residents, Board Members, Property Managers, Vendors (landscapers, plumbers, etc.), and Work Orders.",
+        "Plus the financial pieces: monthly dues, management fees, periodic fee increases."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 1 — Data model decisions",
+      "body": [
+        "Account is the obvious record type for both Associations AND Vendors — same shape (an organization), different role. Salesforce supports Record Types for this.",
+        "Real example: Slack uses a single 'Workspace' object for both customer companies and internal teams — same blueprint, different metadata."
+      ],
+      "vocabulary": [
+        {
+          "word": "Record Type",
+          "def": "Salesforce feature that lets one SObject (like Account) represent multiple business meanings with different page layouts and picklist values."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Data model — the relationships",
+      "body": [
+        "Account (Association) → Buildings → Units → Owners (Contact). Account (Vendor) ↔ Association via a Junction object so many vendors can serve many associations.",
+        "Real example: this many-to-many junction pattern shows up in EVERY Salesforce build — Opportunities↔Products, Cases↔Contacts, etc."
+      ],
+      "vocabulary": [
+        {
+          "word": "Junction object",
+          "def": "A custom object whose only job is to link two other objects in a many-to-many relationship."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 2 — Automation: Apex vs. Flow",
+      "body": [
+        "The brief says ALL automation must be Apex (no Flows). In real consulting, you'd push back: simple click-to-config logic belongs in Flow; Apex is for complex, bulk, or async work.",
+        "Real example: 'when a Unit's Owner field changes, recalculate the Association's owner-count' is a one-line Flow rollup. Putting it in Apex is overkill."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Trigger plan",
+      "body": [
+        "One trigger per object: AccountTrigger, UnitTrigger, ResidentTrigger, WorkOrderTrigger. Each delegates to a handler class.",
+        "Handler classes hold the actual logic — testable as plain Apex, no trigger context needed."
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Trigger handler skeleton",
+      "intro": "Type this. The exact pattern you'd commit on day one of any new SF org.",
+      "code": "public class UnitTriggerHandler {\n    public static void afterUpdate(List<Unit__c> newUnits, Map<Id, Unit__c> oldMap) {\n        for (Unit__c u : newUnits) {\n            Unit__c old = oldMap.get(u.Id);\n            if (u.OwnerContact__c != old.OwnerContact__c) {\n                System.debug('Owner changed on ' + u.Id);\n            }\n        }\n    }\n}",
+      "lineExplanations": [
+        "Handler class — plain old Apex.",
+        "Public static method matching the trigger event.",
+        "Loop the new versions.",
+        "Look up the old version from the map.",
+        "Compare a specific field for change.",
+        "Apply your logic — typically queueing an async job or building a List for bulk DML.",
+        "Closes."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "trigger-handler-pattern"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "list-collection",
+          "map-collection"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [],
+        [
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 3 — Async patterns",
+      "body": [
+        "Periodic fee increases across thousands of units → Batchable (chunked processing). 'Send invoice email after dues are billed' → Queueable (async after the trigger). 'Apply 3% rate hike on Jan 1' → Schedulable wrapping the Batchable.",
+        "Real example: every multi-tenant property management SaaS (AppFolio, Buildium) does exactly this."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 4 — Integration plan",
+      "body": [
+        "External vendor invoicing system (Stripe-like): outbound callout from a Queueable when a Work Order completes, posting the invoice to the partner.",
+        "All credentials in Named Credentials. No secrets in Apex source. Failures logged to a custom 'Integration Log' object for retry."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 5 — Caching",
+      "body": [
+        "List of fee schedules per association — read on every dues calculation, changes monthly. Perfect for Custom Metadata (free reads).",
+        "User's home Association — needed throughout a session, doesn't change. Static-variable cache for one transaction OR Session Cache for the whole user session."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 6 — Testing strategy",
+      "body": [
+        "@TestSetup creates 1 Association with 1 Building, 5 Units, 3 Owners. Each test method gets a fresh copy.",
+        "Cover happy paths (a unit changes ownership) AND edge cases (owner is null, multiple units in same transaction, hitting governor boundaries with 200 units)."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Step 7 — Bulkification audit",
+      "body": [
+        "For every trigger handler, ask: what happens when 200 records hit at once? Any SOQL or DML inside a loop? Any callouts inside the trigger?",
+        "Real example: this audit catches ~80% of bugs that would otherwise surface on the first big import or batch operation."
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "APM wants a 3% fee increase applied to ~50,000 unit records on Jan 1 every year. What async pattern do you propose?",
+      "back": "Schedulable triggering a Batchable. The Batchable processes 200 units per chunk; the Schedulable runs once a year via cron.",
+      "detail": "Synchronous would blow heap and CPU. Queueable doesn't chunk. Batchable's chunking + Schedulable's cron is the textbook fit."
+    },
+    {
+      "type": "quiz",
+      "question": "APM's brief says 'all automation must be in Apex.' As the consultant, what's your move?",
+      "options": [
+        "Implement everything in Apex without question.",
+        "Refuse the engagement.",
+        "Push back: explain Flow is appropriate for simple click-to-config rules; reserve Apex for complex/bulk/async.",
+        "Mix Apex and Flow without telling the client."
+      ],
+      "correct": 2,
+      "explanation": "Real consulting work. Push back with rationale. The consultant's value is judgment, not just typing — over-engineering simple cases in Apex creates maintenance debt the client will regret."
+    },
+    {
+      "type": "concept",
+      "title": "What you've built",
+      "body": [
+        "A complete mental architecture: data model with record types and junctions, trigger handler pattern, async strategy (queueable/batch/schedule), Named Credentials for integrations, Platform Cache + Custom Metadata, full test coverage.",
+        "These are the same building blocks every Salesforce consulting project ever uses."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "What's next",
+      "body": [
+        "You've completed the trainer. Going forward: pair what you've typed here with hands-on work in a real Salesforce sandbox. Type-memorized patterns become muscle when you apply them to actual problems.",
+        "Suggested next steps: Salesforce Trailhead's Apex modules for cert prep, or a real consulting engagement where you can ship a small piece end-to-end."
+      ]
+    }
+  ]
+}

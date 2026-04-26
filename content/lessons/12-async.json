@@ -1,0 +1,263 @@
+{
+  "id": "12-async",
+  "title": "Lesson 12 — Async Apex",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "Why async exists",
+      "body": [
+        "Synchronous Apex has tight limits (10s CPU, 100 SOQL, no callouts during triggers). Async Apex moves work to the BACKGROUND, gets bigger limits, and unblocks the user.",
+        "Real example: when you click 'Place Order' on Amazon, your page returns instantly — but the email confirmation, inventory update, and warehouse notification all run async. That's the same pattern Salesforce uses."
+      ],
+      "vocabulary": [
+        {
+          "word": "asynchronous",
+          "def": "Code that runs later, in the background, on its own schedule. Not blocking the caller."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The four flavors",
+      "body": [
+        "@future — fire-and-forget, simple but limited. Queueable — better, chainable, can pass complex objects. Batchable — for very large data sets (millions of records). Schedulable — runs on a cron schedule.",
+        "Real example: a nightly data sync uses Schedulable + Batchable. A 'send email after save' uses Queueable. A 'do this thing later' uses @future."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "@future — the simplest",
+      "body": [
+        "Mark a static void method @future. Calling it queues it to run later, in its own transaction with fresh limits.",
+        "Constraints: must be static, void, and parameters can only be primitive types (or List/Set/Map of primitives). No SObjects directly."
+      ],
+      "vocabulary": [
+        {
+          "word": "@future",
+          "def": "Annotation marking a static void method to run async in a separate transaction."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A future method",
+      "intro": "Type this. notifyExternalSystem runs in the background after the caller finishes.",
+      "code": "public class IntegrationService {\n    @future(callout=true)\n    public static void notifyExternalSystem(Id recordId) {\n        System.debug('Async work for ' + recordId);\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "@future annotation. callout=true permits HTTP callouts (default is false).",
+        "Method must be public static void.",
+        "Body runs in the background.",
+        "Method close. Class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "future-annotation"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Queueable — the modern default",
+      "body": [
+        "Implement the Queueable interface. Pass the Apex job to System.enqueueJob(). Bigger limits than @future, can pass complex Apex objects, and is chainable.",
+        "Real example: most new Apex async work uses Queueable. It replaces @future for almost every use case."
+      ],
+      "vocabulary": [
+        {
+          "word": "Queueable",
+          "def": "Apex interface. Implement execute(QueueableContext) and enqueue with System.enqueueJob()."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A queueable job",
+      "intro": "Type this. The class implements Queueable; execute() does the work.",
+      "code": "public class EmailJob implements Queueable {\n    private Id targetId;\n    public EmailJob(Id targetId) {\n        this.targetId = targetId;\n    }\n    public void execute(QueueableContext ctx) {\n        System.debug('Sending for ' + targetId);\n    }\n}",
+      "lineExplanations": [
+        "Class with 'implements Queueable' — the contract that lets it be enqueued.",
+        "Backing field for state.",
+        "Constructor stores the id passed in.",
+        "this.targetId — assign the parameter to the instance field.",
+        "Constructor close.",
+        "execute() is the method the platform calls when the job runs.",
+        "Body — do the actual work here.",
+        "Method and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "private-modifier",
+          "variable-declaration"
+        ],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Enqueueing the job",
+      "intro": "Type this. System.enqueueJob returns a job id you can track.",
+      "code": "Id jobId = System.enqueueJob(new EmailJob('001D000000xyz'));\nSystem.debug('Queued job ' + jobId);",
+      "lineExplanations": [
+        "Construct an EmailJob with the target id, and enqueue it. Returns the new async job's id.",
+        "Print the id. The job runs in the background; this code keeps going."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword",
+          "static-vs-instance"
+        ],
+        [
+          "string-concat"
+        ]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Batchable — for huge data sets",
+      "body": [
+        "Three methods: start (define what to query), execute (process a chunk, default 200 records), finish (post-processing).",
+        "Real example: a nightly job that re-summarizes 5 million Opportunities. Batchable processes them in 200-row chunks, each with its own fresh governor limits."
+      ],
+      "vocabulary": [
+        {
+          "word": "Batchable",
+          "def": "Apex interface for processing very large data sets in chunks. Each chunk runs with fresh governor limits."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A batch job skeleton",
+      "intro": "Type this. The shape of every batch job — start, execute, finish.",
+      "code": "public class AccountBatch implements Database.Batchable<SObject> {\n    public Database.QueryLocator start(Database.BatchableContext ctx) {\n        return Database.getQueryLocator('SELECT Id FROM Account');\n    }\n    public void execute(Database.BatchableContext ctx, List<SObject> scope) {\n        for (SObject s : scope) { System.debug(s.Id); }\n    }\n    public void finish(Database.BatchableContext ctx) {\n        System.debug('Done');\n    }\n}",
+      "lineExplanations": [
+        "Class implements Database.Batchable<SObject>. The <SObject> is the type of records each chunk holds.",
+        "start() returns the query that drives the batch.",
+        "Database.getQueryLocator wraps a SOQL string; the platform paginates for us.",
+        "Close start.",
+        "execute() runs once per chunk. 'scope' is the chunk (default 200 records).",
+        "Process each record in the chunk.",
+        "Close execute.",
+        "finish() runs once after all chunks are done.",
+        "Post-processing.",
+        "Close finish.",
+        "Close class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape",
+          "public-modifier"
+        ],
+        [
+          "return-statement",
+          "static-vs-instance"
+        ],
+        [],
+        [
+          "method-shape",
+          "list-collection"
+        ],
+        [
+          "for-each-loop",
+          "block"
+        ],
+        [],
+        [
+          "method-shape"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Schedulable — runs on a cron",
+      "body": [
+        "Implement Schedulable. Schedule via Salesforce UI or System.schedule(). Cron runs your code at the chosen time.",
+        "Real example: a monthly bill-generation job. A nightly data integrity check. A weekly leaderboard recompute. All Schedulable."
+      ],
+      "vocabulary": [
+        {
+          "word": "Schedulable",
+          "def": "Apex interface for jobs that run on a cron schedule."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "When to use which",
+      "body": [
+        "@future: simple, primitive-only params, no chaining. Almost always use Queueable instead now.",
+        "Queueable: most new async work. Chainable. Complex types OK. Batchable: > a few thousand records. Schedulable: time-driven jobs."
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "You need to send a Slack message after an Account is updated. Triggers can't make callouts. What's the pattern?",
+      "back": "From the trigger, enqueue a Queueable (or @future with callout=true). The async job makes the callout outside the trigger transaction.",
+      "detail": "Triggers must NOT make callouts directly. Pushing the work async fixes that AND insulates the user-facing save from external service hiccups."
+    },
+    {
+      "type": "quiz",
+      "question": "You need to recompute a stat on 5 million Opportunities every night. Which async type?",
+      "options": [
+        "@future — simple and quick.",
+        "Queueable — modern default.",
+        "Batchable + Schedulable — chunked processing on a cron.",
+        "Synchronous — just write a regular method."
+      ],
+      "correct": 2,
+      "explanation": "Batchable processes large datasets in 200-row chunks (each with fresh limits); Schedulable wraps it with a cron. Together: nightly recompute, no governor blowup."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "@future, Queueable, Batchable, Schedulable — and when to choose each.",
+        "Next: Inheritance, Polymorphism, and Interfaces — how Apex classes extend and substitute for one another."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+{
+  "id": "04-loops",
+  "title": "Lesson 4 — Loops & Iteration",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "Why loops exist",
+      "body": [
+        "A loop runs the same block of code many times. Without loops, you'd write the same line 100 times to process 100 records.",
+        "Real example: Spotify processes ~100 million song-plays per day. Every analytics pipeline that touches that data is built on loops — one block of logic, run once per record."
+      ],
+      "vocabulary": [
+        {
+          "word": "loop",
+          "def": "A control structure that runs a block of code repeatedly until a condition stops it."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Apex's three loop shapes",
+      "body": [
+        "1) Counter for-loop — when you know how many times to repeat. 2) For-each loop — when you have a collection. 3) While loop — when you don't know how many times.",
+        "Plus a Salesforce-special: the SOQL for-loop, which streams query results without loading them all into memory at once."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "The counter for-loop",
+      "body": [
+        "Shape: for (Integer i = 0; i < N; i++) { ... }. Three parts inside the parens: initialize, condition, advance.",
+        "Real example: a retry loop that attempts an API call up to 5 times before giving up. The counter is the attempt number."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Counting with for",
+      "intro": "Type this. The classic counter loop runs 5 times.",
+      "code": "for (Integer i = 0; i < 5; i++) {\n    System.debug('Attempt ' + i);\n}",
+      "lineExplanations": [
+        "Initialize i to 0. Continue while i < 5. After each iteration, run i++ (increment by 1). The { opens the loop body.",
+        "Body runs once per iteration. Prints 'Attempt 0', 'Attempt 1', ..., 'Attempt 4'. Closing } returns to the for-line for the next iteration."
+      ],
+      "lineConcepts": [
+        [
+          "for-loop",
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The for-each loop",
+      "body": [
+        "Shape: for (Type item : collection) { ... }. Reads naturally: 'for each item in collection, do X.'",
+        "Real example: every Slack notification batch, every email-blast Apex job, every Salesforce trigger walks a List of records this way."
+      ],
+      "vocabulary": [
+        {
+          "word": "for-each",
+          "def": "Loop that walks every item in a collection without manual indexing."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Walking a list",
+      "intro": "Type this. A clean for-each over a list of names.",
+      "code": "List<String> names = new List<String>{'Arthur', 'Ari', 'Tuan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
+      "lineExplanations": [
+        "Inline list literal — three names ready to iterate.",
+        "for-each: 'name' is a fresh variable that holds one list item per iteration.",
+        "Body runs three times: 'Hello Arthur', 'Hello Ari', 'Hello Tuan'."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The SOQL for-loop",
+      "body": [
+        "Apex-only superpower: for (Account a : [SELECT ... FROM Account]) { ... }. Streams records from the database in batches of 200, never loading all into memory.",
+        "Real example: a nightly batch processing 50,000 accounts. With a regular query that's 50,000 records on the heap (governor-limit failure). With a SOQL for-loop, it's 200 at a time — safe."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Streaming SOQL",
+      "intro": "Type this. The brackets [...] are inline SOQL — Apex's database query syntax.",
+      "code": "for (Account a : [SELECT Id, Name FROM Account LIMIT 200]) {\n    System.debug(a.Name);\n}",
+      "lineExplanations": [
+        "Inline SOQL inside the for-each. Apex fetches up to 200 Account records and streams them to the loop variable 'a'.",
+        "Read the Name field off each Account. No List variable was ever created — the loop is the consumer."
+      ],
+      "lineConcepts": [
+        [
+          "soql-for-loop",
+          "for-each-loop"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The while-loop",
+      "body": [
+        "Shape: while (condition) { ... }. Repeats as long as the condition is true.",
+        "Real example: retry-with-backoff logic — keep retrying until the API succeeds OR you've hit the max attempts. Uber's payment service uses this pattern when calling external authorization."
+      ],
+      "vocabulary": [
+        {
+          "word": "while-loop",
+          "def": "Loop that runs as long as a condition stays true. Check happens BEFORE each iteration."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "While with a safety break",
+      "intro": "Type this. Always include a safety break in while-loops to avoid infinite loops.",
+      "code": "Integer attempts = 0;\nwhile (attempts < 5) {\n    System.debug('Try ' + attempts);\n    attempts++;\n}",
+      "lineExplanations": [
+        "Counter starts at 0.",
+        "while (attempts < 5) — condition checked before each iteration. False at 5, loop exits.",
+        "Body runs while condition is true.",
+        "++ increments — without this we'd loop forever."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration"
+        ],
+        [
+          "while-loop",
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "break and continue",
+      "body": [
+        "'break' immediately exits the loop. 'continue' skips to the next iteration.",
+        "Real example: searching a list for the first match — break out of the loop the moment you find it instead of walking the rest. continue is for skipping invalid records (null, wrong type) without exiting."
+      ],
+      "vocabulary": [
+        {
+          "word": "break",
+          "def": "Statement that immediately exits the enclosing loop."
+        },
+        {
+          "word": "continue",
+          "def": "Statement that skips to the next iteration of the enclosing loop."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Skip and stop",
+      "intro": "Type this. continue skips negatives; break stops at 100.",
+      "code": "List<Integer> nums = new List<Integer>{-1, 5, 100, 3};\nfor (Integer n : nums) {\n    if (n < 0) { continue; }\n    if (n >= 100) { break; }\n    System.debug(n);\n}",
+      "lineExplanations": [
+        "List with a negative, two valid values, and a 100.",
+        "Loop over each.",
+        "n=-1 hits this; continue jumps to next iteration. n=5 falls through.",
+        "n=100 hits this; break exits the loop entirely.",
+        "Only prints '5'. The 3 never gets processed because we broke at 100."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "continue"
+        ],
+        [
+          "break"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "What's the difference between break and continue?",
+      "back": "break exits the loop entirely. continue skips to the next iteration but the loop keeps running.",
+      "detail": "Use break when you've found what you need (or hit a fatal error). Use continue when you want to skip invalid items and keep processing."
+    },
+    {
+      "type": "quiz",
+      "question": "You need to print every Contact in a 50,000-record table. Which is safest in Apex?",
+      "options": [
+        "List<Contact> all = [SELECT Id FROM Contact]; for (Contact c : all) { ... }",
+        "for (Contact c : [SELECT Id FROM Contact]) { ... }",
+        "A while-loop with manual pagination.",
+        "Loop the Contact list directly without querying."
+      ],
+      "correct": 1,
+      "explanation": "The SOQL for-loop streams in batches of 200. Loading 50,000 records into a List variable would explode the heap and trigger governor-limit failure."
+    },
+    {
+      "type": "concept",
+      "title": "The cardinal sin: SOQL inside a loop",
+      "body": [
+        "NEVER put a SOQL query inside a for-each loop body. Each iteration runs another query — 200 records means 200 queries, double the governor limit (100/transaction).",
+        "Real example: the #1 production-breaking pattern in junior Apex code. Bulkification is the cure (we'll go deep in the Triggers and Governor Limits lessons)."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Three loop shapes (counter, for-each, while), the SOQL for-loop superpower, and break/continue for control flow.",
+        "Next: Methods & Modifiers — how Apex code is organized into reusable, callable units."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "id": "06-properties",
+  "title": "Lesson 6 — Properties (Getters & Setters)",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "What a property really is",
+      "body": [
+        "A property looks like a variable from outside the class but secretly runs code when read or written.",
+        "Real example: Salesforce's standard Account.Name field — when you read or write it, validation, audit logging, and indexing all happen behind the scenes. It LOOKS like a simple field but it's a property with hidden machinery."
+      ],
+      "vocabulary": [
+        {
+          "word": "property",
+          "def": "A class member that exposes data with optional get/set logic running behind the scenes."
+        },
+        {
+          "word": "getter",
+          "def": "The 'get' block of a property — runs when something reads the value."
+        },
+        {
+          "word": "setter",
+          "def": "The 'set' block of a property — runs when something writes a new value."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Auto-properties — get; set;",
+      "body": [
+        "When you don't need any custom logic, use the shorthand: { get; set; }. Apex auto-generates trivial getter and setter for you.",
+        "This is what 99% of properties look like in real Apex code. You only write custom getter/setter when you need validation, lazy loading, or computation."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Auto-property",
+      "intro": "Type this. Same end-result as a public field, but the getter/setter shape lets you upgrade later without breaking callers.",
+      "code": "public class User {\n    public String name { get; set; }\n    public Integer age { get; set; }\n}",
+      "lineExplanations": [
+        "Class.",
+        "Auto-property: 'name' is a String. The { get; set; } says 'I'll let people read and write this with default behavior.'",
+        "Same shape for age. Closing } closes the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "auto-property",
+          "public-modifier"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Using the property",
+      "intro": "Type this. From the outside, properties read and write exactly like a field.",
+      "code": "User u = new User();\nu.name = 'Arthur';\nu.age = 35;\nSystem.debug(u.name);",
+      "lineExplanations": [
+        "Construct.",
+        "Write to .name — the auto-generated setter stores the value.",
+        "Write to .age — same pattern.",
+        "Read .name — the auto-generated getter returns the stored value."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Read-only properties",
+      "body": [
+        "If you want callers to READ a value but not WRITE it, leave out 'set'. Or make set private to allow only internal class code to modify.",
+        "Real example: a Stripe Charge has an 'id' field that is read-only after creation. The constructor sets it; nothing else can. This guarantees ids stay immutable."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Read-only id",
+      "intro": "Type this. Outsiders can read .id but only the class itself can set it.",
+      "code": "public class Order {\n    public String id { get; private set; }\n    public Order(String orderId) {\n        this.id = orderId;\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "id has a public get and a PRIVATE set — only this class can assign it.",
+        "Constructor takes an orderId.",
+        "Inside the class, we can write to id (private set is reachable). 'this' refers to the current instance.",
+        "Method and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "auto-property",
+          "private-modifier"
+        ],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Custom getter / setter",
+      "body": [
+        "When you need validation or computation, write the get/set block bodies yourself.",
+        "Real example: a User.email property whose setter trims whitespace and lowercases the input. Or an Order.total property whose getter sums line items on the fly."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Setter that validates",
+      "intro": "Type this. The setter normalizes email input.",
+      "code": "public class Person {\n    private String emailValue;\n    public String email {\n        get { return emailValue; }\n        set { emailValue = value.toLowerCase().trim(); }\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "Backing field — holds the actual value. private so callers can't bypass the property.",
+        "Property declaration starts.",
+        "Custom getter — just returns the backing field.",
+        "Custom setter — 'value' is a magic name for the incoming assignment. We normalize before storing.",
+        "Property and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "private-modifier",
+          "variable-declaration"
+        ],
+        [
+          "auto-property"
+        ],
+        [
+          "custom-getter",
+          "return-statement"
+        ],
+        [
+          "custom-setter"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Computed (lazy) properties",
+      "body": [
+        "A getter can compute its value on the fly — no backing field needed at all. Useful when the value is derived from other data.",
+        "Real example: an Order's totalAmount might compute from a list of line items each time it's read. No risk of the cache going stale."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Computed property",
+      "intro": "Type this. fullName has no backing field — the getter computes from firstName and lastName.",
+      "code": "public class Person {\n    public String firstName { get; set; }\n    public String lastName { get; set; }\n    public String fullName {\n        get { return firstName + ' ' + lastName; }\n    }\n}",
+      "lineExplanations": [
+        "Class.",
+        "Auto-property firstName.",
+        "Auto-property lastName.",
+        "Read-only computed property fullName starts.",
+        "Custom getter computes from the two fields. No setter — fullName is purely derived.",
+        "Property and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [
+          "auto-property"
+        ],
+        [],
+        [],
+        [
+          "custom-getter",
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "Why use a property instead of just a public field?",
+      "back": "Properties let you add validation, computation, or access control LATER without breaking the callers that read or write 'obj.field' syntax.",
+      "detail": "Public fields are a one-way door. Properties are a hinge — same call site, swappable backing logic."
+    },
+    {
+      "type": "quiz",
+      "question": "You want callers to read 'orderId' but only your class's constructor to set it. Which property declaration?",
+      "options": [
+        "public String orderId { get; set; }",
+        "public String orderId { get; private set; }",
+        "private String orderId { get; set; }",
+        "public String orderId { set; }"
+      ],
+      "correct": 1,
+      "explanation": "Public get + private set. Anyone can read it; only this class (including its constructor) can write it."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Auto-properties, read-only properties, custom getter/setter for validation, and computed properties.",
+        "Next: SOQL — how Apex talks to the Salesforce database. The most-used skill in any real Apex codebase."
+      ]
+    }
+  ]
+}

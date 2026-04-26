@@ -1,0 +1,213 @@
+{
+  "id": "08-dml",
+  "title": "Lesson 8 — DML: Writing Salesforce Data",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "What DML is",
+      "body": [
+        "DML = Data Manipulation Language. The verbs Apex uses to change records in the database: insert, update, upsert, delete, undelete.",
+        "Real example: every Apex trigger, every async batch, every API endpoint that persists data ultimately performs DML. SOQL reads — DML writes."
+      ],
+      "vocabulary": [
+        { "word": "DML", "def": "Data Manipulation Language — Apex's verbs for changing records (insert/update/upsert/delete/undelete)." }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "insert — creating a record",
+      "body": [
+        "Construct an SObject in Apex (like 'new Account()'), set its fields, then 'insert acct;'. The platform assigns the Id.",
+        "Real example: every Salesforce Web-to-Lead form that uses Apex routing ends with an insert."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Inserting a single record",
+      "intro": "Type this. Construct, set, insert, read back the auto-assigned Id.",
+      "code": "Account acct = new Account();\nacct.Name = 'Acme Corp';\ninsert acct;\nSystem.debug(acct.Id);",
+      "lineExplanations": [
+        "Construct an empty Account in memory. Has no Id yet.",
+        "Set the required Name field.",
+        "DML: insert. Platform writes to the database, assigns an Id, and stamps it back onto our 'acct' variable.",
+        "Print the new Id — proof that the record exists in the database now."
+      ],
+      "lineConcepts": [
+        ["new-keyword"],
+        ["string-quotes"],
+        ["dml-insert"],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "update — modifying existing",
+      "body": [
+        "Update needs records that ALREADY have an Id. Change some fields, then 'update record;'.",
+        "Real example: the 'Edit' button on every Salesforce record page ultimately runs an update."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Updating a record",
+      "intro": "Type this. Query, modify, update.",
+      "code": "Account a = [SELECT Id, Name FROM Account LIMIT 1];\na.Name = 'Acme (Renamed)';\nupdate a;",
+      "lineExplanations": [
+        "Query one Account. Now 'a' has an Id and a Name.",
+        "Mutate the Name in memory. The database hasn't changed yet — only the in-memory copy.",
+        "DML: update. The platform writes the new Name to the database row matching a.Id."
+      ],
+      "lineConcepts": [
+        ["soql", "soql-limit"],
+        ["string-quotes"],
+        ["dml-update"]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Bulk DML — work on Lists",
+      "body": [
+        "Always prefer DML on a List rather than calling it once per record. ONE 'insert leads' on a List<Lead> of 200 = ONE DML statement against the governor limit.",
+        "Real example: an integration that imports 5,000 leads. Looping 'insert lead;' 5,000 times = 5,000 DML statements = governor-limit failure. One bulk insert = 1 DML statement."
+      ],
+      "vocabulary": [
+        { "word": "bulk DML", "def": "DML applied to a List of records in a single call — the bulkified pattern that respects governor limits." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Bulk insert",
+      "intro": "Type this. Build a List, insert it once.",
+      "code": "List<Account> toInsert = new List<Account>();\ntoInsert.add(new Account(Name='One'));\ntoInsert.add(new Account(Name='Two'));\ntoInsert.add(new Account(Name='Three'));\ninsert toInsert;",
+      "lineExplanations": [
+        "Empty list ready to fill.",
+        "Construct an Account inline with Name set, append to the list. 'Name=...' is constructor-shorthand syntax for SObjects.",
+        "Two more.",
+        "And a third.",
+        "ONE DML statement creates all three records in one round-trip."
+      ],
+      "lineConcepts": [
+        ["new-keyword", "list-collection"],
+        ["bulk-dml"],
+        [],
+        [],
+        ["dml-insert"]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "upsert — insert or update",
+      "body": [
+        "Upsert is one statement that does the right thing — if the record has an Id (or matches a key), update it; otherwise, insert a new one.",
+        "Real example: nightly imports from a partner system. You don't always know which records are new vs. existing — upsert handles both transparently."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Upsert by external Id",
+      "intro": "Type this. Upsert keyed on a custom external id field.",
+      "code": "Lead l = new Lead(\n    LastName='Doe',\n    Company='Acme',\n    External_Id__c='EXT-123'\n);\nupsert l External_Id__c;",
+      "lineExplanations": [
+        "Construct a Lead with three fields.",
+        "LastName.",
+        "Company.",
+        "External_Id__c is a custom field marked as External Id.",
+        "Close construction.",
+        "upsert l External_Id__c — match on the external id; insert if no match, update if there is one."
+      ],
+      "lineConcepts": [
+        ["new-keyword"],
+        [],
+        [],
+        [],
+        [],
+        ["dml-upsert"]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "delete and undelete",
+      "body": [
+        "delete soft-deletes (record goes to the Recycle Bin, can be restored). undelete pulls it back out.",
+        "Real example: a 'Mark as Spam' button might delete the record. An 'Oops, restore it' admin action might undelete."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Deleting a record",
+      "intro": "Type this. Query, delete.",
+      "code": "Account a = [SELECT Id FROM Account WHERE Name = 'Acme Corp' LIMIT 1];\ndelete a;",
+      "lineExplanations": [
+        "Query one matching Account.",
+        "DML: delete. The record moves to the Recycle Bin and disappears from active queries."
+      ],
+      "lineConcepts": [
+        ["soql", "where-clause", "soql-limit"],
+        ["dml-delete"]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Database.insert with allOrNone",
+      "body": [
+        "Default 'insert list' fails the WHOLE batch if any record is invalid. Database.insert(records, false) inserts what's valid and reports failures for the rest.",
+        "Real example: an import of 1,000 records where 3 have bad data. With allOrNone=false, you save 997 and log the 3 failures. With the default, you save zero."
+      ],
+      "vocabulary": [
+        { "word": "allOrNone", "def": "DML option — false means partial success allowed, true (default) means the whole batch fails on any single error." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Partial-success insert",
+      "intro": "Type this. Database.insert with allOrNone=false returns a SaveResult per record.",
+      "code": "List<Database.SaveResult> results = Database.insert(toInsert, false);\nfor (Database.SaveResult r : results) {\n    if (!r.isSuccess()) {\n        System.debug(r.getErrors());\n    }\n}",
+      "lineExplanations": [
+        "Database.insert returns a List<SaveResult>. Each result corresponds to one record. false = allow partial success.",
+        "Loop the results.",
+        "If this record FAILED, log the error.",
+        "getErrors() returns the per-record error info. Save successes were saved; you only inspect failures.",
+        "Close.",
+        "Close."
+      ],
+      "lineConcepts": [
+        ["database-class", "all-or-none"],
+        ["for-each-loop"],
+        ["block"],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "You're inserting 5,000 leads in a single Apex transaction. What's the safe pattern?",
+      "back": "Build a List<Lead>, then ONE 'insert listOfLeads;' (or Database.insert).",
+      "detail": "Looping 'insert lead;' once per record = 5,000 DML statements = blown governor limit. Bulk DML = 1 statement."
+    },
+    {
+      "type": "quiz",
+      "question": "You're loading partner data nightly. Some rows match existing records by an External Id; some are new. Which DML?",
+      "options": [
+        "insert — easier to think about.",
+        "update — most rows already exist.",
+        "upsert — handles both insert and update in one call.",
+        "delete then re-insert — clean slate."
+      ],
+      "correct": 2,
+      "explanation": "upsert. It keys on a field you choose (External Id) and does the right thing per record."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Insert / update / upsert / delete / undelete, bulk DML on Lists, Database.insert with allOrNone for partial success.",
+        "Next: Triggers — Apex code that runs automatically when records are inserted, updated, or deleted."
+      ]
+    }
+  ]
+}

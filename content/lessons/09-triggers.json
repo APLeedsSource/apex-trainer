@@ -1,0 +1,255 @@
+{
+  "id": "09-triggers",
+  "title": "Lesson 9 — Triggers",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "What a trigger is",
+      "body": [
+        "A trigger is Apex code that runs AUTOMATICALLY when records are inserted, updated, or deleted on a specific object.",
+        "Real example: 'when a new Lead is created, auto-assign it to a sales rep' — that's a trigger. Slack's 'when someone reacts to a message, send a notification' is the same pattern in their codebase."
+      ],
+      "vocabulary": [
+        {
+          "word": "trigger",
+          "def": "Apex code that fires automatically in response to database events on a specific object."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Trigger anatomy",
+      "body": [
+        "Shape: trigger TriggerName on ObjectName (events) { body }.",
+        "Events: before insert, after insert, before update, after update, before delete, after delete, after undelete. List the ones you care about."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Your first trigger",
+      "intro": "Type this. Fires on every Account insert/update.",
+      "code": "trigger AccountTrigger on Account (before insert, before update) {\n    for (Account a : Trigger.new) {\n        a.Description = 'Touched by trigger';\n    }\n}",
+      "lineExplanations": [
+        "Declare the trigger. Name = AccountTrigger. Object = Account. Events = before insert and before update.",
+        "Trigger.new is a List of the records being processed. Always loop it.",
+        "Mutate a field on each record. In a 'before' context, this change gets persisted automatically — no DML needed.",
+        "Close loop. Close trigger."
+      ],
+      "lineConcepts": [
+        [
+          "trigger",
+          "trigger-event"
+        ],
+        [
+          "trigger-context",
+          "for-each-loop"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "before vs after",
+      "body": [
+        "BEFORE: runs before the record is committed. Edits to Trigger.new persist for free, no DML needed. Use for validation and field defaulting.",
+        "AFTER: runs after the record exists in the database (with an Id). Use for related-record updates, integrations, or anything that needs the new Id."
+      ],
+      "vocabulary": [
+        {
+          "word": "before-trigger",
+          "def": "Runs before commit. Mutate Trigger.new directly; no DML required to persist changes."
+        },
+        {
+          "word": "after-trigger",
+          "def": "Runs after commit. Records have Ids. Use for related-record updates and integrations."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Trigger context variables",
+      "body": [
+        "Trigger.new — list of new versions of records. Trigger.old — list of old versions (update/delete only). Trigger.newMap and oldMap — same data keyed by Id for fast lookup.",
+        "Trigger.isInsert / isUpdate / isDelete / isBefore / isAfter — booleans telling you which event fired."
+      ],
+      "vocabulary": [
+        {
+          "word": "Trigger.new",
+          "def": "The list of records currently being processed (the new versions)."
+        },
+        {
+          "word": "Trigger.oldMap",
+          "def": "Map<Id, SObject> of the old versions, keyed by record Id. Available on update/delete only."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Detecting a field change",
+      "intro": "Type this. Compare new vs old to see what changed.",
+      "code": "trigger LeadTrigger on Lead (before update) {\n    for (Lead l : Trigger.new) {\n        Lead old = Trigger.oldMap.get(l.Id);\n        if (l.Status != old.Status) {\n            System.debug('Status changed for ' + l.Id);\n        }\n    }\n}",
+      "lineExplanations": [
+        "Trigger on Lead before update.",
+        "Loop the new versions.",
+        "Look up the OLD version of the same record from oldMap.",
+        "Compare new Status vs old Status.",
+        "Logic that fires only when this specific field changed.",
+        "Closes."
+      ],
+      "lineConcepts": [
+        [
+          "trigger",
+          "trigger-event"
+        ],
+        [
+          "trigger-context",
+          "for-each-loop"
+        ],
+        [
+          "map-collection"
+        ],
+        [
+          "block"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The cardinal sin: SOQL/DML in a trigger loop",
+      "body": [
+        "A trigger can fire on up to 200 records at once. Putting a SOQL query or DML statement inside the for-loop = up to 200 queries/statements = blown governor limit.",
+        "Real example: this is THE most common reason Apex code fails in production. Bulkification is the cure."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "Bulkification — the rescue",
+      "body": [
+        "Pattern: collect Ids in the loop → ONE query AFTER the loop → second loop processes the queried data.",
+        "Real example: this is the same pattern any high-throughput pipeline uses. Stripe's webhook handlers fan out IDs, batch-fetch related data, then process."
+      ],
+      "vocabulary": [
+        {
+          "word": "bulkification",
+          "def": "Writing trigger code so it works correctly when the trigger fires on 200 records at once."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Bulkified pattern",
+      "intro": "Type this. Collect ids first, then one query, then one DML.",
+      "code": "trigger ContactTrigger on Contact (after insert) {\n    Set<Id> acctIds = new Set<Id>();\n    for (Contact c : Trigger.new) {\n        if (c.AccountId != null) { acctIds.add(c.AccountId); }\n    }\n    List<Account> toUpdate = [SELECT Id FROM Account WHERE Id IN :acctIds];\n    update toUpdate;\n}",
+      "lineExplanations": [
+        "Trigger on Contact after insert.",
+        "Set to collect parent Account ids — Set dedupes.",
+        "First pass: walk Contacts, collect parent ids.",
+        "Skip nulls; otherwise add the AccountId to the set.",
+        "Close first loop.",
+        "ONE SOQL query after the loop using IN :acctIds bind.",
+        "ONE DML update after the loop."
+      ],
+      "lineConcepts": [
+        [
+          "trigger"
+        ],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "block"
+        ],
+        [],
+        [
+          "soql",
+          "soql-bind-variable"
+        ],
+        [
+          "dml-update"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "One trigger per object (best practice)",
+      "body": [
+        "Define ONE trigger per SObject; let it call a separate Handler class for the actual logic. Keeps order-of-execution predictable and code testable.",
+        "Real example: every well-architected Salesforce org has AccountTriggerHandler, ContactTriggerHandler, etc. — thin trigger files dispatching to plain Apex classes."
+      ],
+      "vocabulary": [
+        {
+          "word": "trigger handler pattern",
+          "def": "Best-practice pattern: thin trigger delegates all logic to a regular Apex class for testability and clarity."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Handler delegation",
+      "intro": "Type this. The trigger is one line per event; the handler does the work.",
+      "code": "trigger AccountTrigger on Account (after insert, after update) {\n    if (Trigger.isInsert) { AccountTriggerHandler.afterInsert(Trigger.new); }\n    if (Trigger.isUpdate) { AccountTriggerHandler.afterUpdate(Trigger.new, Trigger.oldMap); }\n}",
+      "lineExplanations": [
+        "Trigger declaration.",
+        "Branch on isInsert; delegate the records to a static handler method.",
+        "Branch on isUpdate; pass new + oldMap so the handler can detect changes.",
+        "Close trigger."
+      ],
+      "lineConcepts": [
+        [
+          "trigger"
+        ],
+        [
+          "trigger-context",
+          "static-vs-instance"
+        ],
+        [
+          "map-collection"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "Why does putting a SOQL query inside a for-loop in a trigger blow up in production?",
+      "back": "Triggers can fire on up to 200 records. Looping with a SOQL inside = up to 200 queries = past the 100-per-transaction governor limit.",
+      "detail": "The fix is bulkification: collect needed ids in the loop; query once AFTER the loop; process the results."
+    },
+    {
+      "type": "quiz",
+      "question": "You need to default a Lead's Source field to 'Web' when it has no value. Which trigger event?",
+      "options": [
+        "after insert — record is committed.",
+        "before insert — mutate Trigger.new and the change persists with no extra DML.",
+        "after update — too late.",
+        "before delete — wrong event entirely."
+      ],
+      "correct": 1,
+      "explanation": "before insert. Set the field on Trigger.new and Salesforce persists the change as part of the insert — no DML needed, no governor-limit cost."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Trigger anatomy, before vs after, context variables, bulkification, and the handler-delegation pattern.",
+        "Next: Test Classes — required for every Apex deployment to production. 75% coverage minimum."
+      ]
+    }
+  ]
+}

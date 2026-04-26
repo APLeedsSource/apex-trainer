@@ -1,0 +1,305 @@
+{
+  "id": "13-oop-pillars",
+  "title": "Lesson 13 — Inheritance, Polymorphism, Interfaces",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "The four pillars of OOP",
+      "body": [
+        "Encapsulation, Inheritance, Polymorphism, Abstraction. Every OOP language since Smalltalk is built on them. Apex inherits these from Java.",
+        "Real example: Salesforce's own SObject class hierarchy IS these pillars in action — every Account, Contact, Opportunity is a class extending SObject."
+      ],
+      "vocabulary": [
+        {
+          "word": "OOP",
+          "def": "Object-Oriented Programming — paradigm built on classes, instances, and the four pillars."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Encapsulation",
+      "body": [
+        "Hide internals. Expose a clean public interface; keep guts private. We covered this in the Methods & Properties lessons (private fields, public methods).",
+        "Real example: Stripe's Charge class — public methods like create() and refund(); private internals you never see."
+      ],
+      "vocabulary": [
+        {
+          "word": "encapsulation",
+          "def": "Bundling data and behavior into a class while hiding internal details from outside callers."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Inheritance — extends",
+      "body": [
+        "A child class can EXTEND a parent. It inherits the parent's properties and methods, can add its own, and can OVERRIDE the parent's behavior.",
+        "Real example: imagine a generic Vehicle class with drive() and fuel(). Car extends Vehicle. Truck extends Vehicle. Both inherit drive(); each has its own behavior."
+      ],
+      "vocabulary": [
+        {
+          "word": "extends",
+          "def": "Apex keyword: 'class B extends A' means B inherits A's members."
+        },
+        {
+          "word": "virtual",
+          "def": "Modifier on a parent method or class meaning 'subclasses are allowed to override me.'"
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Parent class with virtual method",
+      "intro": "Type this. 'virtual' lets subclasses override drive().",
+      "code": "public virtual class Vehicle {\n    public String name;\n    public virtual void drive() {\n        System.debug(name + ' is driving');\n    }\n}",
+      "lineExplanations": [
+        "'public virtual class' — virtual on the class lets it be subclassed.",
+        "Property anyone can read/write.",
+        "'public virtual void drive' — virtual on the method lets subclasses override it.",
+        "Default behavior.",
+        "Method and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "virtual-keyword"
+        ],
+        [
+          "public-modifier",
+          "variable-declaration"
+        ],
+        [
+          "method-shape",
+          "virtual-keyword",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Child class with override",
+      "intro": "Type this. Truck extends Vehicle and overrides drive().",
+      "code": "public class Truck extends Vehicle {\n    public override void drive() {\n        System.debug(name + ' is hauling cargo');\n    }\n}",
+      "lineExplanations": [
+        "Truck extends Vehicle — Truck inherits 'name' and the virtual drive().",
+        "'override' on the method — explicit signal that we're replacing the parent's behavior.",
+        "New body. Note we still have access to inherited 'name' from Vehicle.",
+        "Method and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "extends-keyword"
+        ],
+        [
+          "method-shape",
+          "override-keyword"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Polymorphism",
+      "body": [
+        "ONE variable typed as the parent can hold ANY child instance and the right method runs based on the actual type. 'Many shapes', one interface.",
+        "Real example: a List<Vehicle> can hold Cars, Trucks, Motorcycles. Looping it and calling .drive() runs each one's specific implementation."
+      ],
+      "vocabulary": [
+        {
+          "word": "polymorphism",
+          "def": "One variable type can hold many concrete subclass instances; the right method runs based on actual type."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Polymorphism in action",
+      "intro": "Type this. The same .drive() call dispatches to different code per vehicle.",
+      "code": "List<Vehicle> fleet = new List<Vehicle>();\nfleet.add(new Vehicle());\nfleet.add(new Truck());\nfor (Vehicle v : fleet) {\n    v.drive();\n}",
+      "lineExplanations": [
+        "List typed as parent (Vehicle) — can hold any subclass.",
+        "Add a plain Vehicle.",
+        "Add a Truck — fits in a Vehicle list because Truck IS A Vehicle.",
+        "Loop over the parent type.",
+        "Calling v.drive() runs Vehicle's drive on the Vehicle instance, and Truck's overridden drive on the Truck instance."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [
+          "method-shape"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Abstraction — abstract classes",
+      "body": [
+        "abstract class can declare methods WITHOUT a body. Subclasses MUST implement them. Useful for 'this thing must exist but I don't know how each subclass does it'.",
+        "Real example: a Notification class has abstract send(). EmailNotification extends it and implements send() for SMTP. SlackNotification implements send() differently. Both ARE Notifications."
+      ],
+      "vocabulary": [
+        {
+          "word": "abstract",
+          "def": "Modifier — abstract class can't be instantiated directly; abstract method has no body and must be overridden."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Abstract class",
+      "intro": "Type this. Notification declares send() as abstract — subclasses are forced to implement it.",
+      "code": "public abstract class Notification {\n    public abstract void send(String msg);\n    public void log(String msg) {\n        System.debug('Logging: ' + msg);\n    }\n}",
+      "lineExplanations": [
+        "abstract class — cannot be 'new Notification()' directly.",
+        "abstract method — no body, just a signature. Must be overridden by subclasses.",
+        "Concrete (non-abstract) method — subclasses inherit this for free.",
+        "Body of log.",
+        "Methods and class close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "abstract-keyword"
+        ],
+        [
+          "method-shape",
+          "abstract-keyword"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Interfaces — pure contracts",
+      "body": [
+        "An interface is a CONTRACT — only method signatures, no bodies, no fields. A class 'implements' the interface and provides bodies.",
+        "Real example: Apex's own Queueable interface — implement execute() however you want; the platform calls it. You and Salesforce never need to touch each other's source."
+      ],
+      "vocabulary": [
+        {
+          "word": "interface",
+          "def": "A pure contract — only method signatures. Classes implement it by providing bodies."
+        },
+        {
+          "word": "implements",
+          "def": "Apex keyword: 'class A implements B' means A promises to provide all methods B declares."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Defining an interface",
+      "intro": "Type this. Pure contract — no bodies.",
+      "code": "public interface Sender {\n    void send(String msg);\n    Boolean isReady();\n}",
+      "lineExplanations": [
+        "Interface declaration. No constructors, no fields.",
+        "Method signature only — semicolon, no body.",
+        "Another. Classes implementing Sender must provide BOTH methods.",
+        "Close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "method-shape"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Implementing the interface",
+      "intro": "Type this. EmailSender implements Sender — must provide send() and isReady().",
+      "code": "public class EmailSender implements Sender {\n    public void send(String msg) {\n        System.debug('Email: ' + msg);\n    }\n    public Boolean isReady() {\n        return true;\n    }\n}",
+      "lineExplanations": [
+        "Class implements Sender — promises to provide all of its methods.",
+        "Provide send() with a real body.",
+        "Body — actual email logic would go here.",
+        "Close.",
+        "Provide isReady() with a real body.",
+        "Real-world might check API connectivity.",
+        "Close."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "string-concat"
+        ],
+        [],
+        [
+          "method-shape"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "What's the difference between an abstract class and an interface?",
+      "back": "Abstract class CAN have concrete methods and fields; interface has ONLY method signatures.",
+      "detail": "Use abstract class when subclasses share real implementation. Use interface when you just want to enforce a contract — multiple classes can implement many interfaces, but extend only one class."
+    },
+    {
+      "type": "quiz",
+      "question": "Apex's Queueable — which OOP construct?",
+      "options": [
+        "An abstract class.",
+        "An interface — you implement execute() yourself.",
+        "A concrete class with virtual methods.",
+        "A static utility class."
+      ],
+      "correct": 1,
+      "explanation": "Queueable is an interface. Your class implements Queueable, provides execute(), and the platform calls it on schedule."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Encapsulation, inheritance (extends + virtual + override), polymorphism (parent type holding subclass), abstraction (abstract classes), and interfaces.",
+        "Next: APIs — making outbound HTTP calls and exposing your own Apex as REST endpoints."
+      ]
+    }
+  ]
+}

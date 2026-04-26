@@ -1,0 +1,303 @@
+{
+  "id": "07-soql",
+  "title": "Lesson 7 — SOQL: Reading Salesforce Data",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "What SOQL is",
+      "body": [
+        "SOQL = Salesforce Object Query Language. It's how Apex (and Flow, and Reports) reads data out of the Salesforce database.",
+        "Real example: looks like SQL but specialized for Salesforce — every CRM and ORM in the world has a similar query language. If you know basic SQL, SOQL feels familiar."
+      ],
+      "vocabulary": [
+        {
+          "word": "SOQL",
+          "def": "Salesforce Object Query Language — Apex's database query syntax."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The basic SELECT shape",
+      "body": [
+        "SELECT field1, field2 FROM ObjectName. List the fields you want, then the object to pull from.",
+        "Apex wraps SOQL in square brackets: [SELECT Id, Name FROM Account]. The brackets are how Apex knows it's SOQL, not regular code."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Your first SOQL query",
+      "intro": "Type this. The [...] brackets are inline SOQL — runs against your org and returns a List.",
+      "code": "List<Account> accts = [SELECT Id, Name FROM Account LIMIT 5];\nfor (Account a : accts) {\n    System.debug(a.Name);\n}",
+      "lineExplanations": [
+        "Inline SOQL inside [...]. Returns up to 5 Account records as a List<Account>. LIMIT keeps you safe from accidentally pulling millions of rows.",
+        "Loop over the results.",
+        "Read the Name field. We asked for Id and Name in the SELECT, so those are the only fields populated on each record."
+      ],
+      "lineConcepts": [
+        [
+          "soql",
+          "list-collection",
+          "soql-limit"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Filtering with WHERE",
+      "body": [
+        "WHERE narrows the results. Only rows matching the condition come back.",
+        "Real example: 'all Accounts with annual revenue over $1M' is a WHERE clause. Every Salesforce report is built on top of one of these."
+      ],
+      "vocabulary": [
+        {
+          "word": "WHERE",
+          "def": "SOQL clause that filters results to rows matching a condition."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "WHERE clause",
+      "intro": "Type this. Only Accounts in California come back.",
+      "code": "List<Account> caAccts = [\n    SELECT Id, Name\n    FROM Account\n    WHERE BillingState = 'CA'\n    LIMIT 100\n];",
+      "lineExplanations": [
+        "Variable receives the query result. The opening [ starts the SOQL.",
+        "SELECT lists fields.",
+        "FROM names the object.",
+        "WHERE filters: only rows where BillingState equals 'CA'. Single quotes for the literal — same rule as String literals.",
+        "LIMIT caps the count.",
+        "Closing ] and semicolon."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "list-collection"
+        ],
+        [
+          "soql"
+        ],
+        [],
+        [
+          "where-clause",
+          "string-quotes"
+        ],
+        [
+          "soql-limit"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "ORDER BY and operators",
+      "body": [
+        "ORDER BY sorts. Operators in WHERE: = != > < >= <= LIKE IN.",
+        "Real example: a sales rep dashboard might query 'opportunities in my pipeline ordered by close date desc' — that's ORDER BY CloseDate DESC."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Sorted, filtered query",
+      "intro": "Type this. Returns the top 10 newest closed-won opportunities.",
+      "code": "List<Opportunity> wins = [\n    SELECT Id, Name, Amount, CloseDate\n    FROM Opportunity\n    WHERE StageName = 'Closed Won' AND Amount > 10000\n    ORDER BY CloseDate DESC\n    LIMIT 10\n];",
+      "lineExplanations": [
+        "Variable.",
+        "Four fields requested.",
+        "From Opportunity object.",
+        "Two conditions joined by AND. Both must be true.",
+        "Sort descending by close date.",
+        "Top 10.",
+        "Close brackets."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "list-collection"
+        ],
+        [
+          "soql"
+        ],
+        [],
+        [
+          "where-clause"
+        ],
+        [],
+        [
+          "soql-limit"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Bind variables — using Apex values in SOQL",
+      "body": [
+        "To use a variable inside a SOQL query, prefix it with a colon: WHERE Id = :recordId. This is called a 'bind' — Apex substitutes the value safely.",
+        "Real example: every dynamic query in production code uses binds. NEVER concatenate strings into SOQL — that's the SOQL-injection equivalent and Apex security review will block your package."
+      ],
+      "vocabulary": [
+        {
+          "word": "bind variable",
+          "def": "An Apex variable inserted into a SOQL query with the : prefix. Safe and substituted by the platform."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Querying with a bind",
+      "intro": "Type this. The :acctId in the WHERE clause is a bind variable.",
+      "code": "Id acctId = '001D000000IqhSL';\nList<Contact> contacts = [\n    SELECT Id, Name, Email\n    FROM Contact\n    WHERE AccountId = :acctId\n];\nSystem.debug(contacts.size());",
+      "lineExplanations": [
+        "Declare an Id holding a specific Account record's id.",
+        "Variable for the result.",
+        "SELECT three fields.",
+        "FROM Contact.",
+        "WHERE AccountId = :acctId — bind the Apex variable into the query.",
+        "Close brackets.",
+        "Print how many contacts came back."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration"
+        ],
+        [],
+        [
+          "soql"
+        ],
+        [],
+        [
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Parent-to-child relationships (subquery)",
+      "body": [
+        "From an Account, get all its Contacts in one query: SELECT Name, (SELECT Email FROM Contacts) FROM Account.",
+        "Real example: a customer-360 dashboard wants 'this account and all its contacts' in one round-trip. One query is faster than one-per-account."
+      ],
+      "vocabulary": [
+        {
+          "word": "subquery",
+          "def": "A nested SOQL inside a parent query that pulls related child records."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Account with its Contacts",
+      "intro": "Type this. The (subquery) pulls all Contacts under each Account.",
+      "code": "List<Account> accts = [\n    SELECT Id, Name, (SELECT Id, Email FROM Contacts)\n    FROM Account\n    LIMIT 5\n];\nfor (Account a : accts) {\n    System.debug(a.Name + ' has ' + a.Contacts.size() + ' contacts.');\n}",
+      "lineExplanations": [
+        "Result variable.",
+        "SELECT main fields PLUS (subquery for Contacts). Note 'Contacts' is plural — that's the relationship name.",
+        "FROM Account.",
+        "Cap at 5.",
+        "Close brackets.",
+        "Loop accounts.",
+        "a.Contacts is now a List<Contact>. Use .size() to count without another query."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "list-collection"
+        ],
+        [
+          "soql",
+          "relationship-query"
+        ],
+        [],
+        [
+          "soql-limit"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [
+          "string-concat"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Child-to-parent (dot notation)",
+      "body": [
+        "From a Contact, walk UP to its Account: SELECT Account.Name FROM Contact.",
+        "Real example: a contact-list view that shows the parent company name beside each contact. One query, no second lookup."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Contact with parent Account",
+      "intro": "Type this. Walking from Contact to its parent Account uses the dot.",
+      "code": "List<Contact> contacts = [\n    SELECT Id, Name, Account.Name, Account.BillingCity\n    FROM Contact\n    WHERE Account.Industry = 'Technology'\n    LIMIT 10\n];",
+      "lineExplanations": [
+        "Variable.",
+        "Account.Name and Account.BillingCity walk up the relationship to the parent's fields.",
+        "FROM Contact.",
+        "WHERE clause can also walk up — filter contacts whose parent Account is in Tech.",
+        "Cap at 10.",
+        "Close brackets."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "list-collection"
+        ],
+        [
+          "soql",
+          "relationship-query"
+        ],
+        [],
+        [
+          "where-clause"
+        ],
+        [
+          "soql-limit"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "What's wrong with this code? String name = 'Acme'; List<Account> a = [SELECT Id FROM Account WHERE Name = ' + name + ' ];",
+      "back": "It uses string concatenation instead of a bind variable.",
+      "detail": "Use :name instead. Concatenated SOQL is a security hole and Salesforce review will reject it."
+    },
+    {
+      "type": "quiz",
+      "question": "You want every Account's name AND a list of every contact's email under each account, in ONE query. Which clause?",
+      "options": [
+        "WHERE clause",
+        "ORDER BY clause",
+        "Subquery (parent-to-child)",
+        "Dot notation (child-to-parent)"
+      ],
+      "correct": 2,
+      "explanation": "Subquery in the SELECT: SELECT Name, (SELECT Email FROM Contacts) FROM Account. One round-trip, no governor-limit pressure from looping queries."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "SELECT, WHERE, ORDER BY, LIMIT, bind variables, parent-to-child subqueries, and child-to-parent dot notation.",
+        "Next: DML — how Apex WRITES data back to the Salesforce database (insert, update, delete)."
+      ]
+    }
+  ]
+}

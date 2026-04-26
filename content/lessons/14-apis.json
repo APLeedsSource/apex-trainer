@@ -1,0 +1,326 @@
+{
+  "id": "14-apis",
+  "title": "Lesson 14 — APIs",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "What an API is",
+      "body": [
+        "API = Application Programming Interface. The contract one piece of software exposes for others to use.",
+        "Real example: every modern app talks to dozens of APIs. Your iPhone alone talks to Apple's iCloud API, Google Maps API, weather APIs, and Stripe whenever you Apple-Pay. Each is a contract: 'send me X, I'll give you Y back.'"
+      ],
+      "vocabulary": [
+        {
+          "word": "API",
+          "def": "A contract one program exposes for other programs to call — a defined set of inputs and outputs."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "REST in 60 seconds",
+      "body": [
+        "REST = a style of API. Operations are HTTP verbs: GET (read), POST (create), PUT/PATCH (update), DELETE.",
+        "Real example: 'GET /accounts/123' fetches account 123. 'POST /charges' creates a Stripe charge. The verb tells the server what kind of action you want."
+      ],
+      "vocabulary": [
+        {
+          "word": "REST",
+          "def": "Representational State Transfer — the most common HTTP API style. Verbs (GET/POST/...) on URLs identify operations."
+        },
+        {
+          "word": "endpoint",
+          "def": "A specific URL on the API server that does one thing — like /accounts/123."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Status codes you'll see",
+      "body": [
+        "200 OK · 201 Created · 204 No Content · 400 Bad Request · 401 Unauthorized · 403 Forbidden · 404 Not Found · 429 Rate Limited · 500 Server Error.",
+        "Real example: any time you've seen 'Error 404' on a webpage, that's the same status code an API would return. Same vocabulary, browser or program."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "JSON — the data format",
+      "body": [
+        "Most modern APIs send and receive JSON. It's a text format with keys, values, lists, and nested objects — readable by humans and easy for any language to parse.",
+        "Example: { \"name\": \"Acme\", \"contacts\": [{ \"email\": \"x@y.com\" }] }"
+      ],
+      "vocabulary": [
+        {
+          "word": "JSON",
+          "def": "JavaScript Object Notation — text format used as the body of most modern API requests and responses."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Authentication basics",
+      "body": [
+        "API key (simplest), Bearer token (modern standard), OAuth 2.0 (for user-level permissions). Always sent in headers, never in URLs.",
+        "Real example: Stripe uses bearer tokens. Twilio uses basic auth. Salesforce uses OAuth 2.0. Every API documents which it expects."
+      ],
+      "vocabulary": [
+        {
+          "word": "OAuth",
+          "def": "Standard for user-permissioned authentication — user grants your app access without sharing their password."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Apex callouts — the players",
+      "body": [
+        "Three classes: Http (the dispatcher), HttpRequest (what you send), HttpResponse (what you get back).",
+        "Pattern: build a request, send it via Http().send(request), inspect the response."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "A simple GET callout",
+      "intro": "Type this. Fetch a public weather endpoint and inspect the response.",
+      "code": "HttpRequest req = new HttpRequest();\nreq.setEndpoint('https://api.weather.example/today');\nreq.setMethod('GET');\nHttp http = new Http();\nHttpResponse res = http.send(req);\nSystem.debug(res.getStatusCode());",
+      "lineExplanations": [
+        "Construct an HttpRequest. Empty so far.",
+        "Set the URL we're calling.",
+        "HTTP verb — GET to read.",
+        "Construct the dispatcher.",
+        "Send the request, capture the response.",
+        "Inspect the status code. 200 = success."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes",
+          "method-shape"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "method-shape"
+        ]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Headers and JSON body",
+      "body": [
+        "POST/PUT requests usually carry a JSON body. Set the Content-Type header to application/json. Authentication usually goes in an Authorization header.",
+        "Real example: Stripe's POST /charges expects { amount, currency, source } as JSON in the body, and your secret key as 'Authorization: Bearer sk_xxx'."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "POST with JSON body and auth",
+      "intro": "Type this. Send a JSON body with auth headers.",
+      "code": "HttpRequest req = new HttpRequest();\nreq.setEndpoint('https://api.example.com/charges');\nreq.setMethod('POST');\nreq.setHeader('Authorization', 'Bearer ' + apiKey);\nreq.setHeader('Content-Type', 'application/json');\nreq.setBody('{\"amount\":1000,\"currency\":\"usd\"}');\nHttpResponse res = new Http().send(req);",
+      "lineExplanations": [
+        "Construct.",
+        "Endpoint URL.",
+        "POST method.",
+        "Bearer auth header.",
+        "Tell the server we're sending JSON.",
+        "Set the body — JSON string. In real code, build this with JSON.serialize() instead.",
+        "Send it. Construct Http inline to keep it tight."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "string-quotes",
+          "string-concat"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "new-keyword",
+          "method-shape"
+        ]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Parsing the JSON response",
+      "body": [
+        "JSON.deserialize(jsonString, MyClass.class) maps a JSON string into an Apex class instance. JSON.deserializeUntyped returns a Map<String, Object> — useful when shape is unknown.",
+        "Real example: Stripe's response shape is documented; you build a matching Apex class and JSON.deserialize directly into it."
+      ],
+      "vocabulary": [
+        {
+          "word": "deserialize",
+          "def": "Convert a JSON string into a typed Apex object."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Deserializing the body",
+      "intro": "Type this. Pull the response body into a typed Apex variable.",
+      "code": "Map<String, Object> parsed = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());\nString chargeId = (String) parsed.get('id');\nSystem.debug(chargeId);",
+      "lineExplanations": [
+        "JSON.deserializeUntyped returns Object; cast to Map<String, Object> to read keys.",
+        "Pull a value out by key, cast it to String. Same dot-syntax as any Apex Map.",
+        "Print the parsed id."
+      ],
+      "lineConcepts": [
+        [
+          "map-collection",
+          "static-vs-instance"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Named Credentials",
+      "body": [
+        "Stop hardcoding API URLs and secrets. Salesforce's Named Credentials store the URL + auth in admin config. Reference 'callout:MyService/path' instead of a literal URL.",
+        "Real example: every production-grade Apex integration uses Named Credentials. Rotating an API key becomes an admin-side change, not a code deploy."
+      ],
+      "vocabulary": [
+        {
+          "word": "Named Credential",
+          "def": "Salesforce admin config storing endpoint URL and auth — referenced from Apex via 'callout:Name' so secrets stay out of code."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Calling via Named Credential",
+      "intro": "Type this. The 'callout:Stripe' prefix replaces the literal URL — Salesforce handles auth automatically.",
+      "code": "HttpRequest req = new HttpRequest();\nreq.setEndpoint('callout:Stripe/v1/charges');\nreq.setMethod('GET');\nHttpResponse res = new Http().send(req);",
+      "lineExplanations": [
+        "Construct.",
+        "callout:Stripe references the Named Credential. Salesforce expands to the real URL and injects auth headers.",
+        "Verb.",
+        "Send. No hardcoded secret in this code."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes",
+          "named-credential"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "new-keyword",
+          "method-shape"
+        ]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Exposing Apex as REST",
+      "body": [
+        "@RestResource(urlMapping='/v1/leads/*') marks a class as a REST endpoint. @HttpGet and @HttpPost mark methods that handle each verb.",
+        "Real example: a partner system needs to push leads into your Salesforce org. Build a small @RestResource. Their POST hits your handler."
+      ],
+      "vocabulary": [
+        {
+          "word": "@RestResource",
+          "def": "Annotation that exposes an Apex class as a public REST endpoint at a given URL."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A REST endpoint",
+      "intro": "Type this. Anyone with proper auth can POST to /services/apexrest/v1/leads.",
+      "code": "@RestResource(urlMapping='/v1/leads/*')\nglobal class LeadApi {\n    @HttpGet\n    global static String getInfo() {\n        return 'Hello from Apex';\n    }\n}",
+      "lineExplanations": [
+        "@RestResource with the URL pattern. This class is now an HTTP endpoint.",
+        "Class must be global (visible across packages and clients).",
+        "@HttpGet marks the method that handles GET requests.",
+        "Handler — global static, returns whatever you want serialized.",
+        "Body. The framework auto-serializes the return as JSON.",
+        "Closes."
+      ],
+      "lineConcepts": [
+        [
+          "rest-resource"
+        ],
+        [
+          "class-vs-object"
+        ],
+        [
+          "http-method-annotation"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance"
+        ],
+        [
+          "return-statement",
+          "string-quotes"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Governor limits on callouts",
+      "body": [
+        "100 callouts per transaction. 120-second timeout per callout. Triggers can NEVER make callouts directly — must go async (we covered this in Lesson 12).",
+        "Real example: forgetting the trigger-can't-callout rule is the #1 'why doesn't this work' question for new Apex devs."
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "Why must callouts from triggers go through async (Queueable / @future)?",
+      "back": "Triggers run inside the database transaction; making a slow external call would block the database write. Salesforce blocks it.",
+      "detail": "Pattern: trigger collects ids → enqueues a Queueable → the Queueable runs the callout in its own transaction."
+    },
+    {
+      "type": "quiz",
+      "question": "You're hitting the same external API from many places. Where should the URL and API key live?",
+      "options": [
+        "Hardcoded in each Apex class.",
+        "In a custom setting in plain text.",
+        "In a Named Credential — referenced as 'callout:Name'.",
+        "In a constant in a utility class."
+      ],
+      "correct": 2,
+      "explanation": "Named Credentials. Centralized, secrets never appear in code, rotating keys is an admin change."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "REST basics, status codes, JSON, callouts (Http/HttpRequest/HttpResponse), Named Credentials, exposing Apex as REST, callout governor limits.",
+        "Next: Caching — how to make APIs and queries fast and cheap by avoiding repeated work."
+      ]
+    }
+  ]
+}

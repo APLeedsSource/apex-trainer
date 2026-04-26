@@ -1,0 +1,232 @@
+{
+  "id": "11-governor-limits",
+  "title": "Lesson 11 — Governor Limits & Bulkification",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "What governor limits are",
+      "body": [
+        "Salesforce caps how many resources any single transaction can use — queries, DML rows, CPU time, heap memory.",
+        "Real example: every multi-tenant SaaS has similar guardrails. AWS Lambda has memory and timeout limits. Cloudflare Workers cap CPU. The reason: one rogue tenant can't take down the whole platform."
+      ],
+      "vocabulary": [
+        {
+          "word": "governor limit",
+          "def": "Salesforce-imposed cap on resource usage per transaction (queries, DML, CPU, etc.)."
+        },
+        {
+          "word": "transaction",
+          "def": "One Apex execution unit — a single trigger fire, a single API call, a single batch chunk."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The five limits you'll hit most",
+      "body": [
+        "100 SOQL queries · 150 DML statements · 50,000 rows queried · 10,000 rows DMLed · 10s sync CPU time.",
+        "Real example: 99% of governor failures involve crossing the 100-SOQL or 150-DML thresholds — almost always because a query or DML is sitting inside a for-loop."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "Why limits exist",
+      "body": [
+        "Salesforce runs millions of orgs on shared hardware. Without caps, one badly-coded trigger could consume all the CPU on a server and degrade performance for thousands of customers.",
+        "Real example: this is the same reason Twitter rate-limits API calls per second per user. Multitenancy demands isolation."
+      ],
+      "vocabulary": [
+        {
+          "word": "multitenancy",
+          "def": "Architecture where many customers share the same hardware/runtime. Drives the need for resource caps."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "The cardinal sin: SOQL inside a loop",
+      "body": [
+        "for (Lead l : leads) { Account a = [SELECT ... WHERE Id = :l.AccountId]; } → 200 leads = 200 queries = blown 100-SOQL limit.",
+        "This is THE most common production failure pattern in junior Apex. The fix is bulkification."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "The broken pattern (don't write this)",
+      "intro": "Type this — it COMPILES, but blows the 100-SOQL limit on any trigger of 100+ records.",
+      "code": "for (Lead l : Trigger.new) {\n    Account a = [SELECT Id FROM Account WHERE Id = :l.AccountId LIMIT 1];\n    System.debug(a.Id);\n}",
+      "lineExplanations": [
+        "Loop over up to 200 Leads.",
+        "SOQL inside the loop. Up to 200 queries. Past 100, runtime exception.",
+        "Even valid logic — but the structure dooms it."
+      ],
+      "lineConcepts": [
+        [
+          "for-each-loop",
+          "trigger-context"
+        ],
+        [
+          "soql",
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "The bulkified fix",
+      "intro": "Type this. Collect Ids → ONE query → process from a Map.",
+      "code": "Set<Id> acctIds = new Set<Id>();\nfor (Lead l : Trigger.new) {\n    if (l.AccountId != null) { acctIds.add(l.AccountId); }\n}\nMap<Id, Account> accts = new Map<Id, Account>(\n    [SELECT Id FROM Account WHERE Id IN :acctIds]\n);",
+      "lineExplanations": [
+        "Set to collect parent Account Ids — Set dedupes automatically.",
+        "First loop: gather Ids only.",
+        "Skip nulls; otherwise add the Id.",
+        "Close.",
+        "ONE query (the only one) constructs a Map<Id, Account> directly from a SOQL result.",
+        "The IN :acctIds bind passes all collected Ids in a single query.",
+        "Close map construction."
+      ],
+      "lineConcepts": [
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop",
+          "trigger-context"
+        ],
+        [
+          "block"
+        ],
+        [],
+        [
+          "map-collection",
+          "new-keyword"
+        ],
+        [
+          "soql",
+          "soql-bind-variable"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "DML inside a loop — same failure mode",
+      "body": [
+        "Looping 'update someRecord;' 200 times = 200 DML statements. Past 150 = blown limit.",
+        "Fix: build a List of records to update in the loop. ONE 'update myList;' after the loop = 1 DML statement."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Bulk DML pattern",
+      "intro": "Type this. One DML at the end, never inside the loop.",
+      "code": "List<Account> toUpdate = new List<Account>();\nfor (Account a : Trigger.new) {\n    a.Description = 'Touched';\n    toUpdate.add(a);\n}\nupdate toUpdate;",
+      "lineExplanations": [
+        "Collect records that need an update.",
+        "Loop and mutate.",
+        "Set the field.",
+        "Add to the to-update list — no DML yet.",
+        "Close.",
+        "ONE DML statement updates them all at once."
+      ],
+      "lineConcepts": [
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop",
+          "trigger-context"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        [],
+        [
+          "dml-update",
+          "bulk-dml"
+        ]
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Heap, CPU, and rows",
+      "body": [
+        "Heap (memory): 6 MB sync, 12 MB async. Querying 1M records into a List eats heap fast.",
+        "CPU: 10 seconds sync. Tight nested loops over big collections will time out."
+      ],
+      "vocabulary": [
+        {
+          "word": "heap",
+          "def": "Total memory used by all variables in the transaction. Capped at 6MB sync / 12MB async."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Limits.* methods",
+      "body": [
+        "Apex exposes runtime: Limits.getQueries(), Limits.getDmlStatements(), Limits.getCpuTime() — and Limits.getLimitQueries() for the cap.",
+        "Real example: production-grade code logs Limits.getCpuTime() at key points for performance debugging when slow trigger fires."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Inspecting limits at runtime",
+      "intro": "Type this. Helpful for debugging slow code.",
+      "code": "System.debug('SOQL used: ' + Limits.getQueries());\nSystem.debug('SOQL limit: ' + Limits.getLimitQueries());\nSystem.debug('CPU used (ms): ' + Limits.getCpuTime());",
+      "lineExplanations": [
+        "How many queries this transaction has used so far.",
+        "The limit (100 sync, 200 async).",
+        "CPU time consumed (ms). Compare with Limits.getLimitCpuTime()."
+      ],
+      "lineConcepts": [
+        [
+          "string-concat",
+          "static-vs-instance"
+        ],
+        [
+          "static-vs-instance"
+        ],
+        [
+          "static-vs-instance"
+        ]
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "What's the single most common reason Apex code fails in production?",
+      "back": "A SOQL query or DML statement inside a for-loop, hit by a 200-record trigger.",
+      "detail": "Bulkification (collect → query once → process) is the cure. Internalize this pattern; it shows up every day in real Apex work."
+    },
+    {
+      "type": "quiz",
+      "question": "Your trigger inserts a related record per Lead processed. The trigger fires on 200 leads. Which pattern is safe?",
+      "options": [
+        "Loop the leads, insert one related record each time.",
+        "Build a List<RelatedRecord> in the loop, ONE 'insert listOfRelated;' after the loop.",
+        "Use a while-loop instead of a for-loop.",
+        "Add try/catch around each insert."
+      ],
+      "correct": 1,
+      "explanation": "One bulk DML after the loop. The first option = 200 DML statements, well past the 150 cap."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "Why governor limits exist (multitenancy), the five you'll hit most, the bulkification pattern (collect → one query → one DML), and Limits.* introspection.",
+        "Next: Async Apex — when synchronous limits aren't enough, push work to the background."
+      ]
+    }
+  ]
+}

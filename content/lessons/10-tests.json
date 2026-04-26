@@ -1,0 +1,313 @@
+{
+  "id": "10-tests",
+  "title": "Lesson 10 — Test Classes",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "Why we test",
+      "body": [
+        "Tests catch regressions before they hit production. Without them, every deploy is a guess.",
+        "Real example: Salesforce REQUIRES 75% Apex code coverage to deploy to production. No tests, no deploy. Stripe runs ~1 million automated tests on every PR — same idea, larger scale."
+      ],
+      "vocabulary": [
+        {
+          "word": "test class",
+          "def": "An Apex class marked @isTest that contains test methods. Doesn't count against your org's code limits."
+        },
+        {
+          "word": "code coverage",
+          "def": "Percentage of production code lines exercised by tests. Salesforce requires 75% to deploy."
+        }
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Test class anatomy",
+      "body": [
+        "Mark the class with @isTest. Each test method is also marked @isTest (or named testMyThing). They take no params and return void.",
+        "Test classes don't count against your code-limit allotment — write all the tests you want."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Your first test",
+      "intro": "Type this. Tests an imaginary Greeter.hello() method.",
+      "code": "@isTest\npublic class GreeterTest {\n    @isTest\n    static void testHello() {\n        String result = Greeter.hello('Arthur');\n        System.assertEquals('Hi Arthur', result);\n    }\n}",
+      "lineExplanations": [
+        "@isTest at the class level marks the whole class as test-only.",
+        "Class declaration.",
+        "@isTest at the method level marks this as a runnable test.",
+        "Test method: static, void, no params.",
+        "Call the method under test, capture the return.",
+        "assertEquals(expected, actual) — fails the test if they differ.",
+        "Close.",
+        "Close."
+      ],
+      "lineConcepts": [
+        [
+          "test-annotation"
+        ],
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "void"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "assert-equals"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Assertions",
+      "body": [
+        "Use System.assertEquals(expected, actual, message) for value checks. System.assert(condition, message) for booleans.",
+        "Newer style: Assert.areEqual(...), Assert.isTrue(...). Both work; pick one and stay consistent."
+      ],
+      "vocabulary": [
+        {
+          "word": "assertion",
+          "def": "A statement that fails the test if a condition isn't met. The basic check inside every test method."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Multiple assertions",
+      "intro": "Type this. A single test can check multiple expectations.",
+      "code": "@isTest\nstatic void testMath() {\n    Integer result = MathUtils.max(7, 3);\n    System.assertEquals(7, result, 'max(7,3) should be 7');\n    System.assert(result > 0, 'result must be positive');\n}",
+      "lineExplanations": [
+        "Test annotation.",
+        "Test method.",
+        "Run the method under test.",
+        "assertEquals: expected, actual, message-on-failure.",
+        "assert: a condition + a message-on-failure.",
+        "Close."
+      ],
+      "lineConcepts": [
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance"
+        ],
+        [
+          "variable-declaration"
+        ],
+        [
+          "assert-equals"
+        ],
+        [
+          "assert"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Test.startTest() / Test.stopTest()",
+      "body": [
+        "Wrap the code under test in Test.startTest() / Test.stopTest(). It resets governor limits at the start and forces async jobs to run synchronously at stop.",
+        "Real example: testing async code? You MUST use start/stopTest, otherwise the queueable/future never runs in the test."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "startTest / stopTest",
+      "intro": "Type this. The wrapper makes governor accounting and async-execution behave predictably.",
+      "code": "@isTest\nstatic void testInsert() {\n    Account a = new Account(Name='Test');\n    Test.startTest();\n    insert a;\n    Test.stopTest();\n    System.assertNotEquals(null, a.Id);\n}",
+      "lineExplanations": [
+        "Test annotation.",
+        "Test method.",
+        "Set up data.",
+        "Start the measured/async-flush window.",
+        "Code under test.",
+        "End the window.",
+        "Assert the record got an Id (proof it was inserted)."
+      ],
+      "lineConcepts": [
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "test-startStop"
+        ],
+        [
+          "dml-insert"
+        ],
+        [
+          "test-startStop"
+        ],
+        [
+          "assert"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "@TestSetup",
+      "body": [
+        "@TestSetup creates test data ONCE per class run. Each test method gets a fresh copy. Faster than re-creating in every method.",
+        "Real example: 50 tests all need 5 sample Accounts. With @TestSetup that's one creation; without it, that's 50 creations."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Test data setup",
+      "intro": "Type this. Records are visible to every test method in the class.",
+      "code": "@isTest\npublic class LeadTest {\n    @TestSetup\n    static void setup() {\n        Lead l = new Lead(LastName='Doe', Company='Acme');\n        insert l;\n    }\n    @isTest\n    static void testQuery() {\n        Lead l = [SELECT Id FROM Lead LIMIT 1];\n        System.assertNotEquals(null, l.Id);\n    }\n}",
+      "lineExplanations": [
+        "Class-level test annotation.",
+        "Class.",
+        "@TestSetup runs once before the test methods.",
+        "Setup method — must be static and void, takes no params.",
+        "Build a lead.",
+        "Insert it. The record now exists for all tests.",
+        "Close setup.",
+        "Test annotation.",
+        "Test method that queries the seeded data.",
+        "Query the lead created in setup.",
+        "Assert it exists.",
+        "Close test. Close class."
+      ],
+      "lineConcepts": [
+        [
+          "test-annotation"
+        ],
+        [
+          "class-vs-object"
+        ],
+        [
+          "test-setup"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "dml-insert"
+        ],
+        [],
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "soql"
+        ],
+        [
+          "assert"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Negative tests",
+      "body": [
+        "Test the unhappy path too. Use try/catch to assert that bad input throws an exception.",
+        "Real example: 'inserting a Lead without a LastName must fail' is just as important as 'a valid Lead inserts cleanly'. Both behaviors are part of the contract."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "type-along",
+      "title": "Asserting an exception",
+      "intro": "Type this. The test passes only if an exception was caught.",
+      "code": "@isTest\nstatic void testInvalidInsert() {\n    Lead l = new Lead();\n    try {\n        insert l;\n        System.assert(false, 'Should have thrown');\n    } catch (DmlException e) {\n        System.assert(true);\n    }\n}",
+      "lineExplanations": [
+        "Test annotation.",
+        "Test method.",
+        "Create an INVALID lead (no required fields).",
+        "Wrap the code we expect to throw.",
+        "Try the insert.",
+        "If we reach here, no exception fired — fail explicitly.",
+        "Catch the expected DmlException.",
+        "Reaching the catch is the success path.",
+        "Close."
+      ],
+      "lineConcepts": [
+        [
+          "test-annotation"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "try-catch"
+        ],
+        [
+          "dml-insert"
+        ],
+        [
+          "assert"
+        ],
+        [
+          "try-catch"
+        ],
+        [
+          "assert"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "Why does Salesforce require 75% test coverage to deploy to production?",
+      "back": "Forces every team to ship at least minimal verification with their code, so changes can't silently break the org.",
+      "detail": "Coverage doesn't prove correctness — but zero coverage almost always means zero confidence. 75% is the industry's pragmatic floor."
+    },
+    {
+      "type": "quiz",
+      "question": "You're testing a method that fires off a future job. The test asserts something the future was supposed to do, but the assertion fails. What's missing?",
+      "options": [
+        "@isTest annotation on the test method.",
+        "Test.startTest() / Test.stopTest() around the call.",
+        "A try/catch around the assertion.",
+        "More test data."
+      ],
+      "correct": 1,
+      "explanation": "Test.startTest() / Test.stopTest() force async jobs (futures, queueables, batches) to actually execute by the time stopTest returns. Without it, the future never ran during the test."
+    },
+    {
+      "type": "concept",
+      "title": "What you now know",
+      "body": [
+        "@isTest classes and methods, assertions, Test.startTest/stopTest, @TestSetup, and negative tests.",
+        "Next: Governor Limits — the Salesforce-imposed caps that shape every Apex pattern you'll ever write."
+      ]
+    }
+  ]
+}

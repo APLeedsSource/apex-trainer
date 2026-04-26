@@ -108,5 +108,230 @@
     "title": "new keyword",
     "reminder": "'new ClassName(...)' creates a fresh instance. Used for collections (new List<...>()) and your own classes.",
     "introducedIn": "02-collections"
+  },
+  "for-loop": {
+    "title": "for-loop",
+    "reminder": "for (Integer i = 0; i < N; i++) { } — counter loop. Three parts: init, condition, advance.",
+    "introducedIn": "04-loops"
+  },
+  "for-each-loop": {
+    "title": "for-each loop",
+    "reminder": "for (Type item : collection) { } — walks every item in a collection.",
+    "introducedIn": "04-loops"
+  },
+  "while-loop": {
+    "title": "while-loop",
+    "reminder": "while (condition) { } — runs as long as condition stays true. Add a safety counter to avoid infinite loops.",
+    "introducedIn": "04-loops"
+  },
+  "soql-for-loop": {
+    "title": "SOQL for-loop",
+    "reminder": "for (Account a : [SELECT ...]) { } streams results in chunks of 200 — safe for huge result sets.",
+    "introducedIn": "04-loops"
+  },
+  "break": {
+    "title": "break",
+    "reminder": "Immediately exits the enclosing loop.",
+    "introducedIn": "04-loops"
+  },
+  "continue": {
+    "title": "continue",
+    "reminder": "Skips to the next iteration of the loop, leaving the current one unfinished.",
+    "introducedIn": "04-loops"
+  },
+  "return-statement": {
+    "title": "return",
+    "reminder": "Ends the method and ships a value back to the caller. void methods may have no return at all.",
+    "introducedIn": "05-methods"
+  },
+  "private-modifier": {
+    "title": "private",
+    "reminder": "Access modifier — only the same class can call this method or read this field. Use to hide internals.",
+    "introducedIn": "05-methods"
+  },
+  "auto-property": {
+    "title": "Auto-property",
+    "reminder": "{ get; set; } shorthand — Apex auto-generates trivial getter and setter.",
+    "introducedIn": "06-properties"
+  },
+  "custom-getter": {
+    "title": "Custom getter",
+    "reminder": "get { return ... } — runs your code when something reads the property.",
+    "introducedIn": "06-properties"
+  },
+  "custom-setter": {
+    "title": "Custom setter",
+    "reminder": "set { ... = value; } — 'value' is the magic name for the incoming assignment.",
+    "introducedIn": "06-properties"
+  },
+  "this-keyword": {
+    "title": "this",
+    "reminder": "Refers to the current instance. Use it to disambiguate when a parameter shares a name with a field: this.id = id;",
+    "introducedIn": "06-properties"
+  },
+  "soql": {
+    "title": "SOQL",
+    "reminder": "[SELECT field FROM Object WHERE ... LIMIT n] — Apex's database query syntax. Always inside square brackets.",
+    "introducedIn": "07-soql"
+  },
+  "where-clause": {
+    "title": "WHERE clause",
+    "reminder": "Filters SOQL results. Operators: = != > < >= <= LIKE IN. Combine with AND / OR.",
+    "introducedIn": "07-soql"
+  },
+  "soql-limit": {
+    "title": "LIMIT",
+    "reminder": "Caps the number of rows a SOQL query returns. Always include one when you don't need every row.",
+    "introducedIn": "07-soql"
+  },
+  "soql-bind-variable": {
+    "title": "Bind variable",
+    "reminder": "Use :myVar to inject an Apex value into SOQL. NEVER concatenate strings into a query — that's SOQL injection.",
+    "introducedIn": "07-soql"
+  },
+  "relationship-query": {
+    "title": "Relationship query",
+    "reminder": "Walk parent→child via subquery: SELECT (SELECT Email FROM Contacts) FROM Account. Walk child→parent via dot: SELECT Account.Name FROM Contact.",
+    "introducedIn": "07-soql"
+  },
+  "dml-insert": {
+    "title": "insert",
+    "reminder": "DML verb — creates new records and stamps Ids onto your Apex variable.",
+    "introducedIn": "08-dml"
+  },
+  "dml-update": {
+    "title": "update",
+    "reminder": "DML verb — modifies existing records (must already have an Id).",
+    "introducedIn": "08-dml"
+  },
+  "dml-upsert": {
+    "title": "upsert",
+    "reminder": "DML verb — insert OR update based on whether the record matches an Id (or external Id).",
+    "introducedIn": "08-dml"
+  },
+  "dml-delete": {
+    "title": "delete",
+    "reminder": "DML verb — soft-deletes records to the Recycle Bin. undelete brings them back.",
+    "introducedIn": "08-dml"
+  },
+  "bulk-dml": {
+    "title": "Bulk DML",
+    "reminder": "Always DML on a List, not one record at a time. ONE 'insert listOfLeads;' = ONE DML statement (not N).",
+    "introducedIn": "08-dml"
+  },
+  "database-class": {
+    "title": "Database class",
+    "reminder": "Database.insert(records, allOrNone=false) returns SaveResults — partial-success DML for imports.",
+    "introducedIn": "08-dml"
+  },
+  "all-or-none": {
+    "title": "allOrNone",
+    "reminder": "Database DML option. true (default) = whole batch fails on any error. false = save what's valid, return errors per failure.",
+    "introducedIn": "08-dml"
+  },
+  "trigger": {
+    "title": "Trigger",
+    "reminder": "trigger Name on Object (events) { } — Apex code that fires on database events.",
+    "introducedIn": "09-triggers"
+  },
+  "trigger-event": {
+    "title": "Trigger events",
+    "reminder": "before/after × insert/update/delete (+ after undelete). Choose based on whether you need the record's Id and whether you want free DML.",
+    "introducedIn": "09-triggers"
+  },
+  "trigger-context": {
+    "title": "Trigger context",
+    "reminder": "Trigger.new (list of new versions), Trigger.old (old versions), Trigger.newMap / oldMap (keyed by Id), Trigger.isInsert / isBefore / etc.",
+    "introducedIn": "09-triggers"
+  },
+  "trigger-handler-pattern": {
+    "title": "Trigger handler pattern",
+    "reminder": "Best practice: thin trigger delegates ALL logic to a regular Apex class for testability.",
+    "introducedIn": "09-triggers"
+  },
+  "test-annotation": {
+    "title": "@isTest",
+    "reminder": "Marks a class or method as test-only. Test classes don't count toward your code limit.",
+    "introducedIn": "10-tests"
+  },
+  "assert": {
+    "title": "System.assert",
+    "reminder": "System.assert(condition, message) — fails the test if the condition is false.",
+    "introducedIn": "10-tests"
+  },
+  "assert-equals": {
+    "title": "System.assertEquals",
+    "reminder": "System.assertEquals(expected, actual, message) — fails if values differ.",
+    "introducedIn": "10-tests"
+  },
+  "test-startStop": {
+    "title": "Test.startTest / stopTest",
+    "reminder": "Wrap code under test. Resets governor limits at start; forces async to flush at stop.",
+    "introducedIn": "10-tests"
+  },
+  "test-setup": {
+    "title": "@TestSetup",
+    "reminder": "Method that runs once before each test method in the class. Use for shared test data.",
+    "introducedIn": "10-tests"
+  },
+  "try-catch": {
+    "title": "try / catch",
+    "reminder": "try { risky } catch (ExceptionType e) { handle }. Only catch exceptions you can actually handle.",
+    "introducedIn": "10-tests"
+  },
+  "future-annotation": {
+    "title": "@future",
+    "reminder": "Marks a static void method to run async in a separate transaction. Params must be primitives or collections of primitives.",
+    "introducedIn": "12-async"
+  },
+  "interfaces": {
+    "title": "Interface",
+    "reminder": "Pure contract — only method signatures. Classes 'implements' an interface and provide bodies.",
+    "introducedIn": "12-async"
+  },
+  "extends-keyword": {
+    "title": "extends",
+    "reminder": "'class B extends A' — B inherits A's properties and methods. Single inheritance only in Apex.",
+    "introducedIn": "13-oop-pillars"
+  },
+  "virtual-keyword": {
+    "title": "virtual",
+    "reminder": "Modifier on a parent class or method that opts in to being subclassed/overridden.",
+    "introducedIn": "13-oop-pillars"
+  },
+  "override-keyword": {
+    "title": "override",
+    "reminder": "Modifier on a child method explicitly replacing the parent's behavior. Required, not optional.",
+    "introducedIn": "13-oop-pillars"
+  },
+  "abstract-keyword": {
+    "title": "abstract",
+    "reminder": "abstract class can't be instantiated; abstract method has no body and must be overridden by subclasses.",
+    "introducedIn": "13-oop-pillars"
+  },
+  "named-credential": {
+    "title": "Named Credential",
+    "reminder": "Reference 'callout:Name/path' instead of a raw URL. Salesforce expands it and injects auth — no hardcoded secrets.",
+    "introducedIn": "14-apis"
+  },
+  "rest-resource": {
+    "title": "@RestResource",
+    "reminder": "@RestResource(urlMapping='/path/*') exposes an Apex class as a REST endpoint at /services/apexrest/path.",
+    "introducedIn": "14-apis"
+  },
+  "http-method-annotation": {
+    "title": "@HttpGet / @HttpPost",
+    "reminder": "Method annotations inside an @RestResource class — route a verb to a handler method.",
+    "introducedIn": "14-apis"
+  },
+  "ttl": {
+    "title": "TTL",
+    "reminder": "Time To Live — how long a cache entry remains valid before it expires.",
+    "introducedIn": "15-caching"
+  },
+  "aura-enabled-cacheable": {
+    "title": "@AuraEnabled(cacheable=true)",
+    "reminder": "LWC-callable read-only methods marked cacheable=true are cached on the client per-input.",
+    "introducedIn": "15-caching"
   }
 }
