@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Apex Trainer — Lesson</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="lesson-page">
+  <header class="topbar">
+    <div class="brand"><a href="/">Apex Trainer</a></div>
+    <div class="lesson-header">
+      <h1 id="lesson-title">…</h1>
+      <span id="slide-progress" class="slide-progress"></span>
+    </div>
+    <div class="topbar-actions">
+      <a class="btn btn-ghost" href="/">Dashboard</a>
+    </div>
+  </header>
+
+  <main class="lesson-main">
+    <div id="slide-host" class="slide-host"></div>
+  </main>
+
+  <footer class="lesson-footer">
+    <button class="btn" id="prev-btn">← Previous</button>
+    <button class="btn btn-primary" id="next-btn" disabled>Next →</button>
+  </footer>
+
+  <script type="module">
+    import { initLesson } from '/js/app.js';
+    initLesson();
+  </script>
+</body>
+</html>

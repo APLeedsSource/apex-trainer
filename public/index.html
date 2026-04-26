@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Apex Trainer</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="dashboard">
+  <header class="topbar">
+    <div class="brand">Apex Trainer</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" id="resume-btn">Resume</button>
+      <button class="btn btn-primary" id="sync-btn">Sync to GitHub</button>
+    </div>
+  </header>
+
+  <main class="dash-main">
+    <h1 id="user-greeting">Hi —</h1>
+    <p class="lede">Type known patterns. Build muscle memory. Learn Apex line by line.</p>
+
+    <section class="stats-row">
+      <div class="stat"><div class="stat-num" id="stat-keystrokes">0</div><div class="stat-label">Keystrokes</div></div>
+      <div class="stat"><div class="stat-num" id="stat-exercises">0</div><div class="stat-label">Exercises</div></div>
+      <div class="stat"><div class="stat-num" id="stat-time">0m</div><div class="stat-label">Time</div></div>
+      <div class="stat"><div class="stat-num small" id="stat-saved">Never</div><div class="stat-label">Last saved</div></div>
+    </section>
+
+    <h2>Lessons</h2>
+    <section class="lessons-list" id="lessons-list"></section>
+  </main>
+
+  <script type="module">
+    import { initDashboard } from '/js/app.js';
+    initDashboard();
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "userName": "Arthur",
+  "currentLesson": "00-foundations",
+  "currentSlide": 0,
+  "lessonsCompleted": [],
+  "stats": {
+    "totalKeystrokes": 0,
+    "totalTimeSeconds": 0,
+    "exercisesCompleted": 0
+  },
+  "exerciseHistory": [],
+  "weakConcepts": [],
+  "lastSavedAt": null
+}

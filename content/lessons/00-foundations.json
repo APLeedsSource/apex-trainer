@@ -1,0 +1,158 @@
+{
+  "id": "00-foundations",
+  "title": "Lesson 0 — Coding Foundations",
+  "slides": [
+    {
+      "type": "concept",
+      "title": "Welcome — how this game works",
+      "body": [
+        "This game teaches Apex (Salesforce's programming language) by having you TYPE patterns instead of memorizing them. You'll see code in light grey, and you'll type each character. Correct keystrokes turn solid; wrong ones flash red and don't advance.",
+        "Why typing? Because muscle memory is more durable than rote memorization. After typing 'public static void main' fifteen times across different lessons, the words stop feeling abstract — your fingers know them.",
+        "After each line you complete, an explanation appears on the right. Take a second to read it before moving on. There's no time pressure."
+      ],
+      "vocabulary": []
+    },
+    {
+      "type": "concept",
+      "title": "What is code, really?",
+      "body": [
+        "Code is a list of instructions a computer follows top to bottom. Each instruction is called a STATEMENT. Most statements end in a semicolon ; — that's how the computer knows the statement is over.",
+        "A program is built from VARIABLES (named buckets that hold values) and FUNCTIONS (named blocks of instructions you can re-run). Everything else — classes, methods, triggers — is built on top of those two ideas.",
+        "Apex is the language we'll use. It looks a lot like Java. It's TYPED, meaning when you create a variable you must declare what kind of value it will hold (a number? a string of text? a date?). And it's NOT case-sensitive: 'myAge' and 'MyAge' are treated the same — but you should still capitalize consistently."
+      ],
+      "vocabulary": [
+        { "word": "statement", "def": "One instruction in a program, usually one line, usually ending with a semicolon." },
+        { "word": "variable", "def": "A named storage location that holds a value." },
+        { "word": "function", "def": "A reusable block of instructions identified by a name." },
+        { "word": "typed", "def": "The language requires you to declare what kind of value (Integer, String, etc.) each variable holds." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Your very first line of code",
+      "intro": "Every Apex line you write follows similar shapes. Let's start with the absolute simplest: print a message. Type the line below.",
+      "code": "System.debug('Hello, Apex!');",
+      "lineExplanations": [
+        "System.debug() is Apex's built-in way to print a message. 'System' is a class Salesforce gives you for free; 'debug' is a function on it. The text in quotes is what you want printed. The semicolon ; ends the statement."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Anatomy of a variable declaration",
+      "body": [
+        "When you create a variable in Apex, you write three things in order: the TYPE, the NAME, and (optionally) the initial VALUE.",
+        "Example: 'Integer myAge = 30;' — Integer is the type (whole number), myAge is the name (you choose this), 30 is the value, and ; ends the statement.",
+        "Naming convention: variables and functions use camelCase (lowercase first letter, capitalize each subsequent word). Types use PascalCase (capitalize every word). Memorize this — it makes code readable to other developers."
+      ],
+      "vocabulary": [
+        { "word": "type", "def": "What KIND of value a variable holds — Integer, String, Boolean, etc." },
+        { "word": "declaration", "def": "Creating a variable for the first time, with its type and name." },
+        { "word": "value", "def": "The actual data stored — 30, 'hello', true, etc." },
+        { "word": "camelCase", "def": "thisIsCamelCase — first word lowercase, every subsequent word capitalized." },
+        { "word": "PascalCase", "def": "ThisIsPascalCase — every word capitalized, including the first." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Declaring variables of three types",
+      "intro": "Type these three lines. Each declares a variable of a different type. Notice the pattern: TYPE name = value;",
+      "code": "Integer myAge = 30;\nString myName = 'Arthur';\nBoolean isLearning = true;",
+      "lineExplanations": [
+        "Integer is the type for whole numbers (1, 42, -7). 'myAge' is the name (you chose it). 30 is the value. The = sign assigns the value to the variable.",
+        "String is the type for text. Text values must be wrapped in single quotes in Apex (NOT double quotes — that's a common bug from other languages).",
+        "Boolean holds only two possible values: true or false. No quotes — true and false are language keywords, not text."
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "What does this line do?\n\nInteger myAge = 30;",
+      "back": "Declares a variable named myAge of type Integer, and assigns it the value 30.",
+      "detail": "Three parts: TYPE (Integer) · NAME (myAge) · VALUE (30). The = is the assignment operator."
+    },
+    {
+      "type": "quiz",
+      "question": "Which of these is the correct way to write a piece of text in Apex?",
+      "options": [
+        "String greeting = \"Hello\";",
+        "String greeting = 'Hello';",
+        "String greeting = Hello;",
+        "string greeting := 'Hello';"
+      ],
+      "correct": 1,
+      "explanation": "Apex uses SINGLE quotes for strings. Double quotes are not valid for string literals in Apex. The type is also capitalized: String, not string."
+    },
+    {
+      "type": "concept",
+      "title": "Curly braces { } group things together",
+      "body": [
+        "When you see { } in code, they're saying 'the stuff between us belongs together.' Curly braces are used for class bodies, function bodies, loops, and conditional blocks.",
+        "You'll start to recognize the shape: keyword + parentheses + curly braces. For example: 'if (condition) { do this; }' or 'for (int i = 0; i < 10; i++) { repeat this; }'.",
+        "Indentation inside braces is purely for human readability — Apex doesn't care about indentation, but other developers will care a lot. Use it consistently."
+      ],
+      "vocabulary": [
+        { "word": "block", "def": "Code grouped inside { } that runs together as a unit." }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Your first if-statement",
+      "intro": "Conditionals decide which lines to run. Type this. Notice how { } group the lines that should run when the condition is true.",
+      "code": "Integer score = 85;\nif (score >= 60) {\n    System.debug('You passed!');\n}",
+      "lineExplanations": [
+        "Declare an Integer variable named 'score' with value 85.",
+        "if (condition) starts a conditional. The parentheses hold the test: 'is score greater than or equal to 60?'. The { opens the block of code that runs when the test is true.",
+        "This line runs ONLY if the test was true. The four spaces of indentation are for humans — Apex ignores them. The } on the next line closes the if-block.",
+        "The closing curly brace ends the if-block. Anything after this } runs regardless of the score."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "Vocabulary you'll see everywhere",
+      "body": [
+        "Don't worry about memorizing these now — you'll see them in every lesson. This slide is your mental map. We'll keep coming back to it.",
+        "PARAMETER vs ARGUMENT: a parameter is the placeholder a function declares (like 'Decimal speed'). An argument is the actual value you pass when calling it (like 60 in drive(60)). Same thing, different perspectives.",
+        "ATTRIBUTE / PROPERTY / FIELD: all three loosely mean 'a piece of data attached to a thing.' In Apex classes we usually say 'property'. On Salesforce records we say 'field'. They're cousins.",
+        "FUNCTION vs METHOD: technically the same — a reusable block of code with a name. In object-oriented languages like Apex, functions defined inside a class are called methods. Outside any class, they'd be functions. Apex code lives inside classes, so you'll mostly hear 'method'.",
+        "CLASS vs OBJECT vs INSTANCE: a class is the blueprint (like 'Car'). An object (or instance) is one actual thing built from the blueprint (your specific red Honda). Object and instance are interchangeable.",
+        "CONSTRUCTOR: a special method that runs when you create a new instance — sets up its initial state."
+      ],
+      "vocabulary": [
+        { "word": "parameter", "def": "A placeholder a function/method declares — defined where the function is written." },
+        { "word": "argument", "def": "The actual value you pass to a function when calling it." },
+        { "word": "property", "def": "A named piece of data attached to a class instance." },
+        { "word": "field", "def": "A named piece of data on a Salesforce record (an SObject)." },
+        { "word": "method", "def": "A named, reusable block of code defined inside a class." },
+        { "word": "class", "def": "A blueprint that defines what data and methods objects of its kind have." },
+        { "word": "object", "def": "An instance built from a class. Has its own copies of the class's properties." },
+        { "word": "constructor", "def": "Special method that runs when an object is created, used to set initial state." }
+      ]
+    },
+    {
+      "type": "recall",
+      "front": "When the function 'drive(Decimal speed)' is CALLED with drive(60), what is 'speed' and what is '60'?",
+      "back": "'speed' is the PARAMETER. '60' is the ARGUMENT.",
+      "detail": "Parameter = the named slot defined in the function signature. Argument = the actual value supplied when calling the function. Same value, two perspectives."
+    },
+    {
+      "type": "type-along",
+      "title": "Putting it together — a tiny method",
+      "intro": "This is a complete Apex method inside a class. Don't worry about understanding every word yet — type it, and the explanations will tag each line. You'll see this exact shape over and over.",
+      "code": "public class Greeter {\n    public static void sayHello(String name) {\n        System.debug('Hello, ' + name);\n    }\n}",
+      "lineExplanations": [
+        "'public' = anyone can use this class. 'class' = we're defining a class. 'Greeter' = the class name. The { opens the class body — everything inside belongs to this class.",
+        "'public static void sayHello(String name) {' — public (anyone can call it), static (belongs to the class itself, not to an instance), void (this method returns nothing), sayHello (the method name), (String name) (declares a parameter named 'name' of type String), { (opens the method body).",
+        "Inside the method: print 'Hello, ' followed by whatever name was passed in. The + operator joins (concatenates) two strings together.",
+        "This } closes the method body. The next line's } closes the class body. Two closing braces — one for the method, one for the class. Always match opens with closes."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "What's next",
+      "body": [
+        "You just typed your first complete class with a method. Every Apex lesson from here on builds on this same skeleton: 'public class X { public ... method() { ... } }'.",
+        "From here we go into Lesson 1: Data Types & Primitives — every kind of value Apex understands and how to declare each one.",
+        "Click 'Finish lesson' to mark Lesson 0 complete and return to the dashboard. Your progress will be saved automatically. When you're ready, click 'Sync to GitHub' to push it so you can resume on your other Mac."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "apex-trainer",
+  "version": "0.1.0",
+  "description": "Type-to-learn game for Apex & coding fundamentals",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/APLeedsSource/apex-trainer.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
