@@ -4,26 +4,45 @@
   "slides": [
     {
       "type": "concept",
-      "title": "Why async exists",
+      "title": "Sync vs async \u2014 dominoes vs branches",
       "body": [
-        "Synchronous Apex has tight limits (10s CPU, 100 SOQL, no callouts during triggers). Async Apex moves work to the BACKGROUND, gets bigger limits, and unblocks the user.",
-        "Real example: when you click 'Place Order' on Amazon, your page returns instantly \u2014 but the email confirmation, inventory update, and warehouse notification all run async. That's the same pattern Salesforce uses."
+        "Synchronous is a single line of dominoes \u2014 hit the first, they fall in order, each depends on the one before. Pull one out and the rest stop.",
+        "Asynchronous is hitting one domino that branches into multiple parallel paths \u2014 they run independently. Like a phone call (sync) vs a text message (async): you reply when you have time, not in real time."
       ],
-      "vocabulary": [
-        {
-          "word": "asynchronous",
-          "def": "Code that runs later, in the background, on its own schedule. Not blocking the caller."
-        }
-      ]
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
     },
     {
       "type": "concept",
-      "title": "The four flavors",
+      "title": "The five async flavors",
       "body": [
-        "@future \u2014 fire-and-forget, simple but limited. Queueable \u2014 better, chainable, can pass complex objects. Batchable \u2014 for very large data sets (millions of records). Schedulable \u2014 runs on a cron schedule.",
-        "Real example: a nightly data sync uses Schedulable + Batchable. A 'send email after save' uses Queueable. A 'do this thing later' uses @future."
+        "Batch (huge data sets, chunked), Queueable (chained, ordered, modern default), @future (simple fire-and-forget), Schedulable (runs on a cron).",
+        "Plus Platform Events \u2014 fire-and-forget pub/sub. Anyone can subscribe; the publisher doesn't know or care. Five flavors to fit different scenarios."
       ],
-      "vocabulary": []
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
+    },
+    {
+      "type": "concept",
+      "title": "Async runs on interfaces",
+      "body": [
+        "Most async flavors are interfaces Salesforce defines: Batchable, Queueable, Schedulable. You implement the interface; Salesforce calls your methods on its schedule. Like the engine analogy from L10 \u2014 the framework doesn't care WHAT your start/stop methods do, only that they exist.",
+        "The exception is @future \u2014 a method-level annotation, not a class-level interface. Less control, fewer features."
+      ],
+      "vocabulary": [
+        {
+          "word": "interface (recap)",
+          "def": "A contract declaring method signatures without implementing them. Implementing classes promise to provide those methods."
+        }
+      ],
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
     },
     {
       "type": "concept",
@@ -162,54 +181,147 @@
     },
     {
       "type": "type-along",
-      "title": "A batch job skeleton",
-      "intro": "Type this. The shape of every batch job \u2014 start, execute, finish.",
-      "code": "public class AccountBatch implements Database.Batchable<SObject> {\n    public Database.QueryLocator start(Database.BatchableContext ctx) {\n        return Database.getQueryLocator('SELECT Id FROM Account');\n    }\n    public void execute(Database.BatchableContext ctx, List<SObject> scope) {\n        for (SObject s : scope) { System.debug(s.Id); }\n    }\n    public void finish(Database.BatchableContext ctx) {\n        System.debug('Done');\n    }\n}",
+      "title": "Batchable \u2014 DailyRateCreationBatch",
+      "intro": "**Reconstructed from Ari's session \u2014 verify against recording.** For every Contact in Salesforce, create a daily rate record. The kind of batch every multi-tenant SaaS runs at night \u2014 chunked so 500,000 contacts don't blow CPU or governor limits.",
+      "code": "public class DailyRateCreationBatch implements Database.Batchable<SObject> {\n    \n    public String query;\n    \n    public DailyRateCreationBatch(String q) {\n        this.query = q;\n    }\n    \n    public Database.QueryLocator start(Database.BatchableContext bc) {\n        return Database.getQueryLocator(query);\n    }\n    \n    public void execute(Database.BatchableContext bc, List<SObject> scope) {\n        List<Contact> contacts = (List<Contact>) scope;\n        List<Daily_Rate__c> rates = new List<Daily_Rate__c>();\n        for (Contact c : contacts) {\n            Daily_Rate__c rate = new Daily_Rate__c();\n            rate.Contact__c = c.Id;\n            rate.Date__c = Date.today();\n            rate.Rate__c = Math.random() * 10;\n            rates.add(rate);\n        }\n        Database.insert(rates, false);\n    }\n    \n    public void finish(Database.BatchableContext bc) {\n    }\n}",
       "lineExplanations": [
-        "Class implements Database.Batchable<SObject>. The <SObject> is the type of records each chunk holds.",
-        "start() returns the query that drives the batch.",
-        "Database.getQueryLocator wraps a SOQL string; the platform paginates for us.",
+        "Class declaration plus 'implements Database.Batchable<SObject>' \u2014 the contract requiring three methods (start, execute, finish). The <SObject> type parameter says the batch processes generic SObjects.",
+        "Blank.",
+        "Instance field for the SOQL query string. Public so it can be set externally; usually set via the constructor.",
+        "Blank.",
+        "Constructor that takes the query string. Lets callers reuse this batch class for different filters.",
+        "Assign the parameter to the instance field. 'this' disambiguates field from parameter.",
+        "Close the constructor.",
+        "Blank.",
+        "Required method 1 of 3: start. Returns a QueryLocator \u2014 Salesforce's cursor for paging through huge result sets (way past the 50K SOQL row limit).",
+        "Database.getQueryLocator wraps the SOQL string into a QueryLocator. Salesforce will then chunk the results.",
         "Close start.",
-        "execute() runs once per chunk. 'scope' is the chunk (default 200 records).",
-        "Process each record in the chunk.",
+        "Blank.",
+        "Required method 2 of 3: execute. Runs once per chunk. 'scope' is the chunk \u2014 up to 200 records by default. Generic SObject list because the interface doesn't know your concrete type yet.",
+        "Cast the generic SObject list to a typed Contact list \u2014 now we can read first name, last name, account, etc. Fails at RUNTIME if scope isn't actually contacts.",
+        "Build an empty list \u2014 the new Daily_Rate__c records we'll insert at the end.",
+        "Walk every contact in the chunk.",
+        "Construct one Daily_Rate__c per contact, held in memory.",
+        "Set the lookup to the current contact.",
+        "Set today's date \u2014 this record represents 'today's rate.'",
+        "Random rate for demo. Real code would call an external pricing API.",
+        "Append to our to-insert list \u2014 no DML yet.",
+        "Close the loop.",
+        "ONE bulk DML insert per chunk. The 'false' is the all-or-none flag \u2014 partial success allowed.",
         "Close execute.",
-        "finish() runs once after all chunks are done.",
-        "Post-processing.",
-        "Close finish.",
-        "Close class."
+        "Blank.",
+        "Required method 3 of 3: finish. Runs once after ALL chunks. Often used for completion email or to chain another batch.",
+        "Empty for now \u2014 but Salesforce still calls it.",
+        "Close the class."
       ],
       "lineConcepts": [
         [
           "class-vs-object",
-          "interfaces"
-        ],
-        [
-          "method-shape",
+          "interfaces",
           "public-modifier"
         ],
+        [],
         [
-          "return-statement",
-          "static-vs-instance"
+          "public-modifier",
+          "variable-declaration"
         ],
         [],
         [
           "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [],
+        [
+          "method-shape",
+          "database-class"
+        ],
+        [
+          "database-class"
+        ],
+        [],
+        [],
+        [
+          "method-shape",
+          "void",
+          "list-collection",
+          "parameter-vs-argument"
+        ],
+        [
+          "casting",
           "list-collection"
         ],
         [
-          "for-each-loop",
-          "block"
+          "list-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "new-keyword"
         ],
         [],
         [
-          "method-shape"
+          "static-vs-instance"
         ],
         [
-          "string-quotes"
+          "static-vs-instance"
+        ],
+        [],
+        [],
+        [
+          "database-class",
+          "bulk-dml",
+          "all-or-none"
+        ],
+        [],
+        [],
+        [
+          "method-shape",
+          "void"
         ],
         [],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
+    },
+    {
+      "type": "type-along",
+      "title": "Kicking off the batch",
+      "intro": "**Reconstructed from Ari's session \u2014 verify against recording.** Construct your batch class, hand it to Database.executeBatch with a chunk size, then move on. Salesforce takes it from there \u2014 your code is done as soon as the job is queued.",
+      "code": "String soql = 'SELECT Id, Name FROM Contact';\nDailyRateCreationBatch job = new DailyRateCreationBatch(soql);\nId batchId = Database.executeBatch(job, 10);\nSystem.debug('Batch started: ' + batchId);",
+      "lineExplanations": [
+        "Build the SOQL string \u2014 what records to process. Storing it as a variable lets the batch be reused with different filters.",
+        "Construct an instance of the batch class with the query.",
+        "Hand it to Database.executeBatch with a chunk size of 10. Returns the AsyncApexJob Id for tracking.",
+        "Print the Id \u2014 handy for monitoring in Apex Jobs setup, or aborting via System.abortJob(jobId)."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "string-quotes"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "database-class"
+        ],
+        [
+          "string-concat"
+        ]
+      ],
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
     },
     {
       "type": "concept",
@@ -224,6 +336,24 @@
           "def": "Apex interface for jobs that run on a cron schedule."
         }
       ]
+    },
+    {
+      "type": "concept",
+      "title": "Cron expressions",
+      "body": [
+        "Seven space-separated fields: seconds, minutes, hours, day-of-month, month, day-of-week, year (year optional). Plus special characters: * (every), ? (any/no specific value), L (last), / (every N), comma (list), dash (range).",
+        "Examples: '0 0 13 * * ?' fires at 1 PM every day. '0 0 2 ? * 6L' fires at 2 AM the last Friday of every month. '0 0 * * * ?' fires at the top of every hour."
+      ],
+      "vocabulary": [
+        {
+          "word": "cron expression",
+          "def": "A string describing a recurring schedule. Salesforce uses 7-field cron format passed to System.schedule()."
+        }
+      ],
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
     },
     {
       "type": "type-along",
@@ -264,6 +394,36 @@
           "new-keyword"
         ]
       ]
+    },
+    {
+      "type": "concept",
+      "title": "Platform Events \u2014 fire and forget",
+      "body": [
+        "Publishers raise an event ('a thing happened'). Subscribers anywhere \u2014 Apex triggers, Flows, Lightning components, even external systems via CometD \u2014 listen and act. The publisher doesn't know or care who's listening.",
+        "Real example: imagine you shoot a flare into the sky. Anyone for miles can choose to react however they want. Useful when something happens that isn't a database transaction (a screen click, an email send, an integration ping) but other code wants to react."
+      ],
+      "vocabulary": [
+        {
+          "word": "Platform Event",
+          "def": "Salesforce's pub/sub primitive. A custom event type you publish from Apex/Flow; subscribers across Salesforce or external systems handle it asynchronously."
+        }
+      ],
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
+    },
+    {
+      "type": "concept",
+      "title": "Async pitfalls",
+      "body": [
+        "Silent failures \u2014 when async work fails, the originating save still succeeds (by design). Without explicit error logging, you'll never know. Common pattern: log every async failure to an Integration_Log__c custom object so failures are visible.",
+        "Race conditions \u2014 two parallel async paths can finish in any order. If path B assumes path A finished first, you'll get intermittent bugs. Use Queueable chaining (one job enqueues the next) when order matters."
+      ],
+      "source": {
+        "transcript": "GMT20260213-203641_Recording.transcript.vtt",
+        "confidence": "reconstructed"
+      }
     },
     {
       "type": "concept",

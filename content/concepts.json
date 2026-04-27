@@ -353,5 +353,10 @@
     "title": "System.schedule",
     "reminder": "System.schedule(jobName, cronExpression, schedulableInstance) registers a cron-driven Apex job. Returns the CronTrigger Id.",
     "introducedIn": "11-async"
+  },
+  "casting": {
+    "title": "Casting",
+    "reminder": "(NewType) value tells the compiler 'treat this as NewType for now.' Common with SObject lists: (List<Contact>) scope. Fails at runtime if the value isn't actually that type.",
+    "introducedIn": "11-async"
   }
 }
