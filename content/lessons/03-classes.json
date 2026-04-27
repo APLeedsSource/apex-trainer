@@ -389,27 +389,32 @@
     },
     {
       "type": "type-along",
-      "title": "Capstone: Account Summary class",
-      "intro": "Sales reps want a one-line pitch summary built from any Account they open. Build an AccountSummary class with a constructor, an instance method, and a static factory \u2014 the kind of helper every Salesforce org has dozens of for triggers, screen flows, and Agentforce actions.",
-      "code": "public class AccountSummary {\n    public String name;\n    public Decimal revenue;\n    public AccountSummary(Account a) {\n        this.name = a.Name;\n        this.revenue = a.AnnualRevenue;\n    }\n    public String pitch() {\n        return name + ' ($' + revenue + ')';\n    }\n    public static AccountSummary fromAccount(Account a) {\n        return new AccountSummary(a);\n    }\n}\nAccount a = new Account(Name='Acme', AnnualRevenue=1000000);\nAccountSummary s = AccountSummary.fromAccount(a);\nSystem.debug(s.pitch());",
+      "title": "Capstone: Automobile and CarBuilder",
+      "intro": "Ari's live example. The Automobile class is the factory blueprint \u2014 static constants for color options, instance properties for what THIS car is, an instance method for what it can do. The CarBuilder class consumes Automobile to build a red sedan and take it for a test drive.",
+      "code": "public class Automobile {\n    public static final String OPTION_COLOR_RED = 'red';\n    public static final String OPTION_COLOR_WHITE = 'white';\n    public String color;\n    public Integer numberOfDoors;\n    public void drive(Decimal speed) {\n        System.debug('Driving at ' + speed + ' mph');\n    }\n}\n\npublic class CarBuilder {\n    public Automobile buildRedSedan() {\n        Automobile redSedan = new Automobile();\n        redSedan.color = Automobile.OPTION_COLOR_RED;\n        redSedan.numberOfDoors = 4;\n        redSedan.drive(60);\n        return redSedan;\n    }\n}\n\nCarBuilder builder = new CarBuilder();\nAutomobile myCar = builder.buildRedSedan();",
       "lineExplanations": [
-        "Declare a public class named AccountSummary \u2014 the wrapper we're building.",
-        "Property to hold the account's name. Public so callers can read it directly.",
-        "Property for revenue. Decimal (not Double) because financial values demand exact precision.",
-        "Constructor takes an Account SObject \u2014 the most common Apex pattern for wrapping a record.",
-        "Pull the Name field off the Account onto our property. 'this' disambiguates the property from any local variable.",
-        "Same for AnnualRevenue.",
-        "Close the constructor.",
-        "An instance method that produces the pitch string. Returns a String.",
-        "Concatenate the formatted pitch and return it. + on Strings joins them.",
-        "Close the pitch method.",
-        "A static factory method \u2014 call without an instance. Common alternative to direct 'new Class(...)' usage.",
-        "Inside the factory, just construct and return.",
-        "Close the factory method.",
-        "Close the class body. Two opens (constructor + class) needed two closes.",
-        "Now USE the class. Construct an in-memory Account with Name and AnnualRevenue set via constructor shorthand.",
-        "Call the static factory to wrap the Account in an AccountSummary instance.",
-        "Call the instance method on s and print the result. This is what a downstream trigger or LWC would render."
+        "The Automobile class \u2014 the blueprint. Its static items belong to the factory; instance items belong to each car built.",
+        "Static final = a constant on the class itself, not on any instance. Convention: ALL_CAPS for constants.",
+        "Second color option.",
+        "Instance field \u2014 every Automobile gets its own color value.",
+        "Instance field \u2014 number of doors.",
+        "Instance method \u2014 what an Automobile can DO. Takes a Decimal speed.",
+        "Method body. In real code this would actually move the car.",
+        "Close the drive method.",
+        "Close the Automobile class.",
+        "Blank.",
+        "CarBuilder consumes Automobile. Returns a fully-constructed instance.",
+        "buildRedSedan returns an Automobile (its declared return type).",
+        "Construct a brand-new Automobile in memory.",
+        "Set its color via the static constant \u2014 guarantees we used a valid color.",
+        "Set the door count.",
+        "Take it for a test drive at 60 mph.",
+        "Hand the constructed car back to the caller.",
+        "Close buildRedSedan.",
+        "Close CarBuilder.",
+        "Blank.",
+        "Now use it. Construct a CarBuilder.",
+        "Call buildRedSedan; receive a fully-built Automobile."
       ],
       "lineConcepts": [
         [
@@ -417,36 +422,49 @@
           "public-modifier"
         ],
         [
+          "static-vs-instance",
+          "string-quotes"
+        ],
+        [
+          "static-vs-instance",
+          "string-quotes"
+        ],
+        [
           "variable-declaration"
         ],
         [
-          "decimal-vs-double"
+          "variable-declaration"
         ],
         [
           "method-shape",
+          "void",
           "parameter-vs-argument"
         ],
         [
-          "this-keyword"
-        ],
-        [],
-        [],
-        [
-          "method-shape"
-        ],
-        [
-          "return-statement",
           "string-concat"
         ],
         [],
+        [],
+        [],
         [
-          "static-vs-instance",
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
           "method-shape"
         ],
         [
-          "new-keyword",
+          "new-keyword"
+        ],
+        [
+          "static-vs-instance"
+        ],
+        [],
+        [],
+        [
           "return-statement"
         ],
+        [],
         [],
         [],
         [
@@ -454,11 +472,12 @@
         ],
         [
           "static-vs-instance"
-        ],
-        [
-          "method-shape"
         ]
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20251121-204155_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "concept",

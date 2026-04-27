@@ -11,7 +11,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
@@ -23,7 +23,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
@@ -41,7 +41,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
@@ -182,7 +182,7 @@
     {
       "type": "type-along",
       "title": "Batchable \u2014 DailyRateCreationBatch",
-      "intro": "**Reconstructed from Ari's session \u2014 verify against recording.** For every Contact in Salesforce, create a daily rate record. The kind of batch every multi-tenant SaaS runs at night \u2014 chunked so 500,000 contacts don't blow CPU or governor limits.",
+      "intro": "For every Contact in Salesforce, create a daily rate record. The kind of batch every multi-tenant SaaS runs at night \u2014 chunked so 500,000 contacts don't blow CPU or governor limits.",
       "code": "public class DailyRateCreationBatch implements Database.Batchable<SObject> {\n    \n    public String query;\n    \n    public DailyRateCreationBatch(String q) {\n        this.query = q;\n    }\n    \n    public Database.QueryLocator start(Database.BatchableContext bc) {\n        return Database.getQueryLocator(query);\n    }\n    \n    public void execute(Database.BatchableContext bc, List<SObject> scope) {\n        List<Contact> contacts = (List<Contact>) scope;\n        List<Daily_Rate__c> rates = new List<Daily_Rate__c>();\n        for (Contact c : contacts) {\n            Daily_Rate__c rate = new Daily_Rate__c();\n            rate.Contact__c = c.Id;\n            rate.Date__c = Date.today();\n            rate.Rate__c = Math.random() * 10;\n            rates.add(rate);\n        }\n        Database.insert(rates, false);\n    }\n    \n    public void finish(Database.BatchableContext bc) {\n    }\n}",
       "lineExplanations": [
         "Class declaration plus 'implements Database.Batchable<SObject>' \u2014 the contract requiring three methods (start, execute, finish). The <SObject> type parameter says the batch processes generic SObjects.",
@@ -289,13 +289,13 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
       "type": "type-along",
       "title": "Kicking off the batch",
-      "intro": "**Reconstructed from Ari's session \u2014 verify against recording.** Construct your batch class, hand it to Database.executeBatch with a chunk size, then move on. Salesforce takes it from there \u2014 your code is done as soon as the job is queued.",
+      "intro": "Construct your batch class, hand it to Database.executeBatch with a chunk size, then move on. Salesforce takes it from there \u2014 your code is done as soon as the job is queued.",
       "code": "String soql = 'SELECT Id, Name FROM Contact';\nDailyRateCreationBatch job = new DailyRateCreationBatch(soql);\nId batchId = Database.executeBatch(job, 10);\nSystem.debug('Batch started: ' + batchId);",
       "lineExplanations": [
         "Build the SOQL string \u2014 what records to process. Storing it as a variable lets the batch be reused with different filters.",
@@ -320,7 +320,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
@@ -352,7 +352,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
@@ -410,7 +410,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {
@@ -422,7 +422,7 @@
       ],
       "source": {
         "transcript": "GMT20260213-203641_Recording.transcript.vtt",
-        "confidence": "reconstructed"
+        "confidence": "verified"
       }
     },
     {

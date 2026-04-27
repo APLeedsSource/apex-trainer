@@ -1,13 +1,13 @@
 {
   "id": "09-triggers",
-  "title": "Lesson 9 — Triggers",
+  "title": "Lesson 9 \u2014 Triggers",
   "slides": [
     {
       "type": "concept",
       "title": "What a trigger is",
       "body": [
         "A trigger is Apex code that runs AUTOMATICALLY when records are inserted, updated, or deleted on a specific object.",
-        "Real example: 'when a new Lead is created, auto-assign it to a sales rep' — that's a trigger. Slack's 'when someone reacts to a message, send a notification' is the same pattern in their codebase."
+        "Real example: 'when a new Lead is created, auto-assign it to a sales rep' \u2014 that's a trigger. Slack's 'when someone reacts to a message, send a notification' is the same pattern in their codebase."
       ],
       "vocabulary": [
         {
@@ -33,7 +33,7 @@
       "lineExplanations": [
         "Declare the trigger. Name = AccountTrigger. Object = Account. Events = before insert and before update.",
         "Trigger.new is a List of the records being processed. Always loop it.",
-        "Mutate a field on each record. In a 'before' context, this change gets persisted automatically — no DML needed.",
+        "Mutate a field on each record. In a 'before' context, this change gets persisted automatically \u2014 no DML needed.",
         "Close loop. Close trigger."
       ],
       "lineConcepts": [
@@ -74,8 +74,8 @@
       "type": "concept",
       "title": "Trigger context variables",
       "body": [
-        "Trigger.new — list of new versions of records. Trigger.old — list of old versions (update/delete only). Trigger.newMap and oldMap — same data keyed by Id for fast lookup.",
-        "Trigger.isInsert / isUpdate / isDelete / isBefore / isAfter — booleans telling you which event fired."
+        "Trigger.new \u2014 list of new versions of records. Trigger.old \u2014 list of old versions (update/delete only). Trigger.newMap and oldMap \u2014 same data keyed by Id for fast lookup.",
+        "Trigger.isInsert / isUpdate / isDelete / isBefore / isAfter \u2014 booleans telling you which event fired."
       ],
       "vocabulary": [
         {
@@ -91,15 +91,17 @@
     {
       "type": "type-along",
       "title": "Detecting a field change",
-      "intro": "Type this. Compare new vs old to see what changed.",
-      "code": "trigger LeadTrigger on Lead (before update) {\n    for (Lead l : Trigger.new) {\n        Lead old = Trigger.oldMap.get(l.Id);\n        if (l.Status != old.Status) {\n            System.debug('Status changed for ' + l.Id);\n        }\n    }\n}",
+      "intro": "Ari's classic before-update pattern: when an Account's ShippingState changes, copy it to BillingState. Compare Trigger.new (incoming) against Trigger.oldMap (current DB) to detect the change \u2014 no DML needed because we're modifying records that haven't been saved yet.",
+      "code": "trigger AccountTrigger on Account (before update) {\n    for (Account acct : Trigger.new) {\n        Account oldAccount = Trigger.oldMap.get(acct.Id);\n        if (acct.ShippingState != oldAccount.ShippingState) {\n            acct.BillingState = acct.ShippingState;\n        }\n    }\n}",
       "lineExplanations": [
-        "Trigger on Lead before update.",
-        "Loop the new versions.",
-        "Look up the OLD version of the same record from oldMap.",
-        "Compare new Status vs old Status.",
-        "Logic that fires only when this specific field changed.",
-        "Closes."
+        "Trigger declaration on Account, before update only.",
+        "Loop the new (incoming) versions of each record.",
+        "Look up the OLD version from Trigger.oldMap by Id. Updates always have both.",
+        "Field-change check \u2014 was ShippingState modified?",
+        "Assign BillingState to match. NO 'update' call needed \u2014 we're in BEFORE, the save hasn't happened yet.",
+        "Close the if.",
+        "Close the loop.",
+        "Close the trigger."
       ],
       "lineConcepts": [
         [
@@ -107,22 +109,25 @@
           "trigger-event"
         ],
         [
-          "trigger-context",
-          "for-each-loop"
+          "for-each-loop",
+          "trigger-context"
         ],
         [
-          "map-collection"
+          "map-collection",
+          "trigger-context"
         ],
         [
           "block"
         ],
-        [
-          "string-concat"
-        ],
+        [],
         [],
         [],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20260130-205016_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "concept",
@@ -135,9 +140,9 @@
     },
     {
       "type": "concept",
-      "title": "Bulkification — the rescue",
+      "title": "Bulkification \u2014 the rescue",
       "body": [
-        "Pattern: collect Ids in the loop → ONE query AFTER the loop → second loop processes the queried data.",
+        "Pattern: collect Ids in the loop \u2192 ONE query AFTER the loop \u2192 second loop processes the queried data.",
         "Real example: this is the same pattern any high-throughput pipeline uses. Stripe's webhook handlers fan out IDs, batch-fetch related data, then process."
       ],
       "vocabulary": [
@@ -150,21 +155,28 @@
     {
       "type": "type-along",
       "title": "Bulkified pattern",
-      "intro": "Type this. Collect ids first, then one query, then one DML.",
-      "code": "trigger ContactTrigger on Contact (after insert) {\n    Set<Id> acctIds = new Set<Id>();\n    for (Contact c : Trigger.new) {\n        if (c.AccountId != null) { acctIds.add(c.AccountId); }\n    }\n    List<Account> toUpdate = [SELECT Id FROM Account WHERE Id IN :acctIds];\n    update toUpdate;\n}",
+      "intro": "Ari's grouping pattern. We need to update every contact's MailingState whenever its parent Account's BillingState changes. Naive code does a SOQL inside a loop \u2014 ~50,000 checks for 100 accounts \u00d7 500 contacts. The fix: query once, group by AccountId in a Map<Id, List<Contact>>, then process per-account.",
+      "code": "Set<Id> accountIds = new Set<Id>();\nfor (Account acct : accounts) {\n    accountIds.add(acct.Id);\n}\n\nMap<Id, List<Contact>> accountIdToContacts = new Map<Id, List<Contact>>();\nList<Contact> contacts = [\n    SELECT Id, MailingState, AccountId\n    FROM Contact\n    WHERE AccountId IN :accountIds\n];\nfor (Contact con : contacts) {\n    if (!accountIdToContacts.containsKey(con.AccountId)) {\n        accountIdToContacts.put(con.AccountId, new List<Contact>());\n    }\n    accountIdToContacts.get(con.AccountId).add(con);\n}",
       "lineExplanations": [
-        "Trigger on Contact after insert.",
-        "Set to collect parent Account ids — Set dedupes.",
-        "First pass: walk Contacts, collect parent ids.",
-        "Skip nulls; otherwise add the AccountId to the set.",
-        "Close first loop.",
-        "ONE SOQL query after the loop using IN :acctIds bind.",
-        "ONE DML update after the loop."
+        "Set of account ids \u2014 Set dedupes and gives O(1) IN-clause performance.",
+        "Loop the accounts being processed.",
+        "Add the id. Set silently ignores duplicates.",
+        "Close.",
+        "Blank.",
+        "The grouping map: AccountId \u2192 List<Contact> belonging to that account.",
+        "ONE query for ALL contacts of these accounts. Bulkified \u2014 one round trip.",
+        "Pull the fields we need.",
+        "FROM Contact.",
+        "IN :accountIds \u2014 the bulk filter.",
+        "Close the SOQL.",
+        "Now group the flat result list by AccountId.",
+        "First time we've seen this AccountId? Initialize an empty list for it.",
+        "put a fresh empty list under this AccountId key.",
+        "Close the if.",
+        "Append the contact to its account's list. Now lookup-by-account is O(1) instead of a re-scan.",
+        "Close."
       ],
       "lineConcepts": [
-        [
-          "trigger"
-        ],
         [
           "set-collection",
           "new-keyword"
@@ -172,26 +184,45 @@
         [
           "for-each-loop"
         ],
+        [],
+        [],
+        [],
+        [
+          "map-collection",
+          "new-keyword"
+        ],
+        [
+          "soql"
+        ],
+        [],
+        [],
+        [
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
         [
           "block"
         ],
         [],
-        [
-          "soql",
-          "soql-bind-variable"
-        ],
-        [
-          "dml-update"
-        ],
+        [],
+        [],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20260130-205016_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "concept",
       "title": "One trigger per object (best practice)",
       "body": [
         "Define ONE trigger per SObject; let it call a separate Handler class for the actual logic. Keeps order-of-execution predictable and code testable.",
-        "Real example: every well-architected Salesforce org has AccountTriggerHandler, ContactTriggerHandler, etc. — thin trigger files dispatching to plain Apex classes."
+        "Real example: every well-architected Salesforce org has AccountTriggerHandler, ContactTriggerHandler, etc. \u2014 thin trigger files dispatching to plain Apex classes."
       ],
       "vocabulary": [
         {
@@ -203,27 +234,101 @@
     {
       "type": "type-along",
       "title": "Handler delegation",
-      "intro": "Type this. The trigger is one line per event; the handler does the work.",
-      "code": "trigger AccountTrigger on Account (after insert, after update) {\n    if (Trigger.isInsert) { AccountTriggerHandler.afterInsert(Trigger.new); }\n    if (Trigger.isUpdate) { AccountTriggerHandler.afterUpdate(Trigger.new, Trigger.oldMap); }\n}",
+      "intro": "Ari's pattern: the trigger itself is thin \u2014 it just dispatches by event to a handler class. The handler holds the logic, which keeps it testable as plain Apex (no trigger context needed) and reusable from anywhere.",
+      "code": "trigger AccountTrigger on Account (before insert, before update, after insert, after update) {\n    if (Trigger.isBefore) {\n        AccountTriggerHandler.handleBeforeTrigger(Trigger.new, Trigger.oldMap);\n    } else if (Trigger.isAfter) {\n        AccountTriggerHandler.handleAfterTrigger(Trigger.new, Trigger.oldMap);\n    }\n}\n\npublic class AccountTriggerHandler {\n    public static void handleBeforeTrigger(List<Account> accounts, Map<Id, Account> oldMap) {\n        matchBillingToShipping(accounts, oldMap);\n    }\n    public static void handleAfterTrigger(List<Account> accounts, Map<Id, Account> oldMap) {\n        // post-DML logic \u2014 updating related contacts, async jobs, etc.\n    }\n    public static void matchBillingToShipping(List<Account> accounts, Map<Id, Account> oldMap) {\n        for (Account acct : accounts) {\n            Account oldAcct = oldMap.get(acct.Id);\n            if (acct.ShippingState != oldAcct.ShippingState) {\n                acct.BillingState = acct.ShippingState;\n            }\n        }\n    }\n}",
       "lineExplanations": [
-        "Trigger declaration.",
-        "Branch on isInsert; delegate the records to a static handler method.",
-        "Branch on isUpdate; pass new + oldMap so the handler can detect changes.",
-        "Close trigger."
+        "Trigger on Account listening to all four events.",
+        "Dispatch by phase \u2014 BEFORE first.",
+        "Hand control to the handler. The trigger doesn't know what the handler does, just that it exists.",
+        "Otherwise, AFTER phase.",
+        "Different handler method for after-DML work.",
+        "Close.",
+        "Close the trigger.",
+        "Blank.",
+        "Handler class \u2014 plain Apex, testable without any trigger context.",
+        "BEFORE handler. Takes the same arguments the trigger has.",
+        "Delegate to the specific business rule.",
+        "Close.",
+        "AFTER handler \u2014 placeholder for post-DML logic.",
+        "Comment shows what would go here.",
+        "Close.",
+        "Specific business rule \u2014 match BillingState to ShippingState on change.",
+        "Loop the accounts.",
+        "Look up the old version.",
+        "Detect the change.",
+        "Apply the change.",
+        "Close the if.",
+        "Close the loop.",
+        "Close the method.",
+        "Close the class."
       ],
       "lineConcepts": [
         [
-          "trigger"
+          "trigger",
+          "trigger-event"
         ],
         [
-          "trigger-context",
+          "block",
+          "trigger-context"
+        ],
+        [
+          "static-vs-instance",
+          "trigger-context"
+        ],
+        [
+          "block",
+          "trigger-context"
+        ],
+        [
+          "static-vs-instance",
+          "trigger-context"
+        ],
+        [],
+        [],
+        [],
+        [
+          "class-vs-object",
+          "trigger-handler-pattern"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "list-collection",
+          "map-collection"
+        ],
+        [
           "static-vs-instance"
+        ],
+        [],
+        [
+          "method-shape",
+          "static-vs-instance"
+        ],
+        [],
+        [],
+        [
+          "method-shape",
+          "static-vs-instance"
+        ],
+        [
+          "for-each-loop"
         ],
         [
           "map-collection"
         ],
+        [
+          "block"
+        ],
+        [],
+        [],
+        [],
+        [],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20260130-205016_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "recall",
@@ -235,34 +340,34 @@
       "type": "quiz",
       "question": "You need to default a Lead's Source field to 'Web' when it has no value. Which trigger event?",
       "options": [
-        "after insert — record is committed.",
-        "before insert — mutate Trigger.new and the change persists with no extra DML.",
-        "after update — too late.",
-        "before delete — wrong event entirely."
+        "after insert \u2014 record is committed.",
+        "before insert \u2014 mutate Trigger.new and the change persists with no extra DML.",
+        "after update \u2014 too late.",
+        "before delete \u2014 wrong event entirely."
       ],
       "correct": 1,
-      "explanation": "before insert. Set the field on Trigger.new and Salesforce persists the change as part of the insert — no DML needed, no governor-limit cost."
+      "explanation": "before insert. Set the field on Trigger.new and Salesforce persists the change as part of the insert \u2014 no DML needed, no governor-limit cost."
     },
     {
       "type": "type-along",
       "title": "Capstone: Bulkified Case trigger",
-      "intro": "When Cases come in, we want to default Priority='Medium' if blank AND queue an async Slack notification — but the trigger can fire on up to 200 records. Build a bulkified trigger that handles before-insert defaults synchronously and queues the slow notification job for after-insert.",
+      "intro": "When Cases come in, we want to default Priority='Medium' if blank AND queue an async Slack notification \u2014 but the trigger can fire on up to 200 records. Build a bulkified trigger that handles before-insert defaults synchronously and queues the slow notification job for after-insert.",
       "code": "trigger CaseTrigger on Case (before insert, after insert) {\n    if (Trigger.isBefore && Trigger.isInsert) {\n        for (Case c : Trigger.new) {\n            if (c.Priority == null) {\n                c.Priority = 'Medium';\n            }\n        }\n    }\n    if (Trigger.isAfter && Trigger.isInsert) {\n        Set<Id> caseIds = new Set<Id>();\n        for (Case c : Trigger.new) {\n            caseIds.add(c.Id);\n        }\n        System.enqueueJob(new CaseNotificationJob(caseIds));\n    }\n}",
       "lineExplanations": [
         "Trigger declaration: name, object, two events.",
-        "Before-insert branch — for field defaulting (no DML cost; mutations to Trigger.new persist for free).",
+        "Before-insert branch \u2014 for field defaulting (no DML cost; mutations to Trigger.new persist for free).",
         "Walk the new Cases.",
         "Only set the default if the user didn't supply one.",
         "Set Priority. The change persists automatically as part of the insert.",
         "Close the if.",
         "Close the loop.",
         "Close the before-insert branch.",
-        "After-insert branch — runs once records have Ids.",
-        "Set to collect the new ids — Set deduplicates if the same Id ever shows up twice.",
+        "After-insert branch \u2014 runs once records have Ids.",
+        "Set to collect the new ids \u2014 Set deduplicates if the same Id ever shows up twice.",
         "Walk the new Cases.",
         "Add each id to the set.",
         "Close the loop.",
-        "Enqueue ONE Queueable holding all 200 ids — the work runs async, off the critical path of the user's save.",
+        "Enqueue ONE Queueable holding all 200 ids \u2014 the work runs async, off the critical path of the user's save.",
         "Close the after-insert branch.",
         "Close the trigger."
       ],
@@ -314,7 +419,7 @@
       "title": "What you now know",
       "body": [
         "Trigger anatomy, before vs after, context variables, bulkification, and the handler-delegation pattern.",
-        "Next: Inheritance, Polymorphism & Interfaces — the OOP pillars that let classes extend, override, and substitute for one another."
+        "Next: Inheritance, Polymorphism & Interfaces \u2014 the OOP pillars that let classes extend, override, and substitute for one another."
       ]
     }
   ]

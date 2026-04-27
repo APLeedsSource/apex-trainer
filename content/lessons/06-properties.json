@@ -1,13 +1,13 @@
 {
   "id": "06-properties",
-  "title": "Lesson 6 — Properties (Getters & Setters)",
+  "title": "Lesson 6 \u2014 Properties (Getters & Setters)",
   "slides": [
     {
       "type": "concept",
       "title": "What a property really is",
       "body": [
         "A property looks like a variable from outside the class but secretly runs code when read or written.",
-        "Real example: Salesforce's standard Account.Name field — when you read or write it, validation, audit logging, and indexing all happen behind the scenes. It LOOKS like a simple field but it's a property with hidden machinery."
+        "Real example: Salesforce's standard Account.Name field \u2014 when you read or write it, validation, audit logging, and indexing all happen behind the scenes. It LOOKS like a simple field but it's a property with hidden machinery."
       ],
       "vocabulary": [
         {
@@ -16,17 +16,17 @@
         },
         {
           "word": "getter",
-          "def": "The 'get' block of a property — runs when something reads the value."
+          "def": "The 'get' block of a property \u2014 runs when something reads the value."
         },
         {
           "word": "setter",
-          "def": "The 'set' block of a property — runs when something writes a new value."
+          "def": "The 'set' block of a property \u2014 runs when something writes a new value."
         }
       ]
     },
     {
       "type": "concept",
-      "title": "Auto-properties — get; set;",
+      "title": "Auto-properties \u2014 get; set;",
       "body": [
         "When you don't need any custom logic, use the shorthand: { get; set; }. Apex auto-generates trivial getter and setter for you.",
         "This is what 99% of properties look like in real Apex code. You only write custom getter/setter when you need validation, lazy loading, or computation."
@@ -62,9 +62,9 @@
       "code": "User u = new User();\nu.name = 'Arthur';\nu.age = 35;\nSystem.debug(u.name);",
       "lineExplanations": [
         "Construct.",
-        "Write to .name — the auto-generated setter stores the value.",
-        "Write to .age — same pattern.",
-        "Read .name — the auto-generated getter returns the stored value."
+        "Write to .name \u2014 the auto-generated setter stores the value.",
+        "Write to .age \u2014 same pattern.",
+        "Read .name \u2014 the auto-generated getter returns the stored value."
       ],
       "lineConcepts": [
         [
@@ -93,7 +93,7 @@
       "code": "public class Order {\n    public String id { get; private set; }\n    public Order(String orderId) {\n        this.id = orderId;\n    }\n}",
       "lineExplanations": [
         "Class.",
-        "id has a public get and a PRIVATE set — only this class can assign it.",
+        "id has a public get and a PRIVATE set \u2014 only this class can assign it.",
         "Constructor takes an orderId.",
         "Inside the class, we can write to id (private set is reachable). 'this' refers to the current instance.",
         "Method and class close."
@@ -129,25 +129,46 @@
     {
       "type": "type-along",
       "title": "Setter that validates",
-      "intro": "Type this. The setter normalizes email input.",
-      "code": "public class Person {\n    private String emailValue;\n    public String email {\n        get { return emailValue; }\n        set { emailValue = value.toLowerCase().trim(); }\n    }\n}",
+      "intro": "Ari's color-validation example. The class accepts only RED or WHITE. Any other value silently falls back to WHITE \u2014 the property's setter enforces the invariant so callers can't store bogus state.",
+      "code": "public class Automobile {\n    public static final String OPTION_COLOR_RED = 'red';\n    public static final String OPTION_COLOR_WHITE = 'white';\n    private String colorValue;\n    public String color {\n        get { return colorValue; }\n        set {\n            if (value == OPTION_COLOR_RED || value == OPTION_COLOR_WHITE) {\n                colorValue = value;\n            } else {\n                colorValue = OPTION_COLOR_WHITE;\n            }\n        }\n    }\n}\n\nAutomobile car = new Automobile();\ncar.color = 'green';\nSystem.debug(car.color);",
       "lineExplanations": [
-        "Class.",
-        "Backing field — holds the actual value. private so callers can't bypass the property.",
-        "Property declaration starts.",
-        "Custom getter — just returns the backing field.",
-        "Custom setter — 'value' is a magic name for the incoming assignment. We normalize before storing.",
-        "Property and class close."
+        "Class declaration.",
+        "Static constant for the red option.",
+        "Static constant for the white option.",
+        "Private backing field \u2014 the actual storage. The property reads/writes this.",
+        "Public property named 'color' \u2014 looks like a field from outside, but has logic inside.",
+        "Getter \u2014 runs whenever someone READS car.color. Just return the backing field.",
+        "Setter \u2014 runs whenever someone ASSIGNS to car.color. The implicit 'value' is what they passed.",
+        "Validate: is the new value one of our acceptable options?",
+        "If yes, accept it.",
+        "If no, fall back.",
+        "Default to white when an invalid value comes in. Silent fallback \u2014 no exception.",
+        "Close the else.",
+        "Close the setter.",
+        "Close the property.",
+        "Close the class.",
+        "Blank.",
+        "Construct an Automobile.",
+        "Try to assign 'green'. The setter rejects it and falls back to white.",
+        "Reading the property runs the getter. Prints 'white' even though we set 'green'."
       ],
       "lineConcepts": [
         [
-          "class-vs-object"
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "static-vs-instance"
+        ],
+        [
+          "static-vs-instance"
         ],
         [
           "private-modifier",
           "variable-declaration"
         ],
         [
+          "public-modifier",
           "auto-property"
         ],
         [
@@ -157,15 +178,33 @@
         [
           "custom-setter"
         ],
+        [
+          "block"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+          "new-keyword"
+        ],
         [],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20251205-203154_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "concept",
       "title": "Computed (lazy) properties",
       "body": [
-        "A getter can compute its value on the fly — no backing field needed at all. Useful when the value is derived from other data.",
+        "A getter can compute its value on the fly \u2014 no backing field needed at all. Useful when the value is derived from other data.",
         "Real example: an Order's totalAmount might compute from a list of line items each time it's read. No risk of the cache going stale."
       ],
       "vocabulary": []
@@ -173,14 +212,14 @@
     {
       "type": "type-along",
       "title": "Computed property",
-      "intro": "Type this. fullName has no backing field — the getter computes from firstName and lastName.",
+      "intro": "Type this. fullName has no backing field \u2014 the getter computes from firstName and lastName.",
       "code": "public class Person {\n    public String firstName { get; set; }\n    public String lastName { get; set; }\n    public String fullName {\n        get { return firstName + ' ' + lastName; }\n    }\n}",
       "lineExplanations": [
         "Class.",
         "Auto-property firstName.",
         "Auto-property lastName.",
         "Read-only computed property fullName starts.",
-        "Custom getter computes from the two fields. No setter — fullName is purely derived.",
+        "Custom getter computes from the two fields. No setter \u2014 fullName is purely derived.",
         "Property and class close."
       ],
       "lineConcepts": [
@@ -204,7 +243,7 @@
       "type": "recall",
       "front": "Why use a property instead of just a public field?",
       "back": "Properties let you add validation, computation, or access control LATER without breaking the callers that read or write 'obj.field' syntax.",
-      "detail": "Public fields are a one-way door. Properties are a hinge — same call site, swappable backing logic."
+      "detail": "Public fields are a one-way door. Properties are a hinge \u2014 same call site, swappable backing logic."
     },
     {
       "type": "quiz",
@@ -225,7 +264,7 @@
       "code": "public class Order {\n    private String emailValue;\n    public String customerEmail {\n        get { return emailValue; }\n        set {\n            emailValue = value;\n            if (emailValue != null) emailValue = emailValue.toLowerCase().trim();\n        }\n    }\n    public Decimal subtotal { get; set; }\n    public Decimal taxRate { get; set; }\n    public Decimal total {\n        get { return subtotal + (subtotal * taxRate); }\n    }\n}\nOrder o = new Order();\no.customerEmail = '  ARTHUR@LEEDSSOURCE.COM  ';\no.subtotal = 100;\no.taxRate = 0.08;\nSystem.debug(o.customerEmail);\nSystem.debug(o.total);",
       "lineExplanations": [
         "Declare the Order class.",
-        "Backing field for the normalized email — private so callers can't bypass the property.",
+        "Backing field for the normalized email \u2014 private so callers can't bypass the property.",
         "Public property with custom getter and setter.",
         "Getter just returns the backing field.",
         "Setter starts.",
@@ -233,14 +272,14 @@
         "If non-null, normalize: lowercase + strip whitespace.",
         "Close the setter.",
         "Close the customerEmail property.",
-        "Auto-property — Apex generates trivial get/set for simple values.",
+        "Auto-property \u2014 Apex generates trivial get/set for simple values.",
         "Same pattern for tax rate.",
-        "Computed read-only property — no backing field needed.",
+        "Computed read-only property \u2014 no backing field needed.",
         "Getter computes on every read; never stale because the inputs are read fresh each time.",
         "Close the total property.",
         "Close the class.",
         "Construct an order to demo the properties.",
-        "Set the email — note the messy whitespace and uppercase. The setter will clean it.",
+        "Set the email \u2014 note the messy whitespace and uppercase. The setter will clean it.",
         "Set subtotal.",
         "Set tax rate.",
         "Print: 'arthur@leedssource.com' (normalized).",
@@ -301,7 +340,7 @@
       "title": "What you now know",
       "body": [
         "Auto-properties, read-only properties, custom getter/setter for validation, and computed properties.",
-        "Next: SOQL — how Apex reads data from the Salesforce database. The most-used skill in any real Apex codebase."
+        "Next: SOQL \u2014 how Apex reads data from the Salesforce database. The most-used skill in any real Apex codebase."
       ]
     }
   ]

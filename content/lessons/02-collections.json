@@ -281,48 +281,46 @@
     },
     {
       "type": "type-along",
-      "title": "Capstone: Campaign bounce dedupe",
-      "intro": "Marketing wants to know which UNIQUE emails bounced from yesterday's campaign and how many times each one bounced. Combine a List (raw events), a Set (unique addresses), and a Map (counts) \u2014 the three collections working together as they do in real Salesforce trigger code.",
-      "code": "List<String> bounced = new List<String>{\n    'arthur@example.com',\n    'sara@example.com',\n    'arthur@example.com',\n    'tim@example.com'\n};\nSet<String> uniqueBounced = new Set<String>(bounced);\nMap<String, Integer> bounceCount = new Map<String, Integer>();\nfor (String email : bounced) {\n    Integer count = bounceCount.get(email);\n    if (count == null) { count = 0; }\n    bounceCount.put(email, count + 1);\n}\nSystem.debug('Unique bouncers: ' + uniqueBounced.size());\nSystem.debug('Counts: ' + bounceCount);",
+      "title": "Capstone: State population map",
+      "intro": "Build a Map of state codes to populations, find the big states (>10M people), then sort them alphabetically and print each with its population. Demonstrates Map + List + Set together \u2014 exactly Ari's live demo from session 1.",
+      "code": "Map<String, Integer> stateToPopMap = new Map<String, Integer>();\nstateToPopMap.put('MA', 6000000);\nstateToPopMap.put('FL', 23000000);\nstateToPopMap.put('RI', 1000000);\n\nList<String> bigStates = new List<String>();\nfor (String state : stateToPopMap.keySet()) {\n    Integer population = stateToPopMap.get(state);\n    if (population > 10000000) {\n        bigStates.add(state);\n    }\n}\n\nList<String> sortedStates = new List<String>();\nsortedStates.addAll(stateToPopMap.keySet());\nsortedStates.sort();\nfor (String state : sortedStates) {\n    System.debug(state + ': ' + stateToPopMap.get(state));\n}",
       "lineExplanations": [
-        "Declare a List of Strings using the inline literal syntax \u2014 opens with new List<String>{",
-        "First email entry.",
-        "Second.",
-        "Third \u2014 note 'arthur' appears twice, simulating a duplicated bounce event.",
-        "Fourth.",
-        "Close the list literal with };",
-        "Set constructor takes the List directly \u2014 duplicates are silently dropped, so this Set has 3 unique entries.",
-        "Empty Map<String, Integer> \u2014 keys are emails, values will be counts.",
-        "Walk every email in the original list (including duplicates).",
-        "Look up the current count for this email. Returns null if the key isn't in the map yet.",
-        "Initialize to 0 if not yet present. The single-line if avoids a NullPointerException on count + 1.",
-        "Store the new count back into the map.",
+        "Construct an empty Map keyed by 2-letter state code, valued by integer population.",
+        "Add Massachusetts.",
+        "Add Florida.",
+        "Add Rhode Island.",
+        "Blank.",
+        "Empty list to collect 'big' states (population > 10M).",
+        "Loop the map's keys \u2014 keySet() returns an unordered Set of every key.",
+        "Pull the population for the current state. Map.get returns the value.",
+        "Filter \u2014 only states with > 10 million people.",
+        "Add to bigStates list.",
+        "Close the if.",
         "Close the loop.",
-        "Print how many unique bouncers there are.",
-        "Print the full count map."
+        "Blank.",
+        "Now build a sorted list. Sets aren't ordered \u2014 convert to a List first.",
+        "addAll copies every keySet element into sortedStates in one call.",
+        "List.sort() sorts in place. For Strings that's alphabetical.",
+        "Loop the sorted list and print each state with its population.",
+        "String concatenation forms 'MA: 6000000', etc.",
+        "Close the loop."
       ],
       "lineConcepts": [
+        [
+          "map-collection",
+          "new-keyword"
+        ],
+        [],
+        [],
+        [],
+        [],
         [
           "list-collection",
           "new-keyword"
         ],
         [
-          "string-quotes"
-        ],
-        [],
-        [],
-        [],
-        [],
-        [
-          "set-collection",
-          "new-keyword"
-        ],
-        [
-          "map-collection",
-          "new-keyword"
-        ],
-        [
-          "for-each-loop"
+          "for-each-loop",
+          "set-collection"
         ],
         [],
         [
@@ -330,11 +328,26 @@
         ],
         [],
         [],
+        [],
+        [],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [],
+        [],
+        [
+          "for-each-loop"
+        ],
         [
           "string-concat"
         ],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20251121-204155_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "concept",

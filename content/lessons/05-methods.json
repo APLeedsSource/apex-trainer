@@ -141,41 +141,65 @@
     {
       "type": "type-along",
       "title": "Public fa\u00e7ade, private internals",
-      "intro": "Type this. Public callers only see process(). The helper validate() is private.",
-      "code": "public class OrderService {\n    public static void process(Decimal amount) {\n        validate(amount);\n        System.debug('Processed ' + amount);\n    }\n    private static void validate(Decimal amount) {\n        if (amount <= 0) { return; }\n    }\n}",
+      "intro": "Ari's example: the actual `drive` method is private \u2014 too low-level for callers. We expose `driveSlow` and `driveFast` as public fa\u00e7ades that call into it. The class controls how it's used; callers get clean, intent-revealing entry points.",
+      "code": "public class Automobile {\n    private void drive(Decimal speed) {\n        System.debug('Driving at ' + speed + ' mph');\n    }\n    public void driveSlow() {\n        drive(10);\n    }\n    public void driveFast() {\n        drive(100);\n    }\n}\n\nAutomobile car = new Automobile();\ncar.driveSlow();\ncar.driveFast();",
       "lineExplanations": [
-        "Class.",
-        "public process \u2014 the entry point any caller can hit.",
-        "Calls the private helper. Inside the same class, private methods are reachable directly.",
-        "Print confirmation.",
-        "Method close.",
-        "private validate \u2014 only this class can call it. Keeps the public API clean.",
-        "Inside validator: if invalid, return early.",
-        "Method close. Class close."
+        "Class declaration.",
+        "PRIVATE drive method \u2014 only callable from within Automobile itself. The implementation detail.",
+        "Method body \u2014 the actual driving logic.",
+        "Close drive.",
+        "PUBLIC fa\u00e7ade #1 \u2014 driveSlow. Hides the speed value behind an intent-revealing name.",
+        "Calls the private drive at 10 mph.",
+        "Close driveSlow.",
+        "PUBLIC fa\u00e7ade #2 \u2014 driveFast.",
+        "Calls the private drive at 100 mph.",
+        "Close driveFast.",
+        "Close the class.",
+        "Blank.",
+        "Construct an Automobile.",
+        "Caller can use driveSlow \u2014 but NOT drive(). Compile error if they tried.",
+        "Same for driveFast."
       ],
       "lineConcepts": [
         [
-          "class-vs-object"
-        ],
-        [
-          "method-shape",
+          "class-vs-object",
           "public-modifier"
         ],
-        [],
+        [
+          "private-modifier",
+          "method-shape",
+          "void"
+        ],
         [
           "string-concat"
         ],
         [],
         [
-          "private-modifier"
+          "public-modifier",
+          "method-shape",
+          "void"
         ],
+        [],
+        [],
         [
-          "block",
-          "return-statement"
+          "public-modifier",
+          "method-shape",
+          "void"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [
+          "new-keyword"
         ],
         [],
         []
-      ]
+      ],
+      "source": {
+        "transcript": "GMT20251205-203154_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
     },
     {
       "type": "type-along",
