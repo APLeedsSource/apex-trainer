@@ -11,7 +11,7 @@
   },
   "variable-declaration": {
     "title": "Variable shape",
-    "reminder": "TYPE name = value;  — three parts in order. Example: Integer count = 0;",
+    "reminder": "TYPE name = value;  \u2014 three parts in order. Example: Integer count = 0;",
     "introducedIn": "00-foundations"
   },
   "type": {
@@ -21,7 +21,7 @@
   },
   "string-quotes": {
     "title": "String quotes",
-    "reminder": "Apex strings use SINGLE quotes only — 'hello', not \"hello\".",
+    "reminder": "Apex strings use SINGLE quotes only \u2014 'hello', not \"hello\".",
     "introducedIn": "00-foundations"
   },
   "camel-case": {
@@ -36,12 +36,12 @@
   },
   "case-insensitive": {
     "title": "Apex is case-insensitive",
-    "reminder": "myVariable and MyVariable are the same to the compiler — but pick one style and be consistent.",
+    "reminder": "myVariable and MyVariable are the same to the compiler \u2014 but pick one style and be consistent.",
     "introducedIn": "00-foundations"
   },
   "block": {
     "title": "Block { }",
-    "reminder": "Curly braces group code that runs together — class bodies, method bodies, if-blocks, loops.",
+    "reminder": "Curly braces group code that runs together \u2014 class bodies, method bodies, if-blocks, loops.",
     "introducedIn": "00-foundations"
   },
   "assignment-operator": {
@@ -56,17 +56,17 @@
   },
   "method-shape": {
     "title": "Method anatomy",
-    "reminder": "modifier static? returnType name(params) { body } — e.g. public static void doIt() { ... }",
+    "reminder": "modifier static? returnType name(params) { body } \u2014 e.g. public static void doIt() { ... }",
     "introducedIn": "00-foundations"
   },
   "void": {
     "title": "void",
-    "reminder": "A method whose return type is void returns nothing — it just runs.",
+    "reminder": "A method whose return type is void returns nothing \u2014 it just runs.",
     "introducedIn": "00-foundations"
   },
   "public-modifier": {
     "title": "public",
-    "reminder": "An access modifier — public means any other class can use this. Alternatives: private, protected.",
+    "reminder": "An access modifier \u2014 public means any other class can use this. Alternatives: private, protected.",
     "introducedIn": "00-foundations"
   },
   "static-vs-instance": {
@@ -86,7 +86,7 @@
   },
   "decimal-vs-double": {
     "title": "Decimal vs Double",
-    "reminder": "Money → Decimal (exact). Decimal preserves precision; Double approximates and accumulates rounding error.",
+    "reminder": "Money \u2192 Decimal (exact). Decimal preserves precision; Double approximates and accumulates rounding error.",
     "introducedIn": "01-data-types"
   },
   "list-collection": {
@@ -101,7 +101,7 @@
   },
   "map-collection": {
     "title": "Map",
-    "reminder": "Key → value pairs. Look up by key with .get(key). Like a phone book.",
+    "reminder": "Key \u2192 value pairs. Look up by key with .get(key). Like a phone book.",
     "introducedIn": "02-collections"
   },
   "new-keyword": {
@@ -111,22 +111,22 @@
   },
   "for-loop": {
     "title": "for-loop",
-    "reminder": "for (Integer i = 0; i < N; i++) { } — counter loop. Three parts: init, condition, advance.",
+    "reminder": "for (Integer i = 0; i < N; i++) { } \u2014 counter loop. Three parts: init, condition, advance.",
     "introducedIn": "04-loops"
   },
   "for-each-loop": {
     "title": "for-each loop",
-    "reminder": "for (Type item : collection) { } — walks every item in a collection.",
+    "reminder": "for (Type item : collection) { } \u2014 walks every item in a collection.",
     "introducedIn": "04-loops"
   },
   "while-loop": {
     "title": "while-loop",
-    "reminder": "while (condition) { } — runs as long as condition stays true. Add a safety counter to avoid infinite loops.",
+    "reminder": "while (condition) { } \u2014 runs as long as condition stays true. Add a safety counter to avoid infinite loops.",
     "introducedIn": "04-loops"
   },
   "soql-for-loop": {
     "title": "SOQL for-loop",
-    "reminder": "for (Account a : [SELECT ...]) { } streams results in chunks of 200 — safe for huge result sets.",
+    "reminder": "for (Account a : [SELECT ...]) { } streams results in chunks of 200 \u2014 safe for huge result sets.",
     "introducedIn": "04-loops"
   },
   "break": {
@@ -146,22 +146,22 @@
   },
   "private-modifier": {
     "title": "private",
-    "reminder": "Access modifier — only the same class can call this method or read this field. Use to hide internals.",
+    "reminder": "Access modifier \u2014 only the same class can call this method or read this field. Use to hide internals.",
     "introducedIn": "05-methods"
   },
   "auto-property": {
     "title": "Auto-property",
-    "reminder": "{ get; set; } shorthand — Apex auto-generates trivial getter and setter.",
+    "reminder": "{ get; set; } shorthand \u2014 Apex auto-generates trivial getter and setter.",
     "introducedIn": "06-properties"
   },
   "custom-getter": {
     "title": "Custom getter",
-    "reminder": "get { return ... } — runs your code when something reads the property.",
+    "reminder": "get { return ... } \u2014 runs your code when something reads the property.",
     "introducedIn": "06-properties"
   },
   "custom-setter": {
     "title": "Custom setter",
-    "reminder": "set { ... = value; } — 'value' is the magic name for the incoming assignment.",
+    "reminder": "set { ... = value; } \u2014 'value' is the magic name for the incoming assignment.",
     "introducedIn": "06-properties"
   },
   "this-keyword": {
@@ -171,7 +171,7 @@
   },
   "soql": {
     "title": "SOQL",
-    "reminder": "[SELECT field FROM Object WHERE ... LIMIT n] — Apex's database query syntax. Always inside square brackets.",
+    "reminder": "[SELECT field FROM Object WHERE ... LIMIT n] \u2014 Apex's database query syntax. Always inside square brackets.",
     "introducedIn": "07-soql"
   },
   "where-clause": {
@@ -186,32 +186,32 @@
   },
   "soql-bind-variable": {
     "title": "Bind variable",
-    "reminder": "Use :myVar to inject an Apex value into SOQL. NEVER concatenate strings into a query — that's SOQL injection.",
+    "reminder": "Use :myVar to inject an Apex value into SOQL. NEVER concatenate strings into a query \u2014 that's SOQL injection.",
     "introducedIn": "07-soql"
   },
   "relationship-query": {
     "title": "Relationship query",
-    "reminder": "Walk parent→child via subquery: SELECT (SELECT Email FROM Contacts) FROM Account. Walk child→parent via dot: SELECT Account.Name FROM Contact.",
+    "reminder": "Walk parent\u2192child via subquery: SELECT (SELECT Email FROM Contacts) FROM Account. Walk child\u2192parent via dot: SELECT Account.Name FROM Contact.",
     "introducedIn": "07-soql"
   },
   "dml-insert": {
     "title": "insert",
-    "reminder": "DML verb — creates new records and stamps Ids onto your Apex variable.",
+    "reminder": "DML verb \u2014 creates new records and stamps Ids onto your Apex variable.",
     "introducedIn": "08-dml"
   },
   "dml-update": {
     "title": "update",
-    "reminder": "DML verb — modifies existing records (must already have an Id).",
+    "reminder": "DML verb \u2014 modifies existing records (must already have an Id).",
     "introducedIn": "08-dml"
   },
   "dml-upsert": {
     "title": "upsert",
-    "reminder": "DML verb — insert OR update based on whether the record matches an Id (or external Id).",
+    "reminder": "DML verb \u2014 insert OR update based on whether the record matches an Id (or external Id).",
     "introducedIn": "08-dml"
   },
   "dml-delete": {
     "title": "delete",
-    "reminder": "DML verb — soft-deletes records to the Recycle Bin. undelete brings them back.",
+    "reminder": "DML verb \u2014 soft-deletes records to the Recycle Bin. undelete brings them back.",
     "introducedIn": "08-dml"
   },
   "bulk-dml": {
@@ -221,7 +221,7 @@
   },
   "database-class": {
     "title": "Database class",
-    "reminder": "Database.insert(records, allOrNone=false) returns SaveResults — partial-success DML for imports.",
+    "reminder": "Database.insert(records, allOrNone=false) returns SaveResults \u2014 partial-success DML for imports.",
     "introducedIn": "08-dml"
   },
   "all-or-none": {
@@ -231,12 +231,12 @@
   },
   "trigger": {
     "title": "Trigger",
-    "reminder": "trigger Name on Object (events) { } — Apex code that fires on database events.",
+    "reminder": "trigger Name on Object (events) { } \u2014 Apex code that fires on database events.",
     "introducedIn": "09-triggers"
   },
   "trigger-event": {
     "title": "Trigger events",
-    "reminder": "before/after × insert/update/delete (+ after undelete). Choose based on whether you need the record's Id and whether you want free DML.",
+    "reminder": "before/after \u00d7 insert/update/delete (+ after undelete). Choose based on whether you need the record's Id and whether you want free DML.",
     "introducedIn": "09-triggers"
   },
   "trigger-context": {
@@ -256,12 +256,12 @@
   },
   "assert": {
     "title": "System.assert",
-    "reminder": "System.assert(condition, message) — fails the test if the condition is false.",
+    "reminder": "System.assert(condition, message) \u2014 fails the test if the condition is false.",
     "introducedIn": "13-tests"
   },
   "assert-equals": {
     "title": "System.assertEquals",
-    "reminder": "System.assertEquals(expected, actual, message) — fails if values differ.",
+    "reminder": "System.assertEquals(expected, actual, message) \u2014 fails if values differ.",
     "introducedIn": "13-tests"
   },
   "test-startStop": {
@@ -286,12 +286,12 @@
   },
   "interfaces": {
     "title": "Interface",
-    "reminder": "Pure contract — only method signatures. Classes 'implements' an interface and provide bodies.",
+    "reminder": "Pure contract \u2014 only method signatures. Classes 'implements' an interface and provide bodies.",
     "introducedIn": "11-async"
   },
   "extends-keyword": {
     "title": "extends",
-    "reminder": "'class B extends A' — B inherits A's properties and methods. Single inheritance only in Apex.",
+    "reminder": "'class B extends A' \u2014 B inherits A's properties and methods. Single inheritance only in Apex.",
     "introducedIn": "10-oop-pillars"
   },
   "virtual-keyword": {
@@ -311,7 +311,7 @@
   },
   "named-credential": {
     "title": "Named Credential",
-    "reminder": "Reference 'callout:Name/path' instead of a raw URL. Salesforce expands it and injects auth — no hardcoded secrets.",
+    "reminder": "Reference 'callout:Name/path' instead of a raw URL. Salesforce expands it and injects auth \u2014 no hardcoded secrets.",
     "introducedIn": "15-apis"
   },
   "rest-resource": {
@@ -321,12 +321,12 @@
   },
   "http-method-annotation": {
     "title": "@HttpGet / @HttpPost",
-    "reminder": "Method annotations inside an @RestResource class — route a verb to a handler method.",
+    "reminder": "Method annotations inside an @RestResource class \u2014 route a verb to a handler method.",
     "introducedIn": "15-apis"
   },
   "ttl": {
     "title": "TTL",
-    "reminder": "Time To Live — how long a cache entry remains valid before it expires.",
+    "reminder": "Time To Live \u2014 how long a cache entry remains valid before it expires.",
     "introducedIn": "16-caching"
   },
   "aura-enabled-cacheable": {
@@ -342,6 +342,16 @@
   "invocable-variable": {
     "title": "@InvocableVariable",
     "reminder": "Marks a public field on an inner class so Flow can pass complex parameters into an @InvocableMethod.",
+    "introducedIn": "12-capstone-arlington"
+  },
+  "schedulable-interface": {
+    "title": "Schedulable interface",
+    "reminder": "implements Schedulable forces an execute(SchedulableContext) method. Register with System.schedule(name, cronExp, instance).",
+    "introducedIn": "12-capstone-arlington"
+  },
+  "system-schedule": {
+    "title": "System.schedule",
+    "reminder": "System.schedule(jobName, cronExpression, schedulableInstance) registers a cron-driven Apex job. Returns the CronTrigger Id.",
     "introducedIn": "12-capstone-arlington"
   }
 }

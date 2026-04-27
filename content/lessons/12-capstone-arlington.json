@@ -1,6 +1,6 @@
 {
   "id": "12-capstone-arlington",
-  "title": "Lesson 12 — Capstone: Arlington Property Management",
+  "title": "Lesson 12 \u2014 Capstone: Arlington Property Management",
   "slides": [
     {
       "type": "concept",
@@ -21,10 +21,10 @@
     },
     {
       "type": "concept",
-      "title": "Step 1 — Data model decisions",
+      "title": "Step 1 \u2014 Data model decisions",
       "body": [
-        "Account is the obvious record type for both Associations AND Vendors — same shape (an organization), different role. Salesforce supports Record Types for this.",
-        "Real example: Slack uses a single 'Workspace' object for both customer companies and internal teams — same blueprint, different metadata."
+        "Account is the obvious record type for both Associations AND Vendors \u2014 same shape (an organization), different role. Salesforce supports Record Types for this.",
+        "Real example: Slack uses a single 'Workspace' object for both customer companies and internal teams \u2014 same blueprint, different metadata."
       ],
       "vocabulary": [
         {
@@ -35,10 +35,10 @@
     },
     {
       "type": "concept",
-      "title": "Data model — the relationships",
+      "title": "Data model \u2014 the relationships",
       "body": [
-        "Account (Association) → Buildings → Units → Owners (Contact). Account (Vendor) ↔ Association via a Junction object so many vendors can serve many associations.",
-        "Real example: this many-to-many junction pattern shows up in EVERY Salesforce build — Opportunities↔Products, Cases↔Contacts, etc."
+        "Account (Association) \u2192 Buildings \u2192 Units \u2192 Owners (Contact). Account (Vendor) \u2194 Association via a Junction object so many vendors can serve many associations.",
+        "Real example: this many-to-many junction pattern shows up in EVERY Salesforce build \u2014 Opportunities\u2194Products, Cases\u2194Contacts, etc."
       ],
       "vocabulary": [
         {
@@ -52,7 +52,7 @@
       "title": "The Service__c and Vendor_Service__c objects",
       "body": [
         "APM's data model has two custom objects we'll write code against: Service__c (a service offering like 'plumbing' or 'landscaping') and Vendor_Service__c (a junction record linking each vendor Account to one Service).",
-        "Real example: this many-to-many junction pattern is exactly how Salesforce ships OpportunityLineItem (Opportunity ↔ Product) — every consulting build will have 1–3 junctions like this."
+        "Real example: this many-to-many junction pattern is exactly how Salesforce ships OpportunityLineItem (Opportunity \u2194 Product) \u2014 every consulting build will have 1\u20133 junctions like this."
       ],
       "vocabulary": [
         {
@@ -68,13 +68,13 @@
     {
       "type": "type-along",
       "title": "VendorServiceHelper: getAllServices",
-      "intro": "Build the heart of Arlington's vendor management — a helper class that returns every available Service. Multi-line SOQL with ORDER BY for predictable Name sorting. The skeleton you'll grow over the next several methods.",
+      "intro": "Build the heart of Arlington's vendor management \u2014 a helper class that returns every available Service. Multi-line SOQL with ORDER BY for predictable Name sorting. The skeleton you'll grow over the next several methods.",
       "code": "public class VendorServiceHelper {\n    public static List<Service__c> getAllServices(){\n        List<Service__c> retServices = [\n            SELECT Id, Name, LastModifiedDate, CreatedById, OwnerId\n            FROM Service__c\n            ORDER BY Name\n        ];\n        return retServices;\n    }\n}",
       "lineExplanations": [
-        "Declare the helper class. 'Helper' is a Salesforce convention — central place for reusable logic that triggers, Flows, and other classes call.",
+        "Declare the helper class. 'Helper' is a Salesforce convention \u2014 central place for reusable logic that triggers, Flows, and other classes call.",
         "Static method returning a List of Service__c records. Static = call as VendorServiceHelper.getAllServices() with no instance.",
         "Variable receives the SOQL result. Convention: prefix with 'ret' so readers know this is the return value being built.",
-        "SELECT clause — five fields including audit columns (LastModifiedDate, CreatedById, OwnerId) callers often need.",
+        "SELECT clause \u2014 five fields including audit columns (LastModifiedDate, CreatedById, OwnerId) callers often need.",
         "FROM the Service__c custom object. The __c suffix marks every custom object in Apex.",
         "ORDER BY Name keeps results predictable for any UI that lists them.",
         "Close the SOQL with ];",
@@ -109,18 +109,18 @@
     {
       "type": "type-along",
       "title": "VendorServiceHelper: getServiceById and getServiceByName",
-      "intro": "Add two single-record fetchers — one keyed by Id, one keyed by Name. Same query shape, different filter. Once you've typed the first, the second feels mechanical, and that repetition is the point: real Salesforce orgs have dozens of these.",
+      "intro": "Add two single-record fetchers \u2014 one keyed by Id, one keyed by Name. Same query shape, different filter. Once you've typed the first, the second feels mechanical, and that repetition is the point: real Salesforce orgs have dozens of these.",
       "code": "public static Service__c getServiceById(Id serviceId){\n    Service__c retService = [SELECT Id, Name FROM Service__c WHERE Id = :serviceId LIMIT 1];\n\n    return retService;\n}\n\n\npublic static Service__c getServiceByName(String serviceName){\n    Service__c retService = [SELECT Id, Name FROM Service__c WHERE Name = :serviceName LIMIT 1];\n\n    return retService;\n}",
       "lineExplanations": [
         "Method takes a Salesforce Id, returns a single Service__c.",
-        "Inline SOQL — bind the parameter with :serviceId, LIMIT 1 because we expect one match.",
-        "Blank line — Ari's style adds breathing room between query and return.",
+        "Inline SOQL \u2014 bind the parameter with :serviceId, LIMIT 1 because we expect one match.",
+        "Blank line \u2014 Ari's style adds breathing room between query and return.",
         "Return the matched record.",
         "Close the first method.",
         "Blank.",
-        "Blank — separator between methods.",
+        "Blank \u2014 separator between methods.",
         "Same shape, but typed for a String name.",
-        "Same SOQL, different WHERE field. NEVER concatenate — bind with :serviceName.",
+        "Same SOQL, different WHERE field. NEVER concatenate \u2014 bind with :serviceName.",
         "Blank.",
         "Return.",
         "Close the second method."
@@ -159,18 +159,18 @@
     {
       "type": "type-along",
       "title": "VendorServiceHelper: createVendorServicesForSingleVendor",
-      "intro": "When a vendor signs on for several services at once, build the junction records in bulk: one Vendor_Service__c per service. Bulkified pattern — collect in a List during the loop, ONE DML at the end.",
+      "intro": "When a vendor signs on for several services at once, build the junction records in bulk: one Vendor_Service__c per service. Bulkified pattern \u2014 collect in a List during the loop, ONE DML at the end.",
       "code": "public static void createVendorServicesForSingleVendor(Id vendorAcctId, Set<Id> serviceIds){\n\n    List<Vendor_Service__c> vendorServices = new List<Vendor_Service__c>();\n    \n    for(Id serviceId : serviceIds){\n        Vendor_Service__c newVendorService = new Vendor_Service__c();\n        newVendorService.Vendor__c = vendorAcctId;\n        newVendorService.Service__c = serviceId;\n        vendorServices.add(newVendorService);\n    }\n    \n    insert vendorServices;\n}",
       "lineExplanations": [
-        "void method — does work via DML, returns nothing. Two parameters: the single vendor's Account Id, plus a Set of Service Ids.",
+        "void method \u2014 does work via DML, returns nothing. Two parameters: the single vendor's Account Id, plus a Set of Service Ids.",
         "Blank line.",
-        "Empty list to fill — one Vendor_Service__c junction record per service.",
+        "Empty list to fill \u2014 one Vendor_Service__c junction record per service.",
         "Blank.",
         "Walk every service id. Set<Id> auto-dedupes if the same service was passed twice.",
         "Build a fresh junction record.",
         "Set the lookup to the vendor (Vendor__c is the lookup field on Vendor_Service__c).",
         "Set the lookup to the service.",
-        "Append to the list — no DML yet.",
+        "Append to the list \u2014 no DML yet.",
         "Close the loop.",
         "Blank.",
         "ONE bulk DML statement creates all the junctions at once. This is bulkification done right.",
@@ -210,7 +210,7 @@
     {
       "type": "type-along",
       "title": "VendorServiceHelper: createVendorServicesForSingleService",
-      "intro": "Mirror image of the previous method — when ONE new service goes live and you need to enable several existing vendors for it. Notice the parameters flipped: now Set<Id> holds vendors, single Id is the service. Same body shape.",
+      "intro": "Mirror image of the previous method \u2014 when ONE new service goes live and you need to enable several existing vendors for it. Notice the parameters flipped: now Set<Id> holds vendors, single Id is the service. Same body shape.",
       "code": "public static void createVendorServicesForSingleService(Set<Id> vendorAcctIds, Id serviceId){\n\n    List<Vendor_Service__c> vendorServices = new List<Vendor_Service__c>();\n    \n    for(Id acctId : vendorAcctIds){\n        Vendor_Service__c newVendorService = new Vendor_Service__c();\n        newVendorService.Vendor__c = acctId;\n        newVendorService.Service__c = serviceId;\n        \n        vendorServices.add(newVendorService);\n    }\n    \n    insert vendorServices;\n}",
       "lineExplanations": [
         "Same shape as the previous method, parameters swapped.",
@@ -220,12 +220,12 @@
         "Iterate over the vendor account ids.",
         "Construct a junction record per vendor.",
         "Set the vendor lookup.",
-        "Set the service lookup — same single value every iteration.",
+        "Set the service lookup \u2014 same single value every iteration.",
         "Blank.",
         "Append to the list.",
         "Close the loop.",
         "Blank.",
-        "ONE bulk insert — same bulkified shape.",
+        "ONE bulk insert \u2014 same bulkified shape.",
         "Close the method."
       ],
       "lineConcepts": [
@@ -263,11 +263,11 @@
     {
       "type": "type-along",
       "title": "VendorServiceHelper: generateVendorServiceName",
-      "intro": "A tiny utility for building consistent display names. Even a three-line method earns its keep when the format is called from five places — change the dash to a slash here and every UI updates at once.",
+      "intro": "A tiny utility for building consistent display names. Even a three-line method earns its keep when the format is called from five places \u2014 change the dash to a slash here and every UI updates at once.",
       "code": "public static String generateVendorServiceName(String vendorName, String serviceName){\n    return vendorName + ' - ' + serviceName;\n}",
       "lineExplanations": [
         "Static method takes two Strings, returns one String. Public so any class (or trigger or @InvocableMethod) can call it.",
-        "Concatenate with ' - ' separator and return. The string between the names is the format — change here, change everywhere.",
+        "Concatenate with ' - ' separator and return. The string between the names is the format \u2014 change here, change everywhere.",
         "Close the method."
       ],
       "lineConcepts": [
@@ -284,7 +284,7 @@
     },
     {
       "type": "concept",
-      "title": "Step 2 — Automation: Apex vs. Flow",
+      "title": "Step 2 \u2014 Automation: Apex vs. Flow",
       "body": [
         "The brief says ALL automation must be Apex (no Flows). In real consulting, you'd push back: simple click-to-config logic belongs in Flow; Apex is for complex, bulk, or async work.",
         "Real example: 'when a Unit's Owner field changes, recalculate the Association's owner-count' is a one-line Flow rollup. Putting it in Apex is overkill."
@@ -292,9 +292,9 @@
     },
     {
       "type": "concept",
-      "title": "@InvocableMethod — Apex callable from Flow",
+      "title": "@InvocableMethod \u2014 Apex callable from Flow",
       "body": [
-        "@InvocableMethod marks a static Apex method as callable from Flow, Process Builder, and Agentforce — the bridge between click-to-config automation and code.",
+        "@InvocableMethod marks a static Apex method as callable from Flow, Process Builder, and Agentforce \u2014 the bridge between click-to-config automation and code.",
         "Real example: every Salesforce admin has built a Flow that needed 'one little thing only Apex can do.' @InvocableMethod is the door; Flow walks through it. Pair with @InvocableVariable on inner-class fields when Flow needs to pass complex parameters."
       ],
       "vocabulary": [
@@ -311,16 +311,16 @@
     {
       "type": "type-along",
       "title": "InvocableServiceFetcher",
-      "intro": "Wrap getAllServices() so a Flow can call it. The double-list signature (List<List<Service__c>>) is required — Salesforce passes a one-element outer list because @InvocableMethods always run in bulk, even when Flow only invokes them once.",
+      "intro": "Wrap getAllServices() so a Flow can call it. The double-list signature (List<List<Service__c>>) is required \u2014 Salesforce passes a one-element outer list because @InvocableMethods always run in bulk, even when Flow only invokes them once.",
       "code": "public class InvocableServiceFetcher {\n    \n    @InvocableMethod\n    public static List<List<Service__c>> fetchServices(){\n        List<List<Service__c>> retServices = new List<List<Service__c>>();\n        \n        List<Service__c> allServices = VendorServiceHelper.getAllServices();\n        \n        retServices.add(allServices);\n        \n        return retServices;\n    }\n    \n    \n\n}",
       "lineExplanations": [
         "Declare a class dedicated to Flow-facing wrappers. Convention: 'Invocable' prefix tells future readers this is the Flow surface.",
         "Blank.",
-        "@InvocableMethod above the method — the annotation that exposes it to Flow.",
-        "Method must be public static. Returns List<List<...>> — Salesforce's bulk-mode contract.",
+        "@InvocableMethod above the method \u2014 the annotation that exposes it to Flow.",
+        "Method must be public static. Returns List<List<...>> \u2014 Salesforce's bulk-mode contract.",
         "Construct the outer list.",
         "Blank.",
-        "Delegate to the helper — Flow doesn't care that there's a separate class; the call chain is invisible from Flow's side.",
+        "Delegate to the helper \u2014 Flow doesn't care that there's a separate class; the call chain is invisible from Flow's side.",
         "Blank.",
         "Wrap the inner list inside the outer list.",
         "Blank.",
@@ -367,23 +367,23 @@
     {
       "type": "type-along",
       "title": "InvocableVendorServiceBuilder",
-      "intro": "Flow needs to pass TWO inputs (an account id and a list of service ids) into one Apex call. Use an inner class with @InvocableVariable fields as the parameter shape — the standard pattern for any Flow→Apex call carrying more than a single primitive.",
+      "intro": "Flow needs to pass TWO inputs (an account id and a list of service ids) into one Apex call. Use an inner class with @InvocableVariable fields as the parameter shape \u2014 the standard pattern for any Flow\u2192Apex call carrying more than a single primitive.",
       "code": "public class InvocableVendorServiceBuilder {\n\n    @InvocableMethod\n    public static void createVendorWithServices(List<FlowVendorServiceParams> vendorServiceParams){\n        \n        FlowVendorServiceParams params = vendorServiceParams[0];\n        Set<Id> serviceIdSet = new Set<Id>();\n        serviceIdSet.addAll(params.serviceIds);\n        \n        vendorServiceHelper.createVendorServicesForSingleVendor(params.acctId, serviceIdSet);\n    }\n    \n    public class FlowVendorServiceParams{\n        @InvocableVariable public Id acctId;\n        @InvocableVariable public List<Id> serviceIds;\n    }\n}",
       "lineExplanations": [
-        "Outer class — the Flow-facing wrapper.",
+        "Outer class \u2014 the Flow-facing wrapper.",
         "Blank.",
-        "@InvocableMethod — exposed to Flow.",
+        "@InvocableMethod \u2014 exposed to Flow.",
         "Takes a List of inner-class parameter objects. Even when Flow invokes once, the param is a one-element list.",
         "Blank.",
         "Pull the first (and usually only) params object out.",
-        "Convert the List<Id> Flow gave us into a Set<Id> — the helper expects a Set so duplicates are dedupe'd.",
+        "Convert the List<Id> Flow gave us into a Set<Id> \u2014 the helper expects a Set so duplicates are dedupe'd.",
         "addAll copies all elements from the list into the set in one call.",
         "Blank.",
-        "Delegate to the existing helper — same bulkified path.",
+        "Delegate to the existing helper \u2014 same bulkified path.",
         "Close the method.",
         "Blank.",
-        "Inner class — public so Flow can introspect and bind its fields. This is the parameter SHAPE.",
-        "@InvocableVariable on a public field — Flow sees this as an input field on the action.",
+        "Inner class \u2014 public so Flow can introspect and bind its fields. This is the parameter SHAPE.",
+        "@InvocableVariable on a public field \u2014 Flow sees this as an input field on the action.",
         "Same for the list-of-ids field.",
         "Close the inner class.",
         "Close the outer class."
@@ -431,45 +431,74 @@
       "type": "concept",
       "title": "Trigger plan",
       "body": [
-        "One trigger per object: AccountTrigger, UnitTrigger, ResidentTrigger, WorkOrderTrigger. Each delegates to a handler class.",
-        "Handler classes hold the actual logic — testable as plain Apex, no trigger context needed."
+        "VendorServiceTrigger fires before insert/update on Vendor_Service__c. Its job: set the junction record's Name from its parent Vendor + Service so the UI shows 'ABC Plumbing - Plumbing' instead of an autonumber.",
+        "Pure data shaping \u2014 no DML, no callouts, no async needed. Real example: most before-triggers in production Salesforce orgs are this exact shape \u2014 a small bulk query and a field assignment."
       ]
     },
     {
       "type": "type-along",
-      "title": "Trigger handler skeleton",
-      "intro": "Type this. The exact pattern you'd commit on day one of any new SF org.",
-      "code": "public class UnitTriggerHandler {\n    public static void afterUpdate(List<Unit__c> newUnits, Map<Id, Unit__c> oldMap) {\n        for (Unit__c u : newUnits) {\n            Unit__c old = oldMap.get(u.Id);\n            if (u.OwnerContact__c != old.OwnerContact__c) {\n                System.debug('Owner changed on ' + u.Id);\n            }\n        }\n    }\n}",
+      "title": "VendorServiceTrigger",
+      "intro": "The real trigger from Ari's course. Fires before insert/update on Vendor_Service__c, queries the parent Vendor and Service in bulk, then calls VendorServiceHelper.generateVendorServiceName to set each junction record's Name. Pure data shaping \u2014 no DML needed because we're modifying records that are about to be saved.",
+      "code": "trigger VendorServiceTrigger on Vendor_Service__c (before insert, before update) {\n    List<Vendor_Service__c> vendorServices = trigger.new;\n    Set<Id> vendorIds = new Set<Id>();\n    Set<Id> serviceIds = new Set<Id>();\n    for(Vendor_Service__c vendorService: vendorServices){\n        vendorIds.add(vendorService.Vendor__c);\n        serviceIds.add(vendorService.Service__c);\n    }\n    Map<Id,Account> vendorMap = new Map<Id,Account>([select id,name from account where id in :vendorIds]);\n    Map<Id,Service__c> serviceMap = new Map<Id,Service__c>([select id,name from Service__c where id in :serviceIds]);\n    for(Vendor_Service__c vendorService: vendorServices){\n        vendorService.name = VendorServiceHelper.generateVendorServiceName(\n            vendorMap.get(vendorService.Vendor__c).name,\n            serviceMap.get(vendorService.Service__c).name\n        );\n    }\n}",
       "lineExplanations": [
-        "Handler class — plain old Apex.",
-        "Public static method matching the trigger event.",
-        "Loop the new versions.",
-        "Look up the old version from the map.",
-        "Compare a specific field for change.",
-        "Apply your logic — typically queueing an async job or building a List for bulk DML.",
-        "Closes."
+        "trigger keyword + name + on the object + the events it cares about. Two events keep the rename consistent if a record is later edited.",
+        "Pull Trigger.new into a local for readability. Same list, friendlier name.",
+        "Set of every parent vendor Id we'll need to query \u2014 Set auto-dedupes.",
+        "Set of every Service Id we'll need to query.",
+        "First pass: collect Ids only. Never query inside this loop.",
+        "Add the Vendor__c lookup value.",
+        "Add the Service__c lookup value.",
+        "Close the gather-Ids loop.",
+        "ONE bulk query of all parent Accounts (vendors). Map<Id,Account> wraps the result for O(1) lookup.",
+        "ONE bulk query of all parent Service__c records.",
+        "Second pass: walk the new junction records again, this time setting Name from the maps.",
+        "Set the Name field by calling the helper. Method name matches generateVendorServiceName.",
+        "Look up the vendor Account in the map and pass its Name.",
+        "Look up the Service in the map and pass its Name.",
+        "Close the helper-call argument list.",
+        "Close the second loop.",
+        "Close the trigger."
       ],
       "lineConcepts": [
         [
-          "class-vs-object",
-          "trigger-handler-pattern"
+          "trigger",
+          "trigger-event"
         ],
         [
-          "method-shape",
-          "static-vs-instance",
-          "list-collection",
-          "map-collection"
+          "trigger-context",
+          "list-collection"
+        ],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "set-collection",
+          "new-keyword"
         ],
         [
           "for-each-loop"
         ],
         [],
+        [],
+        [],
         [
-          "block"
+          "map-collection",
+          "new-keyword",
+          "soql"
         ],
         [
-          "string-concat"
+          "map-collection",
+          "new-keyword",
+          "soql"
         ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "static-vs-instance"
+        ],
+        [],
         [],
         [],
         [],
@@ -478,15 +507,243 @@
     },
     {
       "type": "concept",
-      "title": "Step 3 — Async patterns",
+      "title": "Step 3 \u2014 Async patterns",
       "body": [
-        "Periodic fee increases across thousands of units → Batchable (chunked processing). 'Send invoice email after dues are billed' → Queueable (async after the trigger). 'Apply 3% rate hike on Jan 1' → Schedulable wrapping the Batchable.",
-        "Real example: every multi-tenant property management SaaS (AppFolio, Buildium) does exactly this."
+        "Arlington bills monthly management fees on the 1st of every month \u2014 across thousands of Associations. That's MgmtFeeBatch: a Schedulable that, on cron, walks every condo Account and inserts a Mgmt_Fee__c record for the new month if one doesn't exist yet.",
+        "Real example: every multi-tenant property platform (AppFolio, Buildium) does the same. Monthly billing \u2192 cron-fired Schedulable; long-running rate hikes \u2192 Batchable; per-record post-DML work \u2192 Queueable."
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "MgmtFeeBatch \u2014 Schedulable shell",
+      "intro": "Build the Schedulable that the cron job will call. Two constructors (default = current month; explicit = pick year/month for backfills) and the execute method that the framework invokes. The work itself goes in createMgmtFees, which we'll write next.",
+      "code": "public class MgmtFeeBatch implements Schedulable {\n    \n    public Integer serviceYear;\n    public Integer serviceMonth;\n    \n    public MgmtFeeBatch(Integer yr, Integer mo){\n        this.serviceYear = yr;\n        this.serviceMonth = mo;\n    }\n    \n    public MgmtFeeBatch(){\n        this.serviceYear = Date.today().year();\n        this.serviceMonth = Date.today().month();\n    }\n    \n    public void execute(SchedulableContext context){\n        createMgmtFees();\n    }\n}",
+      "lineExplanations": [
+        "Class declaration plus 'implements Schedulable' \u2014 the contract that forces an execute(SchedulableContext) method below.",
+        "Blank.",
+        "Instance field for the year. Public so it's inspectable in tests and tooling.",
+        "Instance field for the month.",
+        "Blank.",
+        "Two-arg constructor for explicit year/month \u2014 useful when re-running a missed month.",
+        "Assign the parameter to the instance field. 'this' disambiguates field from parameter.",
+        "Same for month.",
+        "Close the explicit constructor.",
+        "Blank.",
+        "No-arg constructor \u2014 default to current month. Salesforce's scheduler calls this when System.schedule is given a fresh instance.",
+        "Pull current year. Date.today() is the system clock.",
+        "Pull current month.",
+        "Close the no-arg constructor.",
+        "Blank.",
+        "execute is the Schedulable contract method. SchedulableContext is the framework's handle on the running job \u2014 usually unused.",
+        "Delegate to the worker. Keeping execute thin means createMgmtFees can be called directly from anonymous Apex for testing.",
+        "Close execute.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces",
+          "schedulable-interface"
+        ],
+        [],
+        [
+          "public-modifier",
+          "variable-declaration"
+        ],
+        [
+          "public-modifier",
+          "variable-declaration"
+        ],
+        [],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [],
+        [
+          "method-shape"
+        ],
+        [
+          "this-keyword"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "static-vs-instance"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "MgmtFeeBatch \u2014 createMgmtFees",
+      "intro": "The actual work. Query every condo and the months they've already been billed (using a parent-to-child subquery), figure out which ones are missing the current month, build the new Mgmt_Fee__c records, and bulk-insert via Database.insert. Longer than usual \u2014 but it's a real production batch and natural decomposition would split a single coherent method.",
+      "code": "public void createMgmtFees(){\n    Date serviceDate = Date.newInstance(serviceYear, serviceMonth, 1);\n    \n    List<Account> condos = [\n        SELECT Id, Monthly_Mgmt_Fee__c,\n            (SELECT Id, Service_Date__c, Fee__c FROM Mgmt_Fees__r)\n        FROM Account\n        WHERE Monthly_Mgmt_Fee__c != null\n    ];\n    \n    Set<Mgmt_Fee__c> feesForInsert = new Set<Mgmt_Fee__c>();\n    for(Account condo : condos){\n        Set<Date> keys = new Set<Date>();\n        \n        for(Mgmt_Fee__c fee : condo.Mgmt_Fees__r){\n            keys.add(fee.Service_Date__c);\n        }\n        \n        if(!keys.contains(serviceDate)){\n            Mgmt_Fee__c fee = new Mgmt_Fee__c(\n                Service_Date__c = serviceDate,\n                Fee__c = condo.Monthly_Mgmt_Fee__c,\n                Association__c = condo.Id\n            );\n            feesForInsert.add(fee);\n        }            \n    }\n    \n    if(!feesForInsert.isEmpty()){\n        List<Mgmt_Fee__c> feesForInsertList = new List<Mgmt_Fee__c>();\n        feesForInsertList.addAll(feesForInsert);\n        \n        Database.insert(feesForInsertList);\n    }\n}",
+      "lineExplanations": [
+        "Public method \u2014 invoked by execute(), but also callable directly from anonymous Apex for testing.",
+        "Build the target service date \u2014 first of the month. Date.newInstance(year, month, day) is the static factory.",
+        "Blank.",
+        "SOQL on Account \u2014 the start of a multi-line query.",
+        "Pull Id and the configured monthly fee amount.",
+        "Subquery using the Mgmt_Fees__r child relationship \u2014 returns each Account's existing fee records inline.",
+        "FROM Account.",
+        "WHERE Monthly_Mgmt_Fee__c is set \u2014 only condos that are actually being billed.",
+        "Close the SOQL.",
+        "Blank.",
+        "Set of new fees to insert \u2014 Set dedupes if the same condo somehow appears twice.",
+        "Walk every condo Account.",
+        "Build a Set of dates this condo has ALREADY been billed for \u2014 to detect duplicates.",
+        "Blank.",
+        "Iterate the child Mgmt_Fee__c records that came back in the subquery (accessed via the Mgmt_Fees__r relationship).",
+        "Add the child record's Service_Date__c to our 'already billed' set.",
+        "Close the subquery loop.",
+        "Blank.",
+        "Idempotency check \u2014 if THIS month's date isn't already in the set, this condo is missing this month's fee.",
+        "Build the new Mgmt_Fee__c. Constructor-with-named-args lets you set fields inline.",
+        "Service date = the first of this billing month.",
+        "Fee amount = whatever this condo is configured for.",
+        "Association lookup = the condo Account's Id.",
+        "Close the constructor.",
+        "Add to our to-insert set.",
+        "Close the if.",
+        "Close the per-condo loop.",
+        "Blank.",
+        "Skip the DML if no new fees to insert \u2014 saves a wasted DML statement.",
+        "Convert the Set to a List for Database.insert \u2014 DML methods take Lists, not Sets.",
+        "addAll copies all members in one call.",
+        "Blank.",
+        "Database.insert is the verbose form of 'insert' \u2014 same effect by default; the form that lets you opt into partial-success handling.",
+        "Close the if-not-empty block.",
+        "Close the method."
+      ],
+      "lineConcepts": [
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "static-vs-instance",
+          "variable-declaration"
+        ],
+        [],
+        [
+          "soql"
+        ],
+        [],
+        [
+          "relationship-query"
+        ],
+        [],
+        [
+          "where-clause"
+        ],
+        [],
+        [],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "for-each-loop"
+        ],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [],
+        [
+          "for-each-loop",
+          "relationship-query"
+        ],
+        [],
+        [],
+        [],
+        [
+          "block"
+        ],
+        [
+          "new-keyword"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+          "block"
+        ],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [],
+        [],
+        [
+          "database-class",
+          "bulk-dml"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Scheduling MgmtFeeBatch",
+      "intro": "Now wire MgmtFeeBatch to a cron schedule. Run this once from anonymous Apex (or the dev console) to register the job \u2014 Salesforce will call execute() at 2:00 AM on the 1st of every month. The cron string is the standard 7-field Salesforce format.",
+      "code": "String cronExp = '0 0 2 1 * ? *';\nMgmtFeeBatch job = new MgmtFeeBatch();\nString jobId = System.schedule(\n    'Monthly Management Fees',\n    cronExp,\n    job\n);\nSystem.debug('Scheduled jobId: ' + jobId);",
+      "lineExplanations": [
+        "Cron expression \u2014 second, minute, hour, day-of-month, month, day-of-week, year. '0 0 2 1 * ? *' = 2:00 AM on the 1st of every month, every year.",
+        "Construct the Schedulable instance using the no-arg constructor \u2014 defaults to current month at execute time.",
+        "Call System.schedule. Returns the CronTrigger Id of the new scheduled job.",
+        "Job name \u2014 must be unique across the org's scheduled jobs.",
+        "The cron expression.",
+        "The Schedulable instance to fire.",
+        "Close the call.",
+        "Print the job Id \u2014 handy for verifying via the Apex Jobs setup page or for later System.abortJob(jobId)."
+      ],
+      "lineConcepts": [
+        [
+          "variable-declaration",
+          "string-quotes"
+        ],
+        [
+          "new-keyword"
+        ],
+        [
+          "system-schedule"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        [],
+        [],
+        [
+          "string-concat"
+        ]
       ]
     },
     {
       "type": "concept",
-      "title": "Step 4 — Integration plan",
+      "title": "Step 4 \u2014 Integration plan",
       "body": [
         "External vendor invoicing system (Stripe-like): outbound callout from a Queueable when a Work Order completes, posting the invoice to the partner.",
         "All credentials in Named Credentials. No secrets in Apex source. Failures logged to a custom 'Integration Log' object for retry."
@@ -494,15 +751,15 @@
     },
     {
       "type": "concept",
-      "title": "Step 5 — Caching",
+      "title": "Step 5 \u2014 Caching",
       "body": [
-        "List of fee schedules per association — read on every dues calculation, changes monthly. Perfect for Custom Metadata (free reads).",
-        "User's home Association — needed throughout a session, doesn't change. Static-variable cache for one transaction OR Session Cache for the whole user session."
+        "List of fee schedules per association \u2014 read on every dues calculation, changes monthly. Perfect for Custom Metadata (free reads).",
+        "User's home Association \u2014 needed throughout a session, doesn't change. Static-variable cache for one transaction OR Session Cache for the whole user session."
       ]
     },
     {
       "type": "concept",
-      "title": "Step 6 — Testing strategy",
+      "title": "Step 6 \u2014 Testing strategy",
       "body": [
         "@TestSetup creates 1 Association with 1 Building, 5 Units, 3 Owners. Each test method gets a fresh copy.",
         "Cover happy paths (a unit changes ownership) AND edge cases (owner is null, multiple units in same transaction, hitting governor boundaries with 200 units)."
@@ -510,7 +767,7 @@
     },
     {
       "type": "concept",
-      "title": "Step 7 — Bulkification audit",
+      "title": "Step 7 \u2014 Bulkification audit",
       "body": [
         "For every trigger handler, ask: what happens when 200 records hit at once? Any SOQL or DML inside a loop? Any callouts inside the trigger?",
         "Real example: this audit catches ~80% of bugs that would otherwise surface on the first big import or batch operation."
@@ -532,7 +789,7 @@
         "Mix Apex and Flow without telling the client."
       ],
       "correct": 2,
-      "explanation": "Real consulting work. Push back with rationale. The consultant's value is judgment, not just typing — over-engineering simple cases in Apex creates maintenance debt the client will regret."
+      "explanation": "Real consulting work. Push back with rationale. The consultant's value is judgment, not just typing \u2014 over-engineering simple cases in Apex creates maintenance debt the client will regret."
     },
     {
       "type": "concept",
@@ -546,7 +803,7 @@
       "type": "concept",
       "title": "What's next",
       "body": [
-        "You've finished the core course (matching Ari's original curriculum). The trainer continues with extra topics: Test Classes, Governor Limits, APIs, and Caching — each one a deeper dive into a skill you'll use every day in real consulting work.",
+        "You've finished the core course (matching Ari's original curriculum). The trainer continues with extra topics: Test Classes, Governor Limits, APIs, and Caching \u2014 each one a deeper dive into a skill you'll use every day in real consulting work.",
         "Pair the trainer with hands-on work in a real Salesforce sandbox. Type-memorized patterns become muscle when you apply them to actual problems."
       ]
     }
