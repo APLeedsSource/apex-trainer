@@ -49,10 +49,382 @@
     },
     {
       "type": "concept",
+      "title": "The Service__c and Vendor_Service__c objects",
+      "body": [
+        "APM's data model has two custom objects we'll write code against: Service__c (a service offering like 'plumbing' or 'landscaping') and Vendor_Service__c (a junction record linking each vendor Account to one Service).",
+        "Real example: this many-to-many junction pattern is exactly how Salesforce ships OpportunityLineItem (Opportunity ↔ Product) — every consulting build will have 1–3 junctions like this."
+      ],
+      "vocabulary": [
+        {
+          "word": "Service__c",
+          "def": "Custom object representing a service offering (plumbing, landscaping, etc.). The __c suffix marks any custom object in Apex."
+        },
+        {
+          "word": "Vendor_Service__c",
+          "def": "Junction object linking a vendor Account (Vendor__c lookup) to a Service__c."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "VendorServiceHelper: getAllServices",
+      "intro": "Build the heart of Arlington's vendor management — a helper class that returns every available Service. Multi-line SOQL with ORDER BY for predictable Name sorting. The skeleton you'll grow over the next several methods.",
+      "code": "public class VendorServiceHelper {\n    public static List<Service__c> getAllServices(){\n        List<Service__c> retServices = [\n            SELECT Id, Name, LastModifiedDate, CreatedById, OwnerId\n            FROM Service__c\n            ORDER BY Name\n        ];\n        return retServices;\n    }\n}",
+      "lineExplanations": [
+        "Declare the helper class. 'Helper' is a Salesforce convention — central place for reusable logic that triggers, Flows, and other classes call.",
+        "Static method returning a List of Service__c records. Static = call as VendorServiceHelper.getAllServices() with no instance.",
+        "Variable receives the SOQL result. Convention: prefix with 'ret' so readers know this is the return value being built.",
+        "SELECT clause — five fields including audit columns (LastModifiedDate, CreatedById, OwnerId) callers often need.",
+        "FROM the Service__c custom object. The __c suffix marks every custom object in Apex.",
+        "ORDER BY Name keeps results predictable for any UI that lists them.",
+        "Close the SOQL with ];",
+        "Return the list to the caller.",
+        "Close the method.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "list-collection"
+        ],
+        [
+          "soql"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [
+          "return-statement"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "VendorServiceHelper: getServiceById and getServiceByName",
+      "intro": "Add two single-record fetchers — one keyed by Id, one keyed by Name. Same query shape, different filter. Once you've typed the first, the second feels mechanical, and that repetition is the point: real Salesforce orgs have dozens of these.",
+      "code": "public static Service__c getServiceById(Id serviceId){\n    Service__c retService = [SELECT Id, Name FROM Service__c WHERE Id = :serviceId LIMIT 1];\n\n    return retService;\n}\n\n\npublic static Service__c getServiceByName(String serviceName){\n    Service__c retService = [SELECT Id, Name FROM Service__c WHERE Name = :serviceName LIMIT 1];\n\n    return retService;\n}",
+      "lineExplanations": [
+        "Method takes a Salesforce Id, returns a single Service__c.",
+        "Inline SOQL — bind the parameter with :serviceId, LIMIT 1 because we expect one match.",
+        "Blank line — Ari's style adds breathing room between query and return.",
+        "Return the matched record.",
+        "Close the first method.",
+        "Blank.",
+        "Blank — separator between methods.",
+        "Same shape, but typed for a String name.",
+        "Same SOQL, different WHERE field. NEVER concatenate — bind with :serviceName.",
+        "Blank.",
+        "Return.",
+        "Close the second method."
+      ],
+      "lineConcepts": [
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "soql",
+          "where-clause",
+          "soql-bind-variable",
+          "soql-limit"
+        ],
+        [],
+        [
+          "return-statement"
+        ],
+        [],
+        [],
+        [],
+        [
+          "method-shape"
+        ],
+        [
+          "soql",
+          "where-clause",
+          "soql-bind-variable"
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "VendorServiceHelper: createVendorServicesForSingleVendor",
+      "intro": "When a vendor signs on for several services at once, build the junction records in bulk: one Vendor_Service__c per service. Bulkified pattern — collect in a List during the loop, ONE DML at the end.",
+      "code": "public static void createVendorServicesForSingleVendor(Id vendorAcctId, Set<Id> serviceIds){\n\n    List<Vendor_Service__c> vendorServices = new List<Vendor_Service__c>();\n    \n    for(Id serviceId : serviceIds){\n        Vendor_Service__c newVendorService = new Vendor_Service__c();\n        newVendorService.Vendor__c = vendorAcctId;\n        newVendorService.Service__c = serviceId;\n        vendorServices.add(newVendorService);\n    }\n    \n    insert vendorServices;\n}",
+      "lineExplanations": [
+        "void method — does work via DML, returns nothing. Two parameters: the single vendor's Account Id, plus a Set of Service Ids.",
+        "Blank line.",
+        "Empty list to fill — one Vendor_Service__c junction record per service.",
+        "Blank.",
+        "Walk every service id. Set<Id> auto-dedupes if the same service was passed twice.",
+        "Build a fresh junction record.",
+        "Set the lookup to the vendor (Vendor__c is the lookup field on Vendor_Service__c).",
+        "Set the lookup to the service.",
+        "Append to the list — no DML yet.",
+        "Close the loop.",
+        "Blank.",
+        "ONE bulk DML statement creates all the junctions at once. This is bulkification done right.",
+        "Close the method."
+      ],
+      "lineConcepts": [
+        [
+          "method-shape",
+          "void",
+          "set-collection",
+          "parameter-vs-argument"
+        ],
+        [],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [
+          "new-keyword"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+          "dml-insert",
+          "bulk-dml"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "VendorServiceHelper: createVendorServicesForSingleService",
+      "intro": "Mirror image of the previous method — when ONE new service goes live and you need to enable several existing vendors for it. Notice the parameters flipped: now Set<Id> holds vendors, single Id is the service. Same body shape.",
+      "code": "public static void createVendorServicesForSingleService(Set<Id> vendorAcctIds, Id serviceId){\n\n    List<Vendor_Service__c> vendorServices = new List<Vendor_Service__c>();\n    \n    for(Id acctId : vendorAcctIds){\n        Vendor_Service__c newVendorService = new Vendor_Service__c();\n        newVendorService.Vendor__c = acctId;\n        newVendorService.Service__c = serviceId;\n        \n        vendorServices.add(newVendorService);\n    }\n    \n    insert vendorServices;\n}",
+      "lineExplanations": [
+        "Same shape as the previous method, parameters swapped.",
+        "Blank.",
+        "Empty list of junction records.",
+        "Blank.",
+        "Iterate over the vendor account ids.",
+        "Construct a junction record per vendor.",
+        "Set the vendor lookup.",
+        "Set the service lookup — same single value every iteration.",
+        "Blank.",
+        "Append to the list.",
+        "Close the loop.",
+        "Blank.",
+        "ONE bulk insert — same bulkified shape.",
+        "Close the method."
+      ],
+      "lineConcepts": [
+        [
+          "method-shape",
+          "void",
+          "set-collection",
+          "parameter-vs-argument"
+        ],
+        [],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [],
+        [
+          "for-each-loop"
+        ],
+        [
+          "new-keyword"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+          "dml-insert",
+          "bulk-dml"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "VendorServiceHelper: generateVendorServiceName",
+      "intro": "A tiny utility for building consistent display names. Even a three-line method earns its keep when the format is called from five places — change the dash to a slash here and every UI updates at once.",
+      "code": "public static String generateVendorServiceName(String vendorName, String serviceName){\n    return vendorName + ' - ' + serviceName;\n}",
+      "lineExplanations": [
+        "Static method takes two Strings, returns one String. Public so any class (or trigger or @InvocableMethod) can call it.",
+        "Concatenate with ' - ' separator and return. The string between the names is the format — change here, change everywhere.",
+        "Close the method."
+      ],
+      "lineConcepts": [
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "return-statement",
+          "string-concat"
+        ],
+        []
+      ]
+    },
+    {
+      "type": "concept",
       "title": "Step 2 — Automation: Apex vs. Flow",
       "body": [
         "The brief says ALL automation must be Apex (no Flows). In real consulting, you'd push back: simple click-to-config logic belongs in Flow; Apex is for complex, bulk, or async work.",
         "Real example: 'when a Unit's Owner field changes, recalculate the Association's owner-count' is a one-line Flow rollup. Putting it in Apex is overkill."
+      ]
+    },
+    {
+      "type": "concept",
+      "title": "@InvocableMethod — Apex callable from Flow",
+      "body": [
+        "@InvocableMethod marks a static Apex method as callable from Flow, Process Builder, and Agentforce — the bridge between click-to-config automation and code.",
+        "Real example: every Salesforce admin has built a Flow that needed 'one little thing only Apex can do.' @InvocableMethod is the door; Flow walks through it. Pair with @InvocableVariable on inner-class fields when Flow needs to pass complex parameters."
+      ],
+      "vocabulary": [
+        {
+          "word": "@InvocableMethod",
+          "def": "Annotation marking a static Apex method as callable from Flow."
+        },
+        {
+          "word": "@InvocableVariable",
+          "def": "Annotation on a public field of an inner class so Flow can pass it into an @InvocableMethod."
+        }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "InvocableServiceFetcher",
+      "intro": "Wrap getAllServices() so a Flow can call it. The double-list signature (List<List<Service__c>>) is required — Salesforce passes a one-element outer list because @InvocableMethods always run in bulk, even when Flow only invokes them once.",
+      "code": "public class InvocableServiceFetcher {\n    \n    @InvocableMethod\n    public static List<List<Service__c>> fetchServices(){\n        List<List<Service__c>> retServices = new List<List<Service__c>>();\n        \n        List<Service__c> allServices = VendorServiceHelper.getAllServices();\n        \n        retServices.add(allServices);\n        \n        return retServices;\n    }\n    \n    \n\n}",
+      "lineExplanations": [
+        "Declare a class dedicated to Flow-facing wrappers. Convention: 'Invocable' prefix tells future readers this is the Flow surface.",
+        "Blank.",
+        "@InvocableMethod above the method — the annotation that exposes it to Flow.",
+        "Method must be public static. Returns List<List<...>> — Salesforce's bulk-mode contract.",
+        "Construct the outer list.",
+        "Blank.",
+        "Delegate to the helper — Flow doesn't care that there's a separate class; the call chain is invisible from Flow's side.",
+        "Blank.",
+        "Wrap the inner list inside the outer list.",
+        "Blank.",
+        "Return.",
+        "Close the method.",
+        "Blank.",
+        "Blank.",
+        "Blank.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [],
+        [
+          "invocable-method"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance",
+          "list-collection"
+        ],
+        [
+          "new-keyword"
+        ],
+        [],
+        [
+          "static-vs-instance"
+        ],
+        [],
+        [],
+        [],
+        [
+          "return-statement"
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "InvocableVendorServiceBuilder",
+      "intro": "Flow needs to pass TWO inputs (an account id and a list of service ids) into one Apex call. Use an inner class with @InvocableVariable fields as the parameter shape — the standard pattern for any Flow→Apex call carrying more than a single primitive.",
+      "code": "public class InvocableVendorServiceBuilder {\n\n    @InvocableMethod\n    public static void createVendorWithServices(List<FlowVendorServiceParams> vendorServiceParams){\n        \n        FlowVendorServiceParams params = vendorServiceParams[0];\n        Set<Id> serviceIdSet = new Set<Id>();\n        serviceIdSet.addAll(params.serviceIds);\n        \n        vendorServiceHelper.createVendorServicesForSingleVendor(params.acctId, serviceIdSet);\n    }\n    \n    public class FlowVendorServiceParams{\n        @InvocableVariable public Id acctId;\n        @InvocableVariable public List<Id> serviceIds;\n    }\n}",
+      "lineExplanations": [
+        "Outer class — the Flow-facing wrapper.",
+        "Blank.",
+        "@InvocableMethod — exposed to Flow.",
+        "Takes a List of inner-class parameter objects. Even when Flow invokes once, the param is a one-element list.",
+        "Blank.",
+        "Pull the first (and usually only) params object out.",
+        "Convert the List<Id> Flow gave us into a Set<Id> — the helper expects a Set so duplicates are dedupe'd.",
+        "addAll copies all elements from the list into the set in one call.",
+        "Blank.",
+        "Delegate to the existing helper — same bulkified path.",
+        "Close the method.",
+        "Blank.",
+        "Inner class — public so Flow can introspect and bind its fields. This is the parameter SHAPE.",
+        "@InvocableVariable on a public field — Flow sees this as an input field on the action.",
+        "Same for the list-of-ids field.",
+        "Close the inner class.",
+        "Close the outer class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object"
+        ],
+        [],
+        [
+          "invocable-method"
+        ],
+        [
+          "method-shape",
+          "void",
+          "list-collection"
+        ],
+        [],
+        [],
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [],
+        [],
+        [
+          "static-vs-instance"
+        ],
+        [],
+        [],
+        [
+          "class-vs-object"
+        ],
+        [
+          "invocable-variable"
+        ],
+        [
+          "invocable-variable"
+        ],
+        [],
+        []
       ]
     },
     {

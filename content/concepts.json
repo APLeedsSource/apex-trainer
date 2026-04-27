@@ -333,5 +333,15 @@
     "title": "@AuraEnabled(cacheable=true)",
     "reminder": "LWC-callable read-only methods marked cacheable=true are cached on the client per-input.",
     "introducedIn": "16-caching"
+  },
+  "invocable-method": {
+    "title": "@InvocableMethod",
+    "reminder": "Marks a static Apex method as callable from Flow, Process Builder, and Agentforce. The bridge from click-to-config to code.",
+    "introducedIn": "12-capstone-arlington"
+  },
+  "invocable-variable": {
+    "title": "@InvocableVariable",
+    "reminder": "Marks a public field on an inner class so Flow can pass complex parameters into an @InvocableMethod.",
+    "introducedIn": "12-capstone-arlington"
   }
 }
