@@ -1,41 +1,52 @@
 {
   "id": "03-classes",
-  "title": "Lesson 3 — Classes & Objects",
+  "title": "Lesson 3 \u2014 Classes & Objects",
   "slides": [
     {
       "type": "concept",
       "title": "What a class really is",
       "body": [
-        "A class is a BLUEPRINT. It says 'here is what a thing of this type looks like — what data it holds and what it can do.'",
-        "Real example: Tesla has one Model 3 blueprint. Every Model 3 ever built follows that blueprint. Each individual car is an OBJECT (an instance) — same shape, but with its own VIN, mileage, and owner."
+        "A class is a BLUEPRINT. It says 'here is what a thing of this type looks like \u2014 what data it holds and what it can do.'",
+        "Real example: Tesla has one Model 3 blueprint. Every Model 3 ever built follows that blueprint. Each individual car is an OBJECT (an instance) \u2014 same shape, but with its own VIN, mileage, and owner."
       ],
       "vocabulary": [
-        { "word": "blueprint", "def": "The class definition — the spec for what every instance of this class looks like." },
-        { "word": "instance", "def": "One actual object built from a class." }
+        {
+          "word": "blueprint",
+          "def": "The class definition \u2014 the spec for what every instance of this class looks like."
+        },
+        {
+          "word": "instance",
+          "def": "One actual object built from a class."
+        }
       ]
     },
     {
       "type": "concept",
       "title": "Why classes matter for Salesforce",
       "body": [
-        "Every Salesforce SObject — Account, Contact, Opportunity — is just a class Salesforce defined for you. You access fields and methods on those objects exactly the same way you'll access your own.",
-        "Real example: Account.Name, Contact.Email, Opportunity.Amount — those are all properties on Salesforce-defined classes. The difference between Salesforce's classes and yours is just who wrote them."
+        "Every Salesforce SObject \u2014 Account, Contact, Opportunity \u2014 is just a class Salesforce defined for you. You access fields and methods on those objects exactly the same way you'll access your own.",
+        "Real example: Account.Name, Contact.Email, Opportunity.Amount \u2014 those are all properties on Salesforce-defined classes. The difference between Salesforce's classes and yours is just who wrote them."
       ],
       "vocabulary": []
     },
     {
       "type": "type-along",
       "title": "Your first class",
-      "intro": "Type this. The simplest possible class — just data, no behavior yet.",
+      "intro": "Type this. The simplest possible class \u2014 just data, no behavior yet.",
       "code": "public class Car {\n    public String model;\n    public Integer year;\n}",
       "lineExplanations": [
-        "'public class Car' — defining a class named Car that any other class can use. The { opens the class body.",
+        "'public class Car' \u2014 defining a class named Car that any other class can use. The { opens the class body.",
         "Declare a property: every Car instance has its own 'model' String. 'public' means anyone can read/write it. The semicolon ends the property declaration.",
-        "Another property: 'year' as an Integer. The } below closes the class. That's it — a class with two pieces of data."
+        "Another property: 'year' as an Integer. The } below closes the class. That's it \u2014 a class with two pieces of data."
       ],
       "lineConcepts": [
-        ["class-vs-object", "public-modifier"],
-        ["variable-declaration"],
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "variable-declaration"
+        ],
         [],
         []
       ]
@@ -48,7 +59,10 @@
         "Real example: 'new HttpRequest()' is how every Apex callout to Stripe or Twilio starts. Instantiate, configure, send."
       ],
       "vocabulary": [
-        { "word": "new", "def": "Apex keyword that creates a new instance of a class." }
+        {
+          "word": "new",
+          "def": "Apex keyword that creates a new instance of a class."
+        }
       ]
     },
     {
@@ -57,47 +71,65 @@
       "intro": "Type this. Construct a Car, set its properties, read them back.",
       "code": "Car myCar = new Car();\nmyCar.model = 'Model 3';\nmyCar.year = 2024;\nSystem.debug(myCar.model + ' ' + myCar.year);",
       "lineExplanations": [
-        "'new Car()' creates a fresh instance — both properties start as null. Assign the instance to a variable named myCar of type Car.",
+        "'new Car()' creates a fresh instance \u2014 both properties start as null. Assign the instance to a variable named myCar of type Car.",
         "'myCar.model' = the model property OF this specific car. Object dot property = standard syntax everywhere in Apex.",
-        "Set the year. Each Car instance has its OWN model and year — independent of every other Car ever created.",
+        "Set the year. Each Car instance has its OWN model and year \u2014 independent of every other Car ever created.",
         "Read both properties and concatenate. Prints 'Model 3 2024'."
       ],
       "lineConcepts": [
-        ["new-keyword"],
-        ["string-quotes"],
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
         [],
-        ["string-concat"]
+        [
+          "string-concat"
+        ]
       ]
     },
     {
       "type": "concept",
-      "title": "Methods — what a class can DO",
+      "title": "Methods \u2014 what a class can DO",
       "body": [
-        "Methods are functions defined inside a class. They describe behavior — what the object can do, or what the class as a whole can compute.",
+        "Methods are functions defined inside a class. They describe behavior \u2014 what the object can do, or what the class as a whole can compute.",
         "Real example: Apex's Datetime.now() is a method. The List class has methods .add(), .size(), .clear(). Every method you'll ever write follows the same shape."
       ],
       "vocabulary": [
-        { "word": "method", "def": "A named, reusable block of code defined inside a class." }
+        {
+          "word": "method",
+          "def": "A named, reusable block of code defined inside a class."
+        }
       ]
     },
     {
       "type": "type-along",
       "title": "Adding a method",
-      "intro": "Type this. Now Car can DO something — describe itself.",
+      "intro": "Type this. Now Car can DO something \u2014 describe itself.",
       "code": "public class Car {\n    public String model;\n    public Integer year;\n    public String describe() {\n        return year + ' ' + model;\n    }\n}",
       "lineExplanations": [
         "Same class declaration as before.",
-        "model and year — same two properties.",
+        "model and year \u2014 same two properties.",
         "Method shape: public (anyone can call), String (returns a String), describe (the name), () (no parameters), { (opens the body).",
         "Inside the method: 'return' produces a value back to whoever called the method. We concatenate year and model and return that String.",
-        "} closes the method body. } closes the class. Two opens, two closes — always match them."
+        "} closes the method body. } closes the class. Two opens, two closes \u2014 always match them."
       ],
       "lineConcepts": [
-        ["class-vs-object"],
-        ["variable-declaration"],
+        [
+          "class-vs-object"
+        ],
+        [
+          "variable-declaration"
+        ],
         [],
-        ["method-shape", "public-modifier"],
-        ["string-concat"],
+        [
+          "method-shape",
+          "public-modifier"
+        ],
+        [
+          "string-concat"
+        ],
         [],
         []
       ]
@@ -115,22 +147,31 @@
         "Prints '2024 Model 3'."
       ],
       "lineConcepts": [
-        ["new-keyword"],
-        ["string-quotes"],
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
         [],
-        ["method-shape"],
+        [
+          "method-shape"
+        ],
         []
       ]
     },
     {
       "type": "concept",
-      "title": "Constructors — initial state",
+      "title": "Constructors \u2014 initial state",
       "body": [
         "A CONSTRUCTOR is a special method that runs automatically when you 'new' an instance. Its job: set up starting values so you don't have to.",
-        "Real example: when Stripe's API returns a Charge object, its constructor stamps the timestamp, generates an Id, and sets status='pending' — all before the object reaches your code."
+        "Real example: when Stripe's API returns a Charge object, its constructor stamps the timestamp, generates an Id, and sets status='pending' \u2014 all before the object reaches your code."
       ],
       "vocabulary": [
-        { "word": "constructor", "def": "Special method that runs when an instance is created. Same name as the class. No return type." }
+        {
+          "word": "constructor",
+          "def": "Special method that runs when an instance is created. Same name as the class. No return type."
+        }
       ]
     },
     {
@@ -141,15 +182,22 @@
       "lineExplanations": [
         "Class declaration.",
         "Two properties.",
-        "Constructor: same name as the class (Car). No return type — not even void. Takes two parameters: m (String) and y (Integer).",
+        "Constructor: same name as the class (Car). No return type \u2014 not even void. Takes two parameters: m (String) and y (Integer).",
         "Inside the constructor: assign the parameter m to the property model.",
         "Assign y to year. Two } below close constructor and class."
       ],
       "lineConcepts": [
-        ["class-vs-object"],
-        ["variable-declaration"],
+        [
+          "class-vs-object"
+        ],
+        [
+          "variable-declaration"
+        ],
         [],
-        ["method-shape", "parameter-vs-argument"],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
         [],
         [],
         [],
@@ -159,17 +207,77 @@
     {
       "type": "type-along",
       "title": "Constructing with arguments",
-      "intro": "Type this. Now constructing a Car is one line — no separate property assignments needed.",
+      "intro": "Type this. Now constructing a Car is one line \u2014 no separate property assignments needed.",
       "code": "Car myCar = new Car('Model 3', 2024);\nSystem.debug(myCar.model);\nSystem.debug(myCar.year);",
       "lineExplanations": [
-        "new Car('Model 3', 2024) — pass arguments to the constructor. The constructor runs and sets the properties for us. One line replaces three.",
+        "new Car('Model 3', 2024) \u2014 pass arguments to the constructor. The constructor runs and sets the properties for us. One line replaces three.",
         "Prints 'Model 3'.",
         "Prints 2024. Both properties were set by the constructor."
       ],
       "lineConcepts": [
-        ["new-keyword", "parameter-vs-argument", "string-quotes"],
+        [
+          "new-keyword",
+          "parameter-vs-argument",
+          "string-quotes"
+        ],
         [],
         []
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "Multiple constructors (overloading)",
+      "intro": "Type this. A class can declare more than one constructor \u2014 same name, different parameter lists. Apex picks the right one based on the arguments at the new-call. Lets callers say 'just give me a default' or 'here's exactly what I want.'",
+      "code": "public class Order {\n    public Decimal total;\n    \n    public Order() {\n        this.total = 0;\n    }\n    \n    public Order(Decimal startingTotal) {\n        this.total = startingTotal;\n    }\n}\n\nOrder empty = new Order();\nOrder opened = new Order(100);",
+      "lineExplanations": [
+        "Class declaration.",
+        "One instance field.",
+        "Blank.",
+        "No-arg constructor. Sensible defaults for callers who don't care about specifics.",
+        "Default total = 0.",
+        "Close the no-arg constructor.",
+        "Blank.",
+        "Second constructor \u2014 same name, takes a Decimal. This is overloading.",
+        "Use the parameter to seed the field.",
+        "Close the second constructor.",
+        "Close the class.",
+        "Blank.",
+        "new Order() picks the no-arg constructor automatically.",
+        "new Order(100) picks the Decimal-arg constructor \u2014 Apex matches by parameter count and types."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "variable-declaration"
+        ],
+        [],
+        [
+          "method-shape"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
+        [],
+        [],
+        [],
+        [
+          "new-keyword"
+        ],
+        [
+          "new-keyword"
+        ]
       ]
     },
     {
@@ -180,13 +288,16 @@
     },
     {
       "type": "concept",
-      "title": "Static — belongs to the CLASS, not an instance",
+      "title": "Static \u2014 belongs to the CLASS, not an instance",
       "body": [
-        "A 'static' method or property belongs to the class itself, not to any one instance. Call it as ClassName.method() — no 'new' needed.",
-        "Real example: Datetime.now() is static — there's no specific Datetime instance you call it on. UserInfo.getUserId() is static — one call, returns the current user. Compare with myCar.describe() — that's instance-level."
+        "A 'static' method or property belongs to the class itself, not to any one instance. Call it as ClassName.method() \u2014 no 'new' needed.",
+        "Real example: Datetime.now() is static \u2014 there's no specific Datetime instance you call it on. UserInfo.getUserId() is static \u2014 one call, returns the current user. Compare with myCar.describe() \u2014 that's instance-level."
       ],
       "vocabulary": [
-        { "word": "static", "def": "Modifier meaning 'belongs to the class itself, not any specific instance.'" }
+        {
+          "word": "static",
+          "def": "Modifier meaning 'belongs to the class itself, not any specific instance.'"
+        }
       ]
     },
     {
@@ -195,13 +306,15 @@
       "intro": "Type this. Math is a class. PI is a static property. abs() is a static method. No instance needed.",
       "code": "Decimal circ = Math.PI * 10;\nInteger absVal = Math.abs(-42);\nSystem.debug(circ);\nSystem.debug(absVal);",
       "lineExplanations": [
-        "Math.PI is a static property. Use it directly via ClassName.property — no 'new Math()'. Same shape every time.",
+        "Math.PI is a static property. Use it directly via ClassName.property \u2014 no 'new Math()'. Same shape every time.",
         "Math.abs(-42) is a static method call. Returns 42. The class itself does the work.",
         "Prints ~31.4 (PI * 10).",
         "Prints 42. abs (absolute value) strips the negative sign."
       ],
       "lineConcepts": [
-        ["static-vs-instance"],
+        [
+          "static-vs-instance"
+        ],
         [],
         [],
         []
@@ -210,19 +323,25 @@
     {
       "type": "recall",
       "front": "When should a method be static instead of instance?",
-      "back": "When it doesn't depend on data inside any specific instance — it's a pure utility (like Math.abs) or it operates on the class as a whole (like 'how many cars total were manufactured').",
+      "back": "When it doesn't depend on data inside any specific instance \u2014 it's a pure utility (like Math.abs) or it operates on the class as a whole (like 'how many cars total were manufactured').",
       "detail": "Rule of thumb: if your method body would never use 'this.something', make it static."
     },
     {
       "type": "concept",
-      "title": "Constants — public static final",
+      "title": "Constants \u2014 public static final",
       "body": [
-        "A 'public static final' property is a constant — a value that can never change after it's set. Convention: name it in ALL_CAPS with underscores.",
+        "A 'public static final' property is a constant \u2014 a value that can never change after it's set. Convention: name it in ALL_CAPS with underscores.",
         "Real example: Apex's StatusCode class has constants like StatusCode.REQUIRED_FIELD_MISSING. Salesforce uses constants everywhere to avoid 'magic strings' scattered across the codebase."
       ],
       "vocabulary": [
-        { "word": "constant", "def": "A named value that can never change after it's defined. Apex syntax: public static final TYPE NAME = value;" },
-        { "word": "final", "def": "Modifier meaning 'this value cannot be reassigned.'" }
+        {
+          "word": "constant",
+          "def": "A named value that can never change after it's defined. Apex syntax: public static final TYPE NAME = value;"
+        },
+        {
+          "word": "final",
+          "def": "Modifier meaning 'this value cannot be reassigned.'"
+        }
       ]
     },
     {
@@ -232,13 +351,17 @@
       "code": "public class CarFactory {\n    public static final String COLOR_RED = 'Red';\n    public static final String COLOR_WHITE = 'White';\n    public static final Integer MAX_DOORS = 4;\n}",
       "lineExplanations": [
         "Class declaration.",
-        "A public static final String. Name in ALL_CAPS by convention. The value 'Red' is locked — assigning to COLOR_RED later would fail to compile.",
+        "A public static final String. Name in ALL_CAPS by convention. The value 'Red' is locked \u2014 assigning to COLOR_RED later would fail to compile.",
         "Another constant.",
-        "Integer constants work the same way. Reading: CarFactory.MAX_DOORS gives 4 — anywhere in the codebase."
+        "Integer constants work the same way. Reading: CarFactory.MAX_DOORS gives 4 \u2014 anywhere in the codebase."
       ],
       "lineConcepts": [
-        ["class-vs-object"],
-        ["static-vs-instance"],
+        [
+          "class-vs-object"
+        ],
+        [
+          "static-vs-instance"
+        ],
         [],
         [],
         []
@@ -248,9 +371,9 @@
       "type": "quiz",
       "question": "You want a method that returns the current time, with no specific instance involved. Should it be static or instance?",
       "options": [
-        "Instance — every Datetime object has its own 'now'.",
-        "Static — there's no 'specific instance' to call it on; it's a utility.",
-        "Constructor — it builds something new.",
+        "Instance \u2014 every Datetime object has its own 'now'.",
+        "Static \u2014 there's no 'specific instance' to call it on; it's a utility.",
+        "Constructor \u2014 it builds something new.",
         "It doesn't matter."
       ],
       "correct": 1,
@@ -260,27 +383,27 @@
       "type": "concept",
       "title": "Putting it together",
       "body": [
-        "Every Apex class you'll meet — Salesforce-provided or your own — uses these same building blocks: properties, constructors, instance methods, static methods, constants.",
+        "Every Apex class you'll meet \u2014 Salesforce-provided or your own \u2014 uses these same building blocks: properties, constructors, instance methods, static methods, constants.",
         "Real example: Salesforce's Account class has Name and AnnualRevenue properties, a constructor (called by SOQL), instance methods like .clone(), and is referenced via static lookups in your code. Same shapes you just typed."
       ]
     },
     {
       "type": "type-along",
       "title": "Capstone: Account Summary class",
-      "intro": "Sales reps want a one-line pitch summary built from any Account they open. Build an AccountSummary class with a constructor, an instance method, and a static factory — the kind of helper every Salesforce org has dozens of for triggers, screen flows, and Agentforce actions.",
+      "intro": "Sales reps want a one-line pitch summary built from any Account they open. Build an AccountSummary class with a constructor, an instance method, and a static factory \u2014 the kind of helper every Salesforce org has dozens of for triggers, screen flows, and Agentforce actions.",
       "code": "public class AccountSummary {\n    public String name;\n    public Decimal revenue;\n    public AccountSummary(Account a) {\n        this.name = a.Name;\n        this.revenue = a.AnnualRevenue;\n    }\n    public String pitch() {\n        return name + ' ($' + revenue + ')';\n    }\n    public static AccountSummary fromAccount(Account a) {\n        return new AccountSummary(a);\n    }\n}\nAccount a = new Account(Name='Acme', AnnualRevenue=1000000);\nAccountSummary s = AccountSummary.fromAccount(a);\nSystem.debug(s.pitch());",
       "lineExplanations": [
-        "Declare a public class named AccountSummary — the wrapper we're building.",
+        "Declare a public class named AccountSummary \u2014 the wrapper we're building.",
         "Property to hold the account's name. Public so callers can read it directly.",
         "Property for revenue. Decimal (not Double) because financial values demand exact precision.",
-        "Constructor takes an Account SObject — the most common Apex pattern for wrapping a record.",
+        "Constructor takes an Account SObject \u2014 the most common Apex pattern for wrapping a record.",
         "Pull the Name field off the Account onto our property. 'this' disambiguates the property from any local variable.",
         "Same for AnnualRevenue.",
         "Close the constructor.",
         "An instance method that produces the pitch string. Returns a String.",
         "Concatenate the formatted pitch and return it. + on Strings joins them.",
         "Close the pitch method.",
-        "A static factory method — call without an instance. Common alternative to direct 'new Class(...)' usage.",
+        "A static factory method \u2014 call without an instance. Common alternative to direct 'new Class(...)' usage.",
         "Inside the factory, just construct and return.",
         "Close the factory method.",
         "Close the class body. Two opens (constructor + class) needed two closes.",
@@ -289,23 +412,52 @@
         "Call the instance method on s and print the result. This is what a downstream trigger or LWC would render."
       ],
       "lineConcepts": [
-        ["class-vs-object", "public-modifier"],
-        ["variable-declaration"],
-        ["decimal-vs-double"],
-        ["method-shape", "parameter-vs-argument"],
-        ["this-keyword"],
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "variable-declaration"
+        ],
+        [
+          "decimal-vs-double"
+        ],
+        [
+          "method-shape",
+          "parameter-vs-argument"
+        ],
+        [
+          "this-keyword"
+        ],
         [],
         [],
-        ["method-shape"],
-        ["return-statement", "string-concat"],
+        [
+          "method-shape"
+        ],
+        [
+          "return-statement",
+          "string-concat"
+        ],
         [],
-        ["static-vs-instance", "method-shape"],
-        ["new-keyword", "return-statement"],
+        [
+          "static-vs-instance",
+          "method-shape"
+        ],
+        [
+          "new-keyword",
+          "return-statement"
+        ],
         [],
         [],
-        ["new-keyword"],
-        ["static-vs-instance"],
-        ["method-shape"]
+        [
+          "new-keyword"
+        ],
+        [
+          "static-vs-instance"
+        ],
+        [
+          "method-shape"
+        ]
       ]
     },
     {
@@ -313,7 +465,7 @@
       "title": "What you now know",
       "body": [
         "You can define a class with properties, methods, a constructor, static utilities, and constants. You can construct instances and call methods on them.",
-        "Next lessons: Loops, Methods, Properties, then SOQL — where data starts flowing in and out of Salesforce."
+        "Next lessons: Loops, Methods, Properties, then SOQL \u2014 where data starts flowing in and out of Salesforce."
       ]
     }
   ]

@@ -1,24 +1,24 @@
 {
   "id": "08-dml",
-  "title": "Lesson 8 — DML: Writing Salesforce Data",
+  "title": "Lesson 8 \u2014 DML: Writing Salesforce Data",
   "slides": [
     {
       "type": "concept",
       "title": "What DML is",
       "body": [
         "DML = Data Manipulation Language. The verbs Apex uses to change records in the database: insert, update, upsert, delete, undelete.",
-        "Real example: every Apex trigger, every async batch, every API endpoint that persists data ultimately performs DML. SOQL reads — DML writes."
+        "Real example: every Apex trigger, every async batch, every API endpoint that persists data ultimately performs DML. SOQL reads \u2014 DML writes."
       ],
       "vocabulary": [
         {
           "word": "DML",
-          "def": "Data Manipulation Language — Apex's verbs for changing records (insert/update/upsert/delete/undelete)."
+          "def": "Data Manipulation Language \u2014 Apex's verbs for changing records (insert/update/upsert/delete/undelete)."
         }
       ]
     },
     {
       "type": "concept",
-      "title": "insert — creating a record",
+      "title": "insert \u2014 creating a record",
       "body": [
         "Construct an SObject in Apex (like 'new Account()'), set its fields, then 'insert acct;'. The platform assigns the Id.",
         "Real example: every Salesforce Web-to-Lead form that uses Apex routing ends with an insert."
@@ -34,7 +34,7 @@
         "Construct an empty Account in memory. Has no Id yet.",
         "Set the required Name field.",
         "DML: insert. Platform writes to the database, assigns an Id, and stamps it back onto our 'acct' variable.",
-        "Print the new Id — proof that the record exists in the database now."
+        "Print the new Id \u2014 proof that the record exists in the database now."
       ],
       "lineConcepts": [
         [
@@ -50,8 +50,40 @@
       ]
     },
     {
+      "type": "type-along",
+      "title": "Constructor with named args (multi-field)",
+      "intro": "Type this. Apex lets you set multiple fields right inside an SObject constructor \u2014 same effect as setting them line by line, but tighter when you're constructing many records (think bulkified DML loops).",
+      "code": "Account acct = new Account(\n    Name='Acme Corp',\n    Industry='Technology',\n    AnnualRevenue=1000000\n);\ninsert acct;\nSystem.debug(acct.Id);",
+      "lineExplanations": [
+        "Open the constructor \u2014 every line below is a Field=Value pair.",
+        "Set the Name field. Required for Account.",
+        "Set Industry \u2014 picklist value, but to Apex it's just a String.",
+        "Set AnnualRevenue. Integer literal Apex auto-converts to Decimal here.",
+        "Close the constructor. Equivalent to four lines of acct.X = Y assignment.",
+        "Insert it. Same DML as before; the construction style changed, the DML didn't.",
+        "Print the new Id."
+      ],
+      "lineConcepts": [
+        [
+          "new-keyword"
+        ],
+        [
+          "string-quotes"
+        ],
+        [
+          "string-quotes"
+        ],
+        [],
+        [],
+        [
+          "dml-insert"
+        ],
+        []
+      ]
+    },
+    {
       "type": "concept",
-      "title": "update — modifying existing",
+      "title": "update \u2014 modifying existing",
       "body": [
         "Update needs records that ALREADY have an Id. Change some fields, then 'update record;'.",
         "Real example: the 'Edit' button on every Salesforce record page ultimately runs an update."
@@ -65,7 +97,7 @@
       "code": "Account a = [SELECT Id, Name FROM Account LIMIT 1];\na.Name = 'Acme (Renamed)';\nupdate a;",
       "lineExplanations": [
         "Query one Account. Now 'a' has an Id and a Name.",
-        "Mutate the Name in memory. The database hasn't changed yet — only the in-memory copy.",
+        "Mutate the Name in memory. The database hasn't changed yet \u2014 only the in-memory copy.",
         "DML: update. The platform writes the new Name to the database row matching a.Id."
       ],
       "lineConcepts": [
@@ -83,7 +115,7 @@
     },
     {
       "type": "concept",
-      "title": "Bulk DML — work on Lists",
+      "title": "Bulk DML \u2014 work on Lists",
       "body": [
         "Always prefer DML on a List rather than calling it once per record. ONE 'insert leads' on a List<Lead> of 200 = ONE DML statement against the governor limit.",
         "Real example: an integration that imports 5,000 leads. Looping 'insert lead;' 5,000 times = 5,000 DML statements = governor-limit failure. One bulk insert = 1 DML statement."
@@ -91,7 +123,7 @@
       "vocabulary": [
         {
           "word": "bulk DML",
-          "def": "DML applied to a List of records in a single call — the bulkified pattern that respects governor limits."
+          "def": "DML applied to a List of records in a single call \u2014 the bulkified pattern that respects governor limits."
         }
       ]
     },
@@ -124,10 +156,10 @@
     },
     {
       "type": "concept",
-      "title": "upsert — insert or update",
+      "title": "upsert \u2014 insert or update",
       "body": [
-        "Upsert is one statement that does the right thing — if the record has an Id (or matches a key), update it; otherwise, insert a new one.",
-        "Real example: nightly imports from a partner system. You don't always know which records are new vs. existing — upsert handles both transparently."
+        "Upsert is one statement that does the right thing \u2014 if the record has an Id (or matches a key), update it; otherwise, insert a new one.",
+        "Real example: nightly imports from a partner system. You don't always know which records are new vs. existing \u2014 upsert handles both transparently."
       ],
       "vocabulary": []
     },
@@ -142,7 +174,7 @@
         "Company.",
         "External_Id__c is a custom field marked as External Id.",
         "Close construction.",
-        "upsert l External_Id__c — match on the external id; insert if no match, update if there is one."
+        "upsert l External_Id__c \u2014 match on the external id; insert if no match, update if there is one."
       ],
       "lineConcepts": [
         [
@@ -196,7 +228,7 @@
       "vocabulary": [
         {
           "word": "allOrNone",
-          "def": "DML option — false means partial success allowed, true (default) means the whole batch fails on any single error."
+          "def": "DML option \u2014 false means partial success allowed, true (default) means the whole batch fails on any single error."
         }
       ]
     },
@@ -239,10 +271,10 @@
       "type": "quiz",
       "question": "You're loading partner data nightly. Some rows match existing records by an External Id; some are new. Which DML?",
       "options": [
-        "insert — easier to think about.",
-        "update — most rows already exist.",
-        "upsert — handles both insert and update in one call.",
-        "delete then re-insert — clean slate."
+        "insert \u2014 easier to think about.",
+        "update \u2014 most rows already exist.",
+        "upsert \u2014 handles both insert and update in one call.",
+        "delete then re-insert \u2014 clean slate."
       ],
       "correct": 2,
       "explanation": "upsert. It keys on a field you choose (External Id) and does the right thing per record."
@@ -250,17 +282,17 @@
     {
       "type": "type-along",
       "title": "Capstone: Bulk lead import with partial success",
-      "intro": "An overnight integration drops a batch of leads into Salesforce — some rows are missing required fields. Use Database.insert(records, false) to save what's valid, capture the failures, and log a clean summary. The standard data-import pattern in any Salesforce org.",
+      "intro": "An overnight integration drops a batch of leads into Salesforce \u2014 some rows are missing required fields. Use Database.insert(records, false) to save what's valid, capture the failures, and log a clean summary. The standard data-import pattern in any Salesforce org.",
       "code": "List<Lead> toInsert = new List<Lead>();\ntoInsert.add(new Lead(LastName='Doe', Company='Acme', Email='doe@acme.com'));\ntoInsert.add(new Lead(LastName='Smith', Company='Beta'));\ntoInsert.add(new Lead(Company='Missing Required'));\nList<Database.SaveResult> results = Database.insert(toInsert, false);\nInteger successes = 0;\nInteger failures = 0;\nfor (Database.SaveResult r : results) {\n    if (r.isSuccess()) {\n        successes++;\n    } else {\n        failures++;\n        System.debug('Failed: ' + r.getErrors()[0].getMessage());\n    }\n}\nSystem.debug('Saved ' + successes + ', failed ' + failures);",
       "lineExplanations": [
         "Empty list to fill with leads to insert.",
-        "Valid lead — has LastName, Company, Email.",
-        "Also valid — minimum required fields for Lead.",
-        "INVALID — missing LastName, which is required on Lead.",
+        "Valid lead \u2014 has LastName, Company, Email.",
+        "Also valid \u2014 minimum required fields for Lead.",
+        "INVALID \u2014 missing LastName, which is required on Lead.",
         "Database.insert with allOrNone=false. Returns one SaveResult per record. Valid leads still save; invalid ones come back as failures.",
         "Counter for successes.",
         "Counter for failures.",
-        "Walk the SaveResults — same order as toInsert.",
+        "Walk the SaveResults \u2014 same order as toInsert.",
         "Branch on success.",
         "Increment success count.",
         "Otherwise it's a failure.",
@@ -313,7 +345,7 @@
       "title": "What you now know",
       "body": [
         "Insert / update / upsert / delete / undelete, bulk DML on Lists, Database.insert with allOrNone for partial success.",
-        "Next: Triggers — Apex code that runs automatically when records are inserted, updated, or deleted on a Salesforce object."
+        "Next: Triggers \u2014 Apex code that runs automatically when records are inserted, updated, or deleted on a Salesforce object."
       ]
     }
   ]

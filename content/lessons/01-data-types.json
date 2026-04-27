@@ -1,18 +1,18 @@
 {
   "id": "01-data-types",
-  "title": "Lesson 1 — Data Types & Primitives",
+  "title": "Lesson 1 \u2014 Data Types & Primitives",
   "slides": [
     {
       "type": "concept",
       "title": "Why types matter",
       "body": [
-        "Apex needs to know what KIND of value goes in every variable — a number? text? a date? Declaring the type up front lets the compiler catch bugs before they reach production.",
-        "Real example: a banking app that mixes up a String '100.00' with a Decimal 100.00 will fail in subtle ways. Strong typing prevents this — Stripe and Plaid lean on typed languages partly for this reason."
+        "Apex needs to know what KIND of value goes in every variable \u2014 a number? text? a date? Declaring the type up front lets the compiler catch bugs before they reach production.",
+        "Real example: a banking app that mixes up a String '100.00' with a Decimal 100.00 will fail in subtle ways. Strong typing prevents this \u2014 Stripe and Plaid lean on typed languages partly for this reason."
       ],
       "vocabulary": [
         {
           "word": "type",
-          "def": "What kind of value a variable holds — Integer, String, Boolean, etc."
+          "def": "What kind of value a variable holds \u2014 Integer, String, Boolean, etc."
         }
       ]
     },
@@ -21,36 +21,36 @@
       "title": "The five families of Apex types",
       "body": [
         "Apex types fall into five buckets: Primitives (Integer, String, etc.), Collections (List, Set, Map), Enums, Classes (your own and Apex's), and SObjects (Salesforce records like Account, Contact).",
-        "Plus the special value 'null' — meaning 'no value yet'. Every variable holds either a real value or null."
+        "Plus the special value 'null' \u2014 meaning 'no value yet'. Every variable holds either a real value or null."
       ],
       "vocabulary": [
         {
           "word": "primitive",
-          "def": "A built-in atomic type — Integer, String, Boolean, Decimal, Date, etc."
+          "def": "A built-in atomic type \u2014 Integer, String, Boolean, Decimal, Date, etc."
         },
         {
           "word": "null",
-          "def": "A special value meaning 'no value' — the absence of a real value."
+          "def": "A special value meaning 'no value' \u2014 the absence of a real value."
         }
       ]
     },
     {
       "type": "concept",
-      "title": "Integer — whole numbers",
+      "title": "Integer \u2014 whole numbers",
       "body": [
         "Apex Integer holds whole numbers from about -2 billion to +2 billion. Use it for counters, ages, quantities, indexes.",
-        "When you need bigger numbers — like Twitter/X's tweet IDs which long-ago exceeded 2 billion — Apex has Long, which holds up to 9 quintillion."
+        "When you need bigger numbers \u2014 like Twitter/X's tweet IDs which long-ago exceeded 2 billion \u2014 Apex has Long, which holds up to 9 quintillion."
       ],
       "vocabulary": []
     },
     {
       "type": "type-along",
       "title": "Declaring Integers",
-      "intro": "Type these. Pay attention to the shape — TYPE name = value;",
+      "intro": "Type these. Pay attention to the shape \u2014 TYPE name = value;",
       "code": "Integer count = 0;\nInteger maxAttempts = 5;\nLong tweetId = 1750000000000000000L;",
       "lineExplanations": [
         "A counter starting at 0. Pattern you'll see thousands of times: Integer name = startingValue;",
-        "Configuration values often live in Integers — 'max retries', 'page size', 'timeout in seconds'.",
+        "Configuration values often live in Integers \u2014 'max retries', 'page size', 'timeout in seconds'.",
         "Long is for very large numbers. The trailing L tells Apex 'this number is a Long, not an Integer.' Twitter/X's tweet IDs and Facebook's user IDs are this big."
       ],
       "lineConcepts": [
@@ -64,19 +64,19 @@
     },
     {
       "type": "concept",
-      "title": "Decimal vs Double — never confuse these",
+      "title": "Decimal vs Double \u2014 never confuse these",
       "body": [
-        "Decimal stores exact numbers — perfect for money. Double is faster but stores approximations and loses precision.",
-        "Real example: Stripe, banks, and Salesforce's Currency field always use Decimal. A Double would silently turn $0.10 + $0.20 into $0.30000000004 — fine for graphics, catastrophic for accounting."
+        "Decimal stores exact numbers \u2014 perfect for money. Double is faster but stores approximations and loses precision.",
+        "Real example: Stripe, banks, and Salesforce's Currency field always use Decimal. A Double would silently turn $0.10 + $0.20 into $0.30000000004 \u2014 fine for graphics, catastrophic for accounting."
       ],
       "vocabulary": [
         {
           "word": "Decimal",
-          "def": "Exact-precision number type — required for currency and any value where rounding errors matter."
+          "def": "Exact-precision number type \u2014 required for currency and any value where rounding errors matter."
         },
         {
           "word": "Double",
-          "def": "Approximate-precision number type — fast for math, but loses precision over time."
+          "def": "Approximate-precision number type \u2014 fast for math, but loses precision over time."
         }
       ]
     },
@@ -86,7 +86,7 @@
       "intro": "Type the price of two items being added. This is what every Apex e-commerce or invoicing system looks like.",
       "code": "Decimal price = 19.99;\nDecimal tax = 1.65;\nDecimal total = price + tax;\nSystem.debug(total);",
       "lineExplanations": [
-        "Decimal holds exact decimal values. 19.99 stays exactly 19.99 — no float rounding.",
+        "Decimal holds exact decimal values. 19.99 stays exactly 19.99 \u2014 no float rounding.",
         "Apply a tax of $1.65. Same Decimal type, same precision rules.",
         "+ on numbers does addition. The result type is Decimal because both operands are Decimal.",
         "Print the total. In a real system this might write to the Order.TotalAmount field on a Salesforce record."
@@ -105,13 +105,13 @@
       "type": "recall",
       "front": "You're storing the price of a Stripe charge. Integer, Decimal, or Double?",
       "back": "Decimal.",
-      "detail": "Decimal preserves exact value. Double approximates and accumulates rounding error — guaranteed to fail an audit. Integer can't store cents."
+      "detail": "Decimal preserves exact value. Double approximates and accumulates rounding error \u2014 guaranteed to fail an audit. Integer can't store cents."
     },
     {
       "type": "concept",
-      "title": "Boolean — true or false",
+      "title": "Boolean \u2014 true or false",
       "body": [
-        "Boolean holds exactly one of two values: true or false. No quotes — true and false are language keywords.",
+        "Boolean holds exactly one of two values: true or false. No quotes \u2014 true and false are language keywords.",
         "Real example: every feature flag at Facebook and every 'is_active' toggle in Salesforce is ultimately a Boolean. Billions of them, controlling who sees what."
       ],
       "vocabulary": []
@@ -123,7 +123,7 @@
       "code": "Boolean isActive = true;\nif (isActive) {\n    System.debug('User can log in.');\n}",
       "lineExplanations": [
         "Declare a Boolean. No quotes around true.",
-        "if (someBoolean) is the most common conditional shape — no comparison needed, the Boolean IS the test.",
+        "if (someBoolean) is the most common conditional shape \u2014 no comparison needed, the Boolean IS the test.",
         "Runs only when isActive is true. If it were false, this block is skipped entirely."
       ],
       "lineConcepts": [
@@ -139,9 +139,9 @@
     },
     {
       "type": "concept",
-      "title": "String — text",
+      "title": "String \u2014 text",
       "body": [
-        "String holds text — usernames, emails, product names, error messages. Apex strings always use SINGLE quotes.",
+        "String holds text \u2014 usernames, emails, product names, error messages. Apex strings always use SINGLE quotes.",
         "Real example: every Slack message, every Salesforce email subject, every product description on Amazon is a String somewhere in the database."
       ],
       "vocabulary": []
@@ -152,7 +152,7 @@
       "intro": "Type these. Notice: single quotes always. The + operator joins strings.",
       "code": "String firstName = 'Arthur';\nString lastName = 'Papernik';\nString fullName = firstName + ' ' + lastName;\nSystem.debug(fullName);",
       "lineExplanations": [
-        "Declare a String. Single quotes — never double.",
+        "Declare a String. Single quotes \u2014 never double.",
         "Another String. Apex Strings can hold any text, any length up to a few million characters.",
         "Concatenation: join two Strings with +. The ' ' is a literal space. Without it you'd get 'ArthurPapernik'.",
         "Print 'Arthur Papernik'."
@@ -179,23 +179,27 @@
       "vocabulary": [
         {
           "word": "Datetime",
-          "def": "Year, month, day, hour, minute, second — all stored together, in UTC."
+          "def": "Year, month, day, hour, minute, second \u2014 all stored together, in UTC."
         },
         {
           "word": "UTC",
-          "def": "Coordinated Universal Time — the timezone-neutral baseline used by databases worldwide."
+          "def": "Coordinated Universal Time \u2014 the timezone-neutral baseline used by databases worldwide."
         }
       ]
     },
     {
       "type": "type-along",
       "title": "Working with dates",
-      "intro": "Type this. Apex gives you Date.today() and Datetime.now() for current values — no hard-coding.",
-      "code": "Date today = Date.today();\nDatetime now = Datetime.now();\nDate nextWeek = today.addDays(7);",
+      "intro": "Type this. Apex gives you Date.today() and Datetime.now() for current values, plus Date.newInstance() for building a specific date and .year()/.month() for pulling parts out.",
+      "code": "Date today = Date.today();\nDatetime now = Datetime.now();\nDate nextWeek = today.addDays(7);\n\nDate jan1 = Date.newInstance(2026, 1, 1);\nInteger thisYear = today.year();\nInteger thisMonth = today.month();",
       "lineExplanations": [
-        "Date.today() returns today's calendar date. Use it instead of typing a literal — your code stays correct as time passes.",
+        "Date.today() returns today's calendar date. Use it instead of typing a literal \u2014 your code stays correct as time passes.",
         "Datetime.now() returns the current moment, including hours and minutes. This is what gets stamped on every record's LastModifiedDate.",
-        "addDays(7) returns a NEW Date one week from today. The original 'today' variable is unchanged. This is a method on the Date class."
+        "addDays(7) returns a NEW Date one week from today. The original 'today' is unchanged.",
+        "Blank.",
+        "Date.newInstance(year, month, day) is the static factory for building a specific date \u2014 month is 1-12, day is 1-31.",
+        ".year() pulls the year off any Date or Datetime as an Integer. Pairs with .month(), .day(), .hour(), etc.",
+        ".month() returns the month (1-12). The pair .year()/.month() is the standard way to bucket records into a billing period."
       ],
       "lineConcepts": [
         [
@@ -204,14 +208,24 @@
         [],
         [
           "method-shape"
+        ],
+        [],
+        [
+          "static-vs-instance"
+        ],
+        [
+          "method-shape"
+        ],
+        [
+          "method-shape"
         ]
       ]
     },
     {
       "type": "concept",
-      "title": "Id — Salesforce's primary key",
+      "title": "Id \u2014 Salesforce's primary key",
       "body": [
-        "Id is a special Apex type for Salesforce record identifiers — 18-character strings like '001D000000IqhSL'. Every Account, Contact, or custom record has one.",
+        "Id is a special Apex type for Salesforce record identifiers \u2014 18-character strings like '001D000000IqhSL'. Every Account, Contact, or custom record has one.",
         "Real example: every relationship in Salesforce is just one record's Id stored on another record. Contact.AccountId points to the Account. This is exactly how foreign keys work in any relational database."
       ],
       "vocabulary": [
@@ -227,8 +241,8 @@
       "intro": "Type this. Ids are Strings under the hood, but typing them as Id catches more bugs.",
       "code": "Id accountId = '001D000000IqhSL';\nAccount acct = [SELECT Id, Name FROM Account WHERE Id = :accountId];\nSystem.debug(acct.Name);",
       "lineExplanations": [
-        "Declare an Id variable. The literal looks like a String, but the type is Id — Apex will reject anything that's not a valid 18-char Salesforce id.",
-        "Inline SOQL — bracketed query that fetches a record. The :accountId is bind syntax — 'use the value of this variable here.' This is how Apex talks to the Salesforce database.",
+        "Declare an Id variable. The literal looks like a String, but the type is Id \u2014 Apex will reject anything that's not a valid 18-char Salesforce id.",
+        "Inline SOQL \u2014 bracketed query that fetches a record. The :accountId is bind syntax \u2014 'use the value of this variable here.' This is how Apex talks to the Salesforce database.",
         "Read the Name field off the fetched Account. acct.Name is the standard 'object dot field' syntax."
       ],
       "lineConcepts": [
@@ -241,10 +255,10 @@
     },
     {
       "type": "concept",
-      "title": "null — the absence of a value",
+      "title": "null \u2014 the absence of a value",
       "body": [
         "Any variable can hold null instead of a real value. It means 'nothing assigned yet' or 'this field is empty'.",
-        "Real example: a brand-new Salesforce Lead might have a null Email field until the user fills it in. Forgetting to handle null is the single most common cause of Apex runtime errors — the dreaded NullPointerException."
+        "Real example: a brand-new Salesforce Lead might have a null Email field until the user fills it in. Forgetting to handle null is the single most common cause of Apex runtime errors \u2014 the dreaded NullPointerException."
       ],
       "vocabulary": []
     },
@@ -256,7 +270,7 @@
       "lineExplanations": [
         "Declare a String and explicitly set it to null. In real code this null often comes from a record field that wasn't filled in.",
         "Guard with != null before using the value. != means 'not equal to'. Calling a method on a null variable would crash.",
-        "Safe to call .toLowerCase() now — we know email is a real String inside this block."
+        "Safe to call .toLowerCase() now \u2014 we know email is a real String inside this block."
       ],
       "lineConcepts": [
         [
@@ -279,29 +293,29 @@
         "if (sendEmail.isTrue) {"
       ],
       "correct": 2,
-      "explanation": "A Boolean variable IS already the test — just put it in the if. Quotes would make it a String comparison; a single = is assignment, not comparison; isTrue isn't a thing in Apex."
+      "explanation": "A Boolean variable IS already the test \u2014 just put it in the if. Quotes would make it a String comparison; a single = is assignment, not comparison; isTrue isn't a thing in Apex."
     },
     {
       "type": "recall",
       "front": "Why does Salesforce store every Datetime in UTC instead of the user's local time?",
       "back": "So records stay consistent across timezones. Each user's UI converts UTC into their local time on display.",
-      "detail": "Same pattern at any global system — Slack, Uber, Airbnb. Store one canonical timestamp; convert at the edges."
+      "detail": "Same pattern at any global system \u2014 Slack, Uber, Airbnb. Store one canonical timestamp; convert at the edges."
     },
     {
       "type": "type-along",
       "title": "Capstone: Invoice line item",
-      "intro": "Finance wants to compute an invoice line item — product, quantity, unit price, tax, and total — before saving to a Salesforce custom object. Build a tiny calculation that uses the right primitive for each value (Decimal for money, Integer for counts, Date for the issue date).",
+      "intro": "Finance wants to compute an invoice line item \u2014 product, quantity, unit price, tax, and total \u2014 before saving to a Salesforce custom object. Build a tiny calculation that uses the right primitive for each value (Decimal for money, Integer for counts, Date for the issue date).",
       "code": "String productName = 'Salesforce Premium License';\nInteger quantity = 12;\nDecimal unitPrice = 99.99;\nDecimal taxRate = 0.0825;\nDate issueDate = Date.today();\nDecimal subtotal = unitPrice * quantity;\nDecimal tax = subtotal * taxRate;\nDecimal total = subtotal + tax;\nBoolean isPaid = false;\nString summary = productName + ' x' + quantity + ' = $' + total;\nSystem.debug('Issued: ' + issueDate);\nSystem.debug(summary);\nSystem.debug('Paid? ' + isPaid);",
       "lineExplanations": [
-        "Declare the product name as a String — single-quoted text.",
-        "Quantity is a whole number — Integer is the right primitive.",
-        "Unit price uses Decimal (NOT Double) — money requires exact precision.",
+        "Declare the product name as a String \u2014 single-quoted text.",
+        "Quantity is a whole number \u2014 Integer is the right primitive.",
+        "Unit price uses Decimal (NOT Double) \u2014 money requires exact precision.",
         "Tax rate also Decimal. 0.0825 = 8.25%.",
-        "Date.today() is a static method on the Date class — returns today's calendar date in the org's timezone.",
-        "Multiply Decimal by Integer — Apex auto-promotes; result is Decimal.",
+        "Date.today() is a static method on the Date class \u2014 returns today's calendar date in the org's timezone.",
+        "Multiply Decimal by Integer \u2014 Apex auto-promotes; result is Decimal.",
         "Apply tax rate to subtotal.",
         "Sum the two Decimals.",
-        "Boolean for the paid flag — no quotes, true/false are language keywords.",
+        "Boolean for the paid flag \u2014 no quotes, true/false are language keywords.",
         "Build a human-readable summary line. + on Strings concatenates; numbers are auto-converted.",
         "Print the issue date.",
         "Print the summary.",
@@ -339,7 +353,7 @@
       "title": "What you now know",
       "body": [
         "You can declare every primitive Apex needs: Integer, Long, Decimal, Double, Boolean, String, Date, Datetime, Id, plus null.",
-        "Next: Collections — how to hold many values at once. Lists, Sets, and Maps are the workhorses of every Apex method that touches more than one record."
+        "Next: Collections \u2014 how to hold many values at once. Lists, Sets, and Maps are the workhorses of every Apex method that touches more than one record."
       ]
     }
   ]

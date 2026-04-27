@@ -1,13 +1,13 @@
 {
   "id": "05-methods",
-  "title": "Lesson 5 — Methods & Modifiers",
+  "title": "Lesson 5 \u2014 Methods & Modifiers",
   "slides": [
     {
       "type": "concept",
       "title": "Why methods matter",
       "body": [
         "A method is a named, reusable block of code. Define it once, call it as many times as you need.",
-        "Real example: Stripe's Apex SDK exposes a tiny set of public methods — Charge.create(), Customer.update(), Refund.list(). Behind each, hundreds of lines of internal logic. The user only sees the clean entry points."
+        "Real example: Stripe's Apex SDK exposes a tiny set of public methods \u2014 Charge.create(), Customer.update(), Refund.list(). Behind each, hundreds of lines of internal logic. The user only sees the clean entry points."
       ],
       "vocabulary": [
         {
@@ -21,23 +21,23 @@
       "title": "Method anatomy revisited",
       "body": [
         "Six parts: access modifier (public/private), optional static, return type, name, parameter list, body.",
-        "Example: 'public static String greet(String name) { return ... }'. Memorize this shape — every Apex method follows it."
+        "Example: 'public static String greet(String name) { return ... }'. Memorize this shape \u2014 every Apex method follows it."
       ],
       "vocabulary": [
         {
           "word": "signature",
-          "def": "The method's name and parameter list — together they uniquely identify a method."
+          "def": "The method's name and parameter list \u2014 together they uniquely identify a method."
         }
       ]
     },
     {
       "type": "type-along",
       "title": "A method that returns a value",
-      "intro": "Type this. Notice the return statement — that's how the value gets back to the caller.",
+      "intro": "Type this. Notice the return statement \u2014 that's how the value gets back to the caller.",
       "code": "public class Greeter {\n    public static String hello(String name) {\n        return 'Hi ' + name;\n    }\n}",
       "lineExplanations": [
         "Class declaration.",
-        "public static String hello(String name) — public, static (no instance needed), returns String, takes one parameter.",
+        "public static String hello(String name) \u2014 public, static (no instance needed), returns String, takes one parameter.",
         "return ends the method and ships back the resulting String.",
         "Two closes: method body, class body."
       ],
@@ -78,7 +78,7 @@
     },
     {
       "type": "concept",
-      "title": "void — methods that don't return",
+      "title": "void \u2014 methods that don't return",
       "body": [
         "If a method just runs (logging, sending an email, updating a record) and has no value to return, mark its return type 'void'.",
         "Real example: notifySlack(message) sends a Slack message and returns nothing. The 'work' is the side effect, not a return value."
@@ -93,11 +93,11 @@
     {
       "type": "type-along",
       "title": "A void method",
-      "intro": "Type this. No return statement needed — void methods just run.",
+      "intro": "Type this. No return statement needed \u2014 void methods just run.",
       "code": "public class Logger {\n    public static void info(String msg) {\n        System.debug('[INFO] ' + msg);\n    }\n}",
       "lineExplanations": [
         "Class.",
-        "void return type — this method does work (printing) but has no value to give back.",
+        "void return type \u2014 this method does work (printing) but has no value to give back.",
         "Body just runs. No return statement.",
         "Method and class close."
       ],
@@ -121,35 +121,35 @@
       "title": "Access modifiers",
       "body": [
         "public = anyone can call. private = only this class can call. protected = this class and subclasses. global = anyone, even from outside the package.",
-        "Real example: Stripe's SDK keeps internals private. Only the small public API is exposed. This is encapsulation — the principle that powers every clean codebase."
+        "Real example: Stripe's SDK keeps internals private. Only the small public API is exposed. This is encapsulation \u2014 the principle that powers every clean codebase."
       ],
       "vocabulary": [
         {
           "word": "private",
-          "def": "Access modifier — only the same class can call this method."
+          "def": "Access modifier \u2014 only the same class can call this method."
         },
         {
           "word": "protected",
-          "def": "Access modifier — this class and its subclasses can call."
+          "def": "Access modifier \u2014 this class and its subclasses can call."
         },
         {
           "word": "global",
-          "def": "Access modifier — visible everywhere, including code outside the managed package."
+          "def": "Access modifier \u2014 visible everywhere, including code outside the managed package."
         }
       ]
     },
     {
       "type": "type-along",
-      "title": "Public façade, private internals",
+      "title": "Public fa\u00e7ade, private internals",
       "intro": "Type this. Public callers only see process(). The helper validate() is private.",
       "code": "public class OrderService {\n    public static void process(Decimal amount) {\n        validate(amount);\n        System.debug('Processed ' + amount);\n    }\n    private static void validate(Decimal amount) {\n        if (amount <= 0) { return; }\n    }\n}",
       "lineExplanations": [
         "Class.",
-        "public process — the entry point any caller can hit.",
+        "public process \u2014 the entry point any caller can hit.",
         "Calls the private helper. Inside the same class, private methods are reachable directly.",
         "Print confirmation.",
         "Method close.",
-        "private validate — only this class can call it. Keeps the public API clean.",
+        "private validate \u2014 only this class can call it. Keeps the public API clean.",
         "Inside validator: if invalid, return early.",
         "Method close. Class close."
       ],
@@ -178,11 +178,48 @@
       ]
     },
     {
+      "type": "type-along",
+      "title": "Calling another class's static method",
+      "intro": "Type this. The most common pattern in real Apex: one class holds the logic, another class calls it via 'OtherClass.method(...)'. Triggers, Flows, and other helpers all use this shape.",
+      "code": "public class TaxUtil {\n    public static Decimal forCalifornia(Decimal subtotal) {\n        return subtotal * 0.0725;\n    }\n}\n\nDecimal tax = TaxUtil.forCalifornia(100);\nSystem.debug(tax);",
+      "lineExplanations": [
+        "Helper class \u2014 convention is to name it 'X Util' or 'X Helper'.",
+        "Static method. Static = belongs to the class itself, callable without constructing an instance.",
+        "Body computes and returns. 7.25% sales tax.",
+        "Close the method.",
+        "Close the class.",
+        "Blank.",
+        "Call site: ClassName.methodName(args). No 'new' needed because forCalifornia is static.",
+        "Print the result. This call pattern is how every helper in every Apex codebase gets used."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "method-shape",
+          "static-vs-instance"
+        ],
+        [
+          "return-statement"
+        ],
+        [],
+        [],
+        [],
+        [
+          "static-vs-instance",
+          "variable-declaration"
+        ],
+        []
+      ]
+    },
+    {
       "type": "concept",
       "title": "Multiple parameters",
       "body": [
         "Methods can take many parameters, separated by commas. Order matters at the call site.",
-        "Real example: HttpRequest's setHeader(String key, String value) — order matters. Calling setHeader('value', 'key') would compile but produce a broken header."
+        "Real example: HttpRequest's setHeader(String key, String value) \u2014 order matters. Calling setHeader('value', 'key') would compile but produce a broken header."
       ],
       "vocabulary": []
     },
@@ -193,7 +230,7 @@
       "code": "public class MathUtils {\n    public static Integer max(Integer a, Integer b) {\n        if (a > b) { return a; }\n        return b;\n    }\n}",
       "lineExplanations": [
         "Class.",
-        "public static Integer max(Integer a, Integer b) — two parameters, returns an Integer.",
+        "public static Integer max(Integer a, Integer b) \u2014 two parameters, returns an Integer.",
         "if a is bigger, return a immediately. The method exits here.",
         "Otherwise return b. (Reached only if the if was false.)",
         "Closes."
@@ -221,40 +258,40 @@
       "type": "recall",
       "front": "What's the difference between a method declared 'public' and one declared 'private'?",
       "back": "public can be called from any class. private can only be called from inside the SAME class.",
-      "detail": "Most internal helper methods should be private — it keeps the class's external surface small and intentional."
+      "detail": "Most internal helper methods should be private \u2014 it keeps the class's external surface small and intentional."
     },
     {
       "type": "quiz",
       "question": "You wrote a helper method only called by one method in the same class. What modifier should it have?",
       "options": [
-        "global — make it visible everywhere.",
-        "public — keep it open just in case.",
-        "private — hide it inside the class.",
-        "static — that's a modifier, not visibility."
+        "global \u2014 make it visible everywhere.",
+        "public \u2014 keep it open just in case.",
+        "private \u2014 hide it inside the class.",
+        "static \u2014 that's a modifier, not visibility."
       ],
       "correct": 2,
       "explanation": "private. The method has no caller outside the class, so exposing it just adds noise and makes refactoring harder."
     },
     {
       "type": "type-along",
-      "title": "Capstone: Customer service public façade",
+      "title": "Capstone: Customer service public fa\u00e7ade",
       "intro": "Build a CustomerService.register() method that's the single public entry point for customer signup. Behind it, two private helpers do the validation and logging work. This 'thin public API, fat private internals' shape is how every well-built Apex class in production is structured.",
       "code": "public class CustomerService {\n    public static Boolean register(String email, String name) {\n        if (!isValidEmail(email)) {\n            log('Invalid email: ' + email);\n            return false;\n        }\n        if (String.isBlank(name)) {\n            log('Name required');\n            return false;\n        }\n        log('Registered ' + email);\n        return true;\n    }\n    private static Boolean isValidEmail(String email) {\n        return email != null && email.contains('@');\n    }\n    private static void log(String msg) {\n        System.debug('[CustomerService] ' + msg);\n    }\n}",
       "lineExplanations": [
-        "Declare the service class — public so callers anywhere can use it.",
+        "Declare the service class \u2014 public so callers anywhere can use it.",
         "Public entry point. Boolean return signals success/failure to the caller.",
         "Validation #1: delegate to a private helper. ! is logical NOT.",
         "On failure, log via another private helper.",
-        "Return false — the caller can decide what to do.",
+        "Return false \u2014 the caller can decide what to do.",
         "Close the email-invalid branch.",
         "Validation #2: name is required. String.isBlank handles null and empty in one call.",
         "Log the failure reason.",
         "Return false.",
         "Close the name-blank branch.",
-        "Both validations passed — log success.",
+        "Both validations passed \u2014 log success.",
         "Return true.",
         "Close the public method.",
-        "Private helper — only this class can call it. Hides the email-validation rule from callers.",
+        "Private helper \u2014 only this class can call it. Hides the email-validation rule from callers.",
         "Quick null-safe check. && short-circuits, so contains('@') only runs if email != null.",
         "Close the validation helper.",
         "Private helper for logging. Centralizing the prefix means changing the format is a one-line edit.",
@@ -321,7 +358,7 @@
       "title": "What you now know",
       "body": [
         "Method anatomy, return values vs void, all four access modifiers, multi-parameter methods.",
-        "Next: Properties — the pattern Apex uses to expose data on classes with optional validation in the get/set."
+        "Next: Properties \u2014 the pattern Apex uses to expose data on classes with optional validation in the get/set."
       ]
     }
   ]

@@ -347,11 +347,11 @@
   "schedulable-interface": {
     "title": "Schedulable interface",
     "reminder": "implements Schedulable forces an execute(SchedulableContext) method. Register with System.schedule(name, cronExp, instance).",
-    "introducedIn": "12-capstone-arlington"
+    "introducedIn": "11-async"
   },
   "system-schedule": {
     "title": "System.schedule",
     "reminder": "System.schedule(jobName, cronExpression, schedulableInstance) registers a cron-driven Apex job. Returns the CronTrigger Id.",
-    "introducedIn": "12-capstone-arlington"
+    "introducedIn": "11-async"
   }
 }

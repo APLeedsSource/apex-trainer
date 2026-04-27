@@ -1,13 +1,13 @@
 {
   "id": "11-async",
-  "title": "Lesson 11 — Async Apex",
+  "title": "Lesson 11 \u2014 Async Apex",
   "slides": [
     {
       "type": "concept",
       "title": "Why async exists",
       "body": [
         "Synchronous Apex has tight limits (10s CPU, 100 SOQL, no callouts during triggers). Async Apex moves work to the BACKGROUND, gets bigger limits, and unblocks the user.",
-        "Real example: when you click 'Place Order' on Amazon, your page returns instantly — but the email confirmation, inventory update, and warehouse notification all run async. That's the same pattern Salesforce uses."
+        "Real example: when you click 'Place Order' on Amazon, your page returns instantly \u2014 but the email confirmation, inventory update, and warehouse notification all run async. That's the same pattern Salesforce uses."
       ],
       "vocabulary": [
         {
@@ -20,14 +20,14 @@
       "type": "concept",
       "title": "The four flavors",
       "body": [
-        "@future — fire-and-forget, simple but limited. Queueable — better, chainable, can pass complex objects. Batchable — for very large data sets (millions of records). Schedulable — runs on a cron schedule.",
+        "@future \u2014 fire-and-forget, simple but limited. Queueable \u2014 better, chainable, can pass complex objects. Batchable \u2014 for very large data sets (millions of records). Schedulable \u2014 runs on a cron schedule.",
         "Real example: a nightly data sync uses Schedulable + Batchable. A 'send email after save' uses Queueable. A 'do this thing later' uses @future."
       ],
       "vocabulary": []
     },
     {
       "type": "concept",
-      "title": "@future — the simplest",
+      "title": "@future \u2014 the simplest",
       "body": [
         "Mark a static void method @future. Calling it queues it to run later, in its own transaction with fresh limits.",
         "Constraints: must be static, void, and parameters can only be primitive types (or List/Set/Map of primitives). No SObjects directly."
@@ -72,7 +72,7 @@
     },
     {
       "type": "concept",
-      "title": "Queueable — the modern default",
+      "title": "Queueable \u2014 the modern default",
       "body": [
         "Implement the Queueable interface. Pass the Apex job to System.enqueueJob(). Bigger limits than @future, can pass complex Apex objects, and is chainable.",
         "Real example: most new Apex async work uses Queueable. It replaces @future for almost every use case."
@@ -90,13 +90,13 @@
       "intro": "Type this. The class implements Queueable; execute() does the work.",
       "code": "public class EmailJob implements Queueable {\n    private Id targetId;\n    public EmailJob(Id targetId) {\n        this.targetId = targetId;\n    }\n    public void execute(QueueableContext ctx) {\n        System.debug('Sending for ' + targetId);\n    }\n}",
       "lineExplanations": [
-        "Class with 'implements Queueable' — the contract that lets it be enqueued.",
+        "Class with 'implements Queueable' \u2014 the contract that lets it be enqueued.",
         "Backing field for state.",
         "Constructor stores the id passed in.",
-        "this.targetId — assign the parameter to the instance field.",
+        "this.targetId \u2014 assign the parameter to the instance field.",
         "Constructor close.",
         "execute() is the method the platform calls when the job runs.",
-        "Body — do the actual work here.",
+        "Body \u2014 do the actual work here.",
         "Method and class close."
       ],
       "lineConcepts": [
@@ -148,7 +148,7 @@
     },
     {
       "type": "concept",
-      "title": "Batchable — for huge data sets",
+      "title": "Batchable \u2014 for huge data sets",
       "body": [
         "Three methods: start (define what to query), execute (process a chunk, default 200 records), finish (post-processing).",
         "Real example: a nightly job that re-summarizes 5 million Opportunities. Batchable processes them in 200-row chunks, each with its own fresh governor limits."
@@ -163,7 +163,7 @@
     {
       "type": "type-along",
       "title": "A batch job skeleton",
-      "intro": "Type this. The shape of every batch job — start, execute, finish.",
+      "intro": "Type this. The shape of every batch job \u2014 start, execute, finish.",
       "code": "public class AccountBatch implements Database.Batchable<SObject> {\n    public Database.QueryLocator start(Database.BatchableContext ctx) {\n        return Database.getQueryLocator('SELECT Id FROM Account');\n    }\n    public void execute(Database.BatchableContext ctx, List<SObject> scope) {\n        for (SObject s : scope) { System.debug(s.Id); }\n    }\n    public void finish(Database.BatchableContext ctx) {\n        System.debug('Done');\n    }\n}",
       "lineExplanations": [
         "Class implements Database.Batchable<SObject>. The <SObject> is the type of records each chunk holds.",
@@ -213,7 +213,7 @@
     },
     {
       "type": "concept",
-      "title": "Schedulable — runs on a cron",
+      "title": "Schedulable \u2014 runs on a cron",
       "body": [
         "Implement Schedulable. Schedule via Salesforce UI or System.schedule(). Cron runs your code at the chosen time.",
         "Real example: a monthly bill-generation job. A nightly data integrity check. A weekly leaderboard recompute. All Schedulable."
@@ -223,6 +223,46 @@
           "word": "Schedulable",
           "def": "Apex interface for jobs that run on a cron schedule."
         }
+      ]
+    },
+    {
+      "type": "type-along",
+      "title": "A schedulable job",
+      "intro": "Type this. Implementing Schedulable forces an execute(SchedulableContext) method, then System.schedule(name, cron, instance) registers it. The cron string is Salesforce's 7-field format \u2014 '0 0 2 * * ?' = 2:00 AM every day.",
+      "code": "public class NightlyCleanup implements Schedulable {\n    public void execute(SchedulableContext ctx) {\n        System.debug('Cleanup running');\n    }\n}\n\nString cron = '0 0 2 * * ?';\nSystem.schedule('Nightly Cleanup', cron, new NightlyCleanup());",
+      "lineExplanations": [
+        "Class declaration plus 'implements Schedulable' \u2014 the contract that requires the execute method below.",
+        "execute is the contract method. SchedulableContext is the framework's handle on the running job; usually unused.",
+        "Body \u2014 in real code this would call into a Batchable or do the work directly.",
+        "Close execute.",
+        "Close the class.",
+        "Blank.",
+        "Cron string \u2014 second, minute, hour, day-of-month, month, day-of-week, year (year optional). '0 0 2 * * ?' fires at 2:00 AM every day.",
+        "Register the job. Returns the CronTrigger Id; the framework calls execute() at every cron tick from here on."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "public-modifier",
+          "interfaces",
+          "schedulable-interface"
+        ],
+        [
+          "method-shape",
+          "void"
+        ],
+        [],
+        [],
+        [],
+        [],
+        [
+          "variable-declaration",
+          "string-quotes"
+        ],
+        [
+          "system-schedule",
+          "new-keyword"
+        ]
       ]
     },
     {
@@ -243,10 +283,10 @@
       "type": "quiz",
       "question": "You need to recompute a stat on 5 million Opportunities every night. Which async type?",
       "options": [
-        "@future — simple and quick.",
-        "Queueable — modern default.",
-        "Batchable + Schedulable — chunked processing on a cron.",
-        "Synchronous — just write a regular method."
+        "@future \u2014 simple and quick.",
+        "Queueable \u2014 modern default.",
+        "Batchable + Schedulable \u2014 chunked processing on a cron.",
+        "Synchronous \u2014 just write a regular method."
       ],
       "correct": 2,
       "explanation": "Batchable processes large datasets in 200-row chunks (each with fresh limits); Schedulable wraps it with a cron. Together: nightly recompute, no governor blowup."
@@ -254,11 +294,11 @@
     {
       "type": "type-along",
       "title": "Capstone: Queueable revenue updater",
-      "intro": "After a periodic price-list change, you need to bump every relevant Account's AnnualRevenue by 3%. Build a Queueable that does the SOQL + DML async — the standard pattern for any post-trigger background work in Salesforce.",
+      "intro": "After a periodic price-list change, you need to bump every relevant Account's AnnualRevenue by 3%. Build a Queueable that does the SOQL + DML async \u2014 the standard pattern for any post-trigger background work in Salesforce.",
       "code": "public class RevenueUpdateJob implements Queueable {\n    private List<Id> accountIds;\n    public RevenueUpdateJob(List<Id> ids) {\n        this.accountIds = ids;\n    }\n    public void execute(QueueableContext ctx) {\n        List<Account> toUpdate = [\n            SELECT Id, AnnualRevenue\n            FROM Account\n            WHERE Id IN :accountIds\n        ];\n        for (Account a : toUpdate) {\n            a.AnnualRevenue = a.AnnualRevenue * 1.03;\n        }\n        update toUpdate;\n    }\n}\nList<Id> sampleIds = new List<Id>{'001D000000IqhSL'};\nSystem.enqueueJob(new RevenueUpdateJob(sampleIds));",
       "lineExplanations": [
-        "Class implements Queueable — that's the Apex contract for an async job.",
-        "Field to hold the work — the list of ids the job will process.",
+        "Class implements Queueable \u2014 that's the Apex contract for an async job.",
+        "Field to hold the work \u2014 the list of ids the job will process.",
         "Constructor takes the ids the caller wants processed.",
         "Store on the instance. 'this' disambiguates from the parameter.",
         "Close the constructor.",
@@ -266,12 +306,12 @@
         "Query the relevant Accounts in one SOQL call.",
         "Get the field we'll modify.",
         "From the Account object.",
-        "Bind the list of ids — single query for all of them.",
+        "Bind the list of ids \u2014 single query for all of them.",
         "Close the SOQL.",
         "Walk the records.",
         "Apply the 3% bump. Decimal arithmetic preserves precision.",
         "Close the loop.",
-        "ONE bulk DML — never inside the loop. This is the bulkified pattern again.",
+        "ONE bulk DML \u2014 never inside the loop. This is the bulkified pattern again.",
         "Close execute.",
         "Close the class.",
         "Build a tiny test list of ids.",
@@ -332,8 +372,8 @@
       "type": "concept",
       "title": "What you now know",
       "body": [
-        "@future, Queueable, Batchable, Schedulable — and when to choose each.",
-        "Next: the Capstone — bringing every concept from the core course onto a real consulting scenario (Arlington Property Management)."
+        "@future, Queueable, Batchable, Schedulable \u2014 and when to choose each.",
+        "Next: the Capstone \u2014 bringing every concept from the core course onto a real consulting scenario (Arlington Property Management)."
       ]
     }
   ]

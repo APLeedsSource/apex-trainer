@@ -1,24 +1,24 @@
 {
   "id": "02-collections",
-  "title": "Lesson 2 — Collections (List, Set, Map)",
+  "title": "Lesson 2 \u2014 Collections (List, Set, Map)",
   "slides": [
     {
       "type": "concept",
       "title": "Why collections exist",
       "body": [
-        "A single variable holds one value. But real apps work with MANY values at once — every contact in your CRM, every track in a Spotify playlist, every message in a Slack channel.",
+        "A single variable holds one value. But real apps work with MANY values at once \u2014 every contact in your CRM, every track in a Spotify playlist, every message in a Slack channel.",
         "Apex gives you three collection types: List, Set, and Map. Pick the right one and code stays simple. Pick the wrong one and you'll be writing extra logic forever."
       ],
       "vocabulary": [
         {
           "word": "collection",
-          "def": "A variable that holds many values, not just one — List, Set, or Map."
+          "def": "A variable that holds many values, not just one \u2014 List, Set, or Map."
         }
       ]
     },
     {
       "type": "concept",
-      "title": "List — ordered, allows duplicates",
+      "title": "List \u2014 ordered, allows duplicates",
       "body": [
         "A List is an ordered sequence of values. First item is at index 0, second at index 1, and so on. You can have duplicates.",
         "Real example: a Spotify playlist (order matters, same song can repeat). A Twitter/X feed (newest tweet first). The line at the DMV (first in, first served)."
@@ -37,7 +37,7 @@
     {
       "type": "type-along",
       "title": "Building a List",
-      "intro": "Type this. Notice the angle brackets <String> — they tell Apex what type of values this List holds.",
+      "intro": "Type this. Notice the angle brackets <String> \u2014 they tell Apex what type of values this List holds.",
       "code": "List<String> playlist = new List<String>();\nplaylist.add('Bohemian Rhapsody');\nplaylist.add('Hotel California');\nSystem.debug(playlist[0]);",
       "lineExplanations": [
         "Declare a List of Strings. List<String> is the type. 'new List<String>()' constructs an empty list. The new keyword always means 'create me a new instance.'",
@@ -59,9 +59,9 @@
     },
     {
       "type": "concept",
-      "title": "Set — unique, unordered",
+      "title": "Set \u2014 unique, unordered",
       "body": [
-        "A Set is a bag of unique values. No duplicates allowed. No guaranteed order — you can't ask for 'the third item.'",
+        "A Set is a bag of unique values. No duplicates allowed. No guaranteed order \u2014 you can't ask for 'the third item.'",
         "Real example: your Twitter/X followers (you can only follow someone once). The set of unique email addresses for a marketing campaign. The set of distinct product IDs in a shopping cart."
       ],
       "vocabulary": [
@@ -79,7 +79,7 @@
       "lineExplanations": [
         "Declare a Set of Strings. Same shape as List, just the word changes.",
         "Add an email. The set now has 1 entry.",
-        "Add the SAME email again. Apex silently ignores it — the Set still has 1 entry. This is exactly the dedup behavior you want for an email campaign list.",
+        "Add the SAME email again. Apex silently ignores it \u2014 the Set still has 1 entry. This is exactly the dedup behavior you want for an email campaign list.",
         "Prints 1, not 2. .size() returns the count."
       ],
       "lineConcepts": [
@@ -100,10 +100,10 @@
     },
     {
       "type": "concept",
-      "title": "Map — key to value",
+      "title": "Map \u2014 key to value",
       "body": [
-        "A Map stores key→value pairs. Look up a value by its key — like a phone book: name is the key, number is the value.",
-        "Real example: a URL shortener (short code → long URL). Salesforce trigger code constantly uses Map<Id, Account> to look up records by their Id without re-querying the database."
+        "A Map stores key\u2192value pairs. Look up a value by its key \u2014 like a phone book: name is the key, number is the value.",
+        "Real example: a URL shortener (short code \u2192 long URL). Salesforce trigger code constantly uses Map<Id, Account> to look up records by their Id without re-querying the database."
       ],
       "vocabulary": [
         {
@@ -112,7 +112,7 @@
         },
         {
           "word": "key",
-          "def": "The unique identifier in a map entry — what you look up by."
+          "def": "The unique identifier in a map entry \u2014 what you look up by."
         }
       ]
     },
@@ -125,7 +125,7 @@
         "Map<String, String>: keys are Strings, values are Strings. Construction follows the same new-keyword pattern.",
         "put(key, value) inserts a pair. 'abc' now maps to 'https://salesforce.com'.",
         "Add another mapping. The Map now has 2 entries.",
-        "get('abc') returns the value for that key. Prints 'https://salesforce.com'. This is the magic of Maps — instant lookup by key."
+        "get('abc') returns the value for that key. Prints 'https://salesforce.com'. This is the magic of Maps \u2014 instant lookup by key."
       ],
       "lineConcepts": [
         [
@@ -142,7 +142,7 @@
       "title": "Choosing between them",
       "body": [
         "Order matters and duplicates allowed? List. Need to dedupe but order doesn't matter? Set. Need to look up by a key? Map.",
-        "Real example: a Salesforce trigger that processes 200 leads might use ALL THREE — a List of leads to update, a Set of unique account names already seen, and a Map of email→Lead for fast lookup."
+        "Real example: a Salesforce trigger that processes 200 leads might use ALL THREE \u2014 a List of leads to update, a Set of unique account names already seen, and a Map of email\u2192Lead for fast lookup."
       ],
       "vocabulary": []
     },
@@ -161,8 +161,8 @@
       "intro": "Type this. The for-each loop reads cleanly: 'for each name in names, do X.'",
       "code": "List<String> names = new List<String>{'Arthur', 'Ari', 'Tuan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
       "lineExplanations": [
-        "Inline list literal — { 'a', 'b' } seeds the list with values right at construction. Cleaner than three separate .add() calls.",
-        "for (String name : names) — for each name in names. 'name' is a fresh variable that holds one item per iteration.",
+        "Inline list literal \u2014 { 'a', 'b' } seeds the list with values right at construction. Cleaner than three separate .add() calls.",
+        "for (String name : names) \u2014 for each name in names. 'name' is a fresh variable that holds one item per iteration.",
         "Runs once per name. Prints 'Hello Arthur', then 'Hello Ari', then 'Hello Tuan'. The order matches the List's order."
       ],
       "lineConcepts": [
@@ -186,7 +186,7 @@
       "lineExplanations": [
         "Inline Map literal: 'Alice' => 90 means key 'Alice' maps to value 90. The fat arrow => is just for map literals.",
         "scores.keySet() returns a Set of all keys. Loop over the keys, then use .get() to fetch each value.",
-        "Prints 'Alice: 90' and 'Bob: 85'. Map iteration order isn't guaranteed — don't rely on it."
+        "Prints 'Alice: 90' and 'Bob: 85'. Map iteration order isn't guaranteed \u2014 don't rely on it."
       ],
       "lineConcepts": [
         [
@@ -201,10 +201,36 @@
       ]
     },
     {
+      "type": "type-along",
+      "title": "Set and List helpers \u2014 addAll, contains, isEmpty",
+      "intro": "Type this. Three of the most-used collection methods. addAll merges one collection into another, contains checks membership, isEmpty guards a DML so you don't waste a statement on zero records.",
+      "code": "Set<String> tags = new Set<String>{'sale', 'featured'};\nList<String> moreTags = new List<String>{'new', 'sale'};\ntags.addAll(moreTags);\nBoolean hasNew = tags.contains('new');\nBoolean nothingHere = tags.isEmpty();",
+      "lineExplanations": [
+        "Set built from a literal of two strings.",
+        "List built from a literal of two strings \u2014 note 'sale' is duplicated across the two collections.",
+        "addAll merges every element of moreTags into tags. Duplicates are silently dropped (it's a Set). Now tags holds {sale, featured, new}.",
+        "contains returns true if the value is already in the set. O(1) lookup \u2014 much faster than scanning a List.",
+        "isEmpty returns true on a zero-length collection. Common DML guard: 'if (!toInsert.isEmpty()) insert toInsert;'"
+      ],
+      "lineConcepts": [
+        [
+          "set-collection",
+          "new-keyword"
+        ],
+        [
+          "list-collection",
+          "new-keyword"
+        ],
+        [],
+        [],
+        []
+      ]
+    },
+    {
       "type": "recall",
       "front": "Your trigger needs to update each Lead by its Id. You already fetched 50 Leads from the database. What's the fastest way to look one up by Id?",
       "back": "Put them in a Map<Id, Lead>, then leadMap.get(someId).",
-      "detail": "Looking up by Id in a Map is essentially instant. Searching a List for a matching Id requires walking it — slow with 50,000 records."
+      "detail": "Looking up by Id in a Map is essentially instant. Searching a List for a matching Id requires walking it \u2014 slow with 50,000 records."
     },
     {
       "type": "quiz",
@@ -216,14 +242,14 @@
         "Integer"
       ],
       "correct": 1,
-      "explanation": "Set guarantees uniqueness automatically. List would let duplicates in. Map needs a value per key — overkill for a tag list."
+      "explanation": "Set guarantees uniqueness automatically. List would let duplicates in. Map needs a value per key \u2014 overkill for a tag list."
     },
     {
       "type": "concept",
       "title": "Why this matters in Salesforce",
       "body": [
         "Apex governor limits cap how many database queries you can run per transaction (100 SOQL queries). The trick: query ONCE into a collection, then loop over the collection.",
-        "This pattern — query once, then loop — is how every well-built Salesforce trigger scales. We'll go deep on it in the Triggers lesson and again in the Governor Limits extras."
+        "This pattern \u2014 query once, then loop \u2014 is how every well-built Salesforce trigger scales. We'll go deep on it in the Triggers lesson and again in the Governor Limits extras."
       ],
       "vocabulary": [
         {
@@ -240,7 +266,7 @@
       "lineExplanations": [
         "ONE query to the database. Returns up to 10 Accounts as a List. This counts as 1 SOQL query against the governor limit.",
         "Walk the list with for-each. The variable 'a' holds one Account per iteration.",
-        "Read the Name field off each Account. No additional queries — we already have all the data."
+        "Read the Name field off each Account. No additional queries \u2014 we already have all the data."
       ],
       "lineConcepts": [
         [
@@ -256,17 +282,17 @@
     {
       "type": "type-along",
       "title": "Capstone: Campaign bounce dedupe",
-      "intro": "Marketing wants to know which UNIQUE emails bounced from yesterday's campaign and how many times each one bounced. Combine a List (raw events), a Set (unique addresses), and a Map (counts) — the three collections working together as they do in real Salesforce trigger code.",
+      "intro": "Marketing wants to know which UNIQUE emails bounced from yesterday's campaign and how many times each one bounced. Combine a List (raw events), a Set (unique addresses), and a Map (counts) \u2014 the three collections working together as they do in real Salesforce trigger code.",
       "code": "List<String> bounced = new List<String>{\n    'arthur@example.com',\n    'sara@example.com',\n    'arthur@example.com',\n    'tim@example.com'\n};\nSet<String> uniqueBounced = new Set<String>(bounced);\nMap<String, Integer> bounceCount = new Map<String, Integer>();\nfor (String email : bounced) {\n    Integer count = bounceCount.get(email);\n    if (count == null) { count = 0; }\n    bounceCount.put(email, count + 1);\n}\nSystem.debug('Unique bouncers: ' + uniqueBounced.size());\nSystem.debug('Counts: ' + bounceCount);",
       "lineExplanations": [
-        "Declare a List of Strings using the inline literal syntax — opens with new List<String>{",
+        "Declare a List of Strings using the inline literal syntax \u2014 opens with new List<String>{",
         "First email entry.",
         "Second.",
-        "Third — note 'arthur' appears twice, simulating a duplicated bounce event.",
+        "Third \u2014 note 'arthur' appears twice, simulating a duplicated bounce event.",
         "Fourth.",
         "Close the list literal with };",
-        "Set constructor takes the List directly — duplicates are silently dropped, so this Set has 3 unique entries.",
-        "Empty Map<String, Integer> — keys are emails, values will be counts.",
+        "Set constructor takes the List directly \u2014 duplicates are silently dropped, so this Set has 3 unique entries.",
+        "Empty Map<String, Integer> \u2014 keys are emails, values will be counts.",
         "Walk every email in the original list (including duplicates).",
         "Look up the current count for this email. Returns null if the key isn't in the map yet.",
         "Initialize to 0 if not yet present. The single-line if avoids a NullPointerException on count + 1.",
@@ -315,7 +341,7 @@
       "title": "What you now know",
       "body": [
         "List for ordered/duplicates, Set for unique, Map for key-lookup. for-each loops walk all three.",
-        "Next: Classes — how to define your OWN types. Once you know classes, all of Apex (and Salesforce's entire SObject system) starts making sense."
+        "Next: Classes \u2014 how to define your OWN types. Once you know classes, all of Apex (and Salesforce's entire SObject system) starts making sense."
       ]
     }
   ]
