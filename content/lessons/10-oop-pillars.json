@@ -1,18 +1,18 @@
 {
   "id": "10-oop-pillars",
-  "title": "Lesson 10 — Inheritance, Polymorphism, Interfaces",
+  "title": "Lesson 10 \u2014 Inheritance, Polymorphism, Interfaces",
   "slides": [
     {
       "type": "concept",
       "title": "The four pillars of OOP",
       "body": [
         "Encapsulation, Inheritance, Polymorphism, Abstraction. Every OOP language since Smalltalk is built on them. Apex inherits these from Java.",
-        "Real example: Salesforce's own SObject class hierarchy IS these pillars in action — every Account, Contact, Opportunity is a class extending SObject."
+        "Real example: Salesforce's own SObject class hierarchy IS these pillars in action \u2014 every Account, Contact, Opportunity is a class extending SObject."
       ],
       "vocabulary": [
         {
           "word": "OOP",
-          "def": "Object-Oriented Programming — paradigm built on classes, instances, and the four pillars."
+          "def": "Object-Oriented Programming \u2014 paradigm built on classes, instances, and the four pillars."
         }
       ]
     },
@@ -21,7 +21,7 @@
       "title": "Encapsulation",
       "body": [
         "Hide internals. Expose a clean public interface; keep guts private. We covered this in the Methods & Properties lessons (private fields, public methods).",
-        "Real example: Stripe's Charge class — public methods like create() and refund(); private internals you never see."
+        "Real example: Stripe's Charge class \u2014 public methods like create() and refund(); private internals you never see."
       ],
       "vocabulary": [
         {
@@ -32,7 +32,7 @@
     },
     {
       "type": "concept",
-      "title": "Inheritance — extends",
+      "title": "Inheritance \u2014 extends",
       "body": [
         "A child class can EXTEND a parent. It inherits the parent's properties and methods, can add its own, and can OVERRIDE the parent's behavior.",
         "Real example: imagine a generic Vehicle class with drive() and fuel(). Car extends Vehicle. Truck extends Vehicle. Both inherit drive(); each has its own behavior."
@@ -54,9 +54,9 @@
       "intro": "Type this. 'virtual' lets subclasses override drive().",
       "code": "public virtual class Vehicle {\n    public String name;\n    public virtual void drive() {\n        System.debug(name + ' is driving');\n    }\n}",
       "lineExplanations": [
-        "'public virtual class' — virtual on the class lets it be subclassed.",
+        "'public virtual class' \u2014 virtual on the class lets it be subclassed.",
         "Property anyone can read/write.",
-        "'public virtual void drive' — virtual on the method lets subclasses override it.",
+        "'public virtual void drive' \u2014 virtual on the method lets subclasses override it.",
         "Default behavior.",
         "Method and class close."
       ],
@@ -87,8 +87,8 @@
       "intro": "Type this. Truck extends Vehicle and overrides drive().",
       "code": "public class Truck extends Vehicle {\n    public override void drive() {\n        System.debug(name + ' is hauling cargo');\n    }\n}",
       "lineExplanations": [
-        "Truck extends Vehicle — Truck inherits 'name' and the virtual drive().",
-        "'override' on the method — explicit signal that we're replacing the parent's behavior.",
+        "Truck extends Vehicle \u2014 Truck inherits 'name' and the virtual drive().",
+        "'override' on the method \u2014 explicit signal that we're replacing the parent's behavior.",
         "New body. Note we still have access to inherited 'name' from Vehicle.",
         "Method and class close."
       ],
@@ -128,9 +128,9 @@
       "intro": "Type this. The same .drive() call dispatches to different code per vehicle.",
       "code": "List<Vehicle> fleet = new List<Vehicle>();\nfleet.add(new Vehicle());\nfleet.add(new Truck());\nfor (Vehicle v : fleet) {\n    v.drive();\n}",
       "lineExplanations": [
-        "List typed as parent (Vehicle) — can hold any subclass.",
+        "List typed as parent (Vehicle) \u2014 can hold any subclass.",
         "Add a plain Vehicle.",
-        "Add a Truck — fits in a Vehicle list because Truck IS A Vehicle.",
+        "Add a Truck \u2014 fits in a Vehicle list because Truck IS A Vehicle.",
         "Loop over the parent type.",
         "Calling v.drive() runs Vehicle's drive on the Vehicle instance, and Truck's overridden drive on the Truck instance."
       ],
@@ -152,7 +152,7 @@
     },
     {
       "type": "concept",
-      "title": "Abstraction — abstract classes",
+      "title": "Abstraction \u2014 abstract classes",
       "body": [
         "abstract class can declare methods WITHOUT a body. Subclasses MUST implement them. Useful for 'this thing must exist but I don't know how each subclass does it'.",
         "Real example: a Notification class has abstract send(). EmailNotification extends it and implements send() for SMTP. SlackNotification implements send() differently. Both ARE Notifications."
@@ -160,19 +160,19 @@
       "vocabulary": [
         {
           "word": "abstract",
-          "def": "Modifier — abstract class can't be instantiated directly; abstract method has no body and must be overridden."
+          "def": "Modifier \u2014 abstract class can't be instantiated directly; abstract method has no body and must be overridden."
         }
       ]
     },
     {
       "type": "type-along",
       "title": "Abstract class",
-      "intro": "Type this. Notification declares send() as abstract — subclasses are forced to implement it.",
+      "intro": "Type this. Notification declares send() as abstract \u2014 subclasses are forced to implement it.",
       "code": "public abstract class Notification {\n    public abstract void send(String msg);\n    public void log(String msg) {\n        System.debug('Logging: ' + msg);\n    }\n}",
       "lineExplanations": [
-        "abstract class — cannot be 'new Notification()' directly.",
-        "abstract method — no body, just a signature. Must be overridden by subclasses.",
-        "Concrete (non-abstract) method — subclasses inherit this for free.",
+        "abstract class \u2014 cannot be 'new Notification()' directly.",
+        "abstract method \u2014 no body, just a signature. Must be overridden by subclasses.",
+        "Concrete (non-abstract) method \u2014 subclasses inherit this for free.",
         "Body of log.",
         "Methods and class close."
       ],
@@ -197,15 +197,15 @@
     },
     {
       "type": "concept",
-      "title": "Interfaces — pure contracts",
+      "title": "Interfaces \u2014 pure contracts",
       "body": [
-        "An interface is a CONTRACT — only method signatures, no bodies, no fields. A class 'implements' the interface and provides bodies.",
-        "Real example: Apex's own Queueable interface — implement execute() however you want; the platform calls it. You and Salesforce never need to touch each other's source."
+        "An interface is a CONTRACT \u2014 only method signatures, no bodies, no fields. A class 'implements' the interface and provides bodies.",
+        "Real example: Apex's own Queueable interface \u2014 implement execute() however you want; the platform calls it. You and Salesforce never need to touch each other's source."
       ],
       "vocabulary": [
         {
           "word": "interface",
-          "def": "A pure contract — only method signatures. Classes implement it by providing bodies."
+          "def": "A pure contract \u2014 only method signatures. Classes implement it by providing bodies."
         },
         {
           "word": "implements",
@@ -216,11 +216,11 @@
     {
       "type": "type-along",
       "title": "Defining an interface",
-      "intro": "Type this. Pure contract — no bodies.",
+      "intro": "Type this. Pure contract \u2014 no bodies.",
       "code": "public interface Sender {\n    void send(String msg);\n    Boolean isReady();\n}",
       "lineExplanations": [
         "Interface declaration. No constructors, no fields.",
-        "Method signature only — semicolon, no body.",
+        "Method signature only \u2014 semicolon, no body.",
         "Another. Classes implementing Sender must provide BOTH methods.",
         "Close."
       ],
@@ -241,12 +241,12 @@
     {
       "type": "type-along",
       "title": "Implementing the interface",
-      "intro": "Type this. EmailSender implements Sender — must provide send() and isReady().",
+      "intro": "Type this. EmailSender implements Sender \u2014 must provide send() and isReady().",
       "code": "public class EmailSender implements Sender {\n    public void send(String msg) {\n        System.debug('Email: ' + msg);\n    }\n    public Boolean isReady() {\n        return true;\n    }\n}",
       "lineExplanations": [
-        "Class implements Sender — promises to provide all of its methods.",
+        "Class implements Sender \u2014 promises to provide all of its methods.",
         "Provide send() with a real body.",
-        "Body — actual email logic would go here.",
+        "Body \u2014 actual email logic would go here.",
         "Close.",
         "Provide isReady() with a real body.",
         "Real-world might check API connectivity.",
@@ -276,17 +276,75 @@
       ]
     },
     {
+      "type": "type-along",
+      "title": "Implementing multiple interfaces",
+      "intro": "Ari's tip: a class can implement more than one interface at once \u2014 comma-separated. The class then must provide method bodies for ALL methods declared by all the interfaces. Common pattern in async Apex: a class that's both Schedulable AND Database.Batchable.",
+      "code": "public class FeeRunner implements Schedulable, Database.Batchable<SObject> {\n    public void execute(SchedulableContext ctx) {\n        Database.executeBatch(this);\n    }\n    public Database.QueryLocator start(Database.BatchableContext bc) {\n        return Database.getQueryLocator('SELECT Id FROM Account');\n    }\n    public void execute(Database.BatchableContext bc, List<SObject> scope) {\n    }\n    public void finish(Database.BatchableContext bc) {\n    }\n}",
+      "lineExplanations": [
+        "Class implements TWO interfaces \u2014 comma-separated. Now the class must satisfy both contracts.",
+        "Schedulable.execute \u2014 runs once when the cron fires.",
+        "Body \u2014 kick off the batch by passing 'this' (the same class instance is also Batchable).",
+        "Close.",
+        "Batchable.start \u2014 returns the QueryLocator that defines the chunkable result set.",
+        "Inline SOQL wrapped in a QueryLocator.",
+        "Close.",
+        "Batchable.execute \u2014 note this is a SECOND execute method, but with a different signature (Apex allows overloading by signature).",
+        "Close \u2014 body would process the chunk.",
+        "Batchable.finish \u2014 runs once after all chunks complete.",
+        "Close.",
+        "Close the class."
+      ],
+      "lineConcepts": [
+        [
+          "class-vs-object",
+          "interfaces"
+        ],
+        [
+          "method-shape",
+          "void"
+        ],
+        [
+          "database-class",
+          "this-keyword"
+        ],
+        [],
+        [
+          "method-shape",
+          "database-class"
+        ],
+        [
+          "soql"
+        ],
+        [],
+        [
+          "method-shape",
+          "void"
+        ],
+        [],
+        [
+          "method-shape",
+          "void"
+        ],
+        [],
+        []
+      ],
+      "source": {
+        "transcript": "GMT20260427-200740_Recording.transcript.vtt",
+        "confidence": "verified"
+      }
+    },
+    {
       "type": "recall",
       "front": "What's the difference between an abstract class and an interface?",
       "back": "Abstract class CAN have concrete methods and fields; interface has ONLY method signatures.",
-      "detail": "Use abstract class when subclasses share real implementation. Use interface when you just want to enforce a contract — multiple classes can implement many interfaces, but extend only one class."
+      "detail": "Use abstract class when subclasses share real implementation. Use interface when you just want to enforce a contract \u2014 multiple classes can implement many interfaces, but extend only one class."
     },
     {
       "type": "quiz",
-      "question": "Apex's Queueable — which OOP construct?",
+      "question": "Apex's Queueable \u2014 which OOP construct?",
       "options": [
         "An abstract class.",
-        "An interface — you implement execute() yourself.",
+        "An interface \u2014 you implement execute() yourself.",
         "A concrete class with virtual methods.",
         "A static utility class."
       ],
@@ -296,24 +354,24 @@
     {
       "type": "type-along",
       "title": "Capstone: Notification interface (Email + Slack)",
-      "intro": "Your platform needs to send notifications via either email OR Slack. Use an interface so the same calling code works for both — the textbook strategy pattern, which is exactly how Salesforce's own framework code stays swappable for different integrations.",
+      "intro": "Your platform needs to send notifications via either email OR Slack. Use an interface so the same calling code works for both \u2014 the textbook strategy pattern, which is exactly how Salesforce's own framework code stays swappable for different integrations.",
       "code": "public interface Sender {\n    void send(String to, String message);\n}\npublic class EmailSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Email -> ' + to + ': ' + message);\n    }\n}\npublic class SlackSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Slack -> ' + to + ': ' + message);\n    }\n}\nList<Sender> senders = new List<Sender>{new EmailSender(), new SlackSender()};\nfor (Sender s : senders) {\n    s.send('arthur@leedssource.com', 'Welcome to Salesforce!');\n}",
       "lineExplanations": [
-        "Define the contract — interfaces have only signatures, no bodies.",
+        "Define the contract \u2014 interfaces have only signatures, no bodies.",
         "Every implementer must provide this method.",
         "Close the interface.",
         "EmailSender promises to satisfy the Sender contract.",
-        "Provide the send method — same signature as the interface declared.",
+        "Provide the send method \u2014 same signature as the interface declared.",
         "EmailSender's actual logic. Real code would call SingleEmailMessage.",
         "Close send.",
         "Close EmailSender.",
-        "SlackSender — same contract, different impl.",
+        "SlackSender \u2014 same contract, different impl.",
         "Same signature.",
         "Slack's logic. Real code would HTTP POST to a webhook.",
         "Close send.",
         "Close SlackSender.",
         "Polymorphism in action: a List of Senders can hold any implementer.",
-        "Walk the list — calling code doesn't know or care which class it's holding.",
+        "Walk the list \u2014 calling code doesn't know or care which class it's holding.",
         "Each .send() dispatches to the actual class's implementation. Email runs Email's, Slack runs Slack's.",
         "Close the loop."
       ],
@@ -370,7 +428,7 @@
       "title": "What you now know",
       "body": [
         "Encapsulation, inheritance (extends + virtual + override), polymorphism (parent type holding subclass), abstraction (abstract classes), and interfaces.",
-        "Next: Async Apex — push work to the background when synchronous limits aren't enough."
+        "Next: Async Apex \u2014 push work to the background when synchronous limits aren't enough."
       ]
     }
   ]
