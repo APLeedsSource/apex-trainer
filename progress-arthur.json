@@ -1,7 +1,7 @@
 {
-  "userName": "Arthur",
-  "currentLesson": "12-capstone-arlington",
-  "currentSlide": 26,
+  "userName": "arthur",
+  "currentLesson": "14-governor-limits",
+  "currentSlide": 5,
   "lessonsCompleted": [
     "00-foundations",
     "01-data-types",
@@ -19,9 +19,9 @@
     "13-tests"
   ],
   "stats": {
-    "totalKeystrokes": 2154,
-    "totalTimeSeconds": 80214,
-    "exercisesCompleted": 19
+    "totalKeystrokes": 2282,
+    "totalTimeSeconds": 80403,
+    "exercisesCompleted": 20
   },
   "exerciseHistory": [
     {
@@ -156,9 +156,16 @@
       "accuracy": 88,
       "seconds": 53,
       "completedAt": "2026-04-27T14:29:26.665Z"
+    },
+    {
+      "slideTitle": "The broken pattern (don't write this)",
+      "wpm": 16,
+      "accuracy": 75,
+      "seconds": 95,
+      "completedAt": "2026-05-01T21:03:17.654Z"
     }
   ],
   "weakConcepts": [],
-  "lastSavedAt": "2026-05-01T19:36:26.921Z",
+  "lastSavedAt": "2026-05-01T21:03:27.305Z",
   "mutedConcepts": []
 }
