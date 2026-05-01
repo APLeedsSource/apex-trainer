@@ -9,13 +9,30 @@
 <body class="dashboard">
   <header class="topbar">
     <div class="brand">Apex Trainer</div>
-    <div class="topbar-actions">
+    <div class="topbar-actions" id="topbar-user-actions" hidden>
+      <span class="current-user" id="current-user-label"></span>
+      <button class="reminders-link" id="switch-user-btn" type="button">Switch user</button>
       <button class="btn btn-ghost" id="resume-btn">Resume</button>
       <button class="btn btn-primary" id="sync-btn">Sync to GitHub</button>
     </div>
   </header>
 
-  <main class="dash-main">
+  <!-- User picker: shown until the visitor selects or creates a user. -->
+  <main class="dash-main" id="user-picker-main">
+    <h1>Welcome to Apex Trainer</h1>
+    <p class="lede">Pick your name to load your progress, or add yourself if this is your first time.</p>
+    <section class="user-picker">
+      <div class="user-cards" id="user-cards"></div>
+      <div class="user-add">
+        <input type="text" id="new-user-name" placeholder="Add your name" maxlength="40" />
+        <button class="btn btn-primary" id="add-user-btn">+ Add me</button>
+        <div class="user-add-error" id="user-add-error"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Dashboard: shown once a user is selected. -->
+  <main class="dash-main" id="dashboard-main" hidden>
     <h1 id="user-greeting">Hi —</h1>
     <p class="lede">Type known patterns. Build muscle memory. Learn Apex line by line.</p>
 

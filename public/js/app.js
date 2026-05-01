@@ -1,12 +1,42 @@
 import { renderSlide } from './slides.js';
-import { loadProgress, saveProgress, syncToGitHub, loadLessonsIndex, loadLesson, loadConcepts } from './progress-client.js';
+import {
+  loadProgress, saveProgress, syncToGitHub, loadLessonsIndex, loadLesson, loadConcepts,
+  listUsers, createUser, getCurrentUserId, setCurrentUserId
+} from './progress-client.js';
 
 // ---- Dashboard ----
 export async function initDashboard() {
-  const progress = await loadProgress();
+  // Step 1: ensure a user is selected. If not, render the picker and wait.
+  let userId = getCurrentUserId();
+  if (!userId) {
+    await renderUserPicker();
+    return; // renderUserPicker reloads the page once a user is chosen.
+  }
+
+  // Step 2: try to load the chosen user's progress. If the file is gone
+  // (user deleted, repo wiped, etc.), fall back to picker.
+  let progress;
+  try {
+    progress = await loadProgress();
+  } catch (e) {
+    setCurrentUserId('');
+    await renderUserPicker();
+    return;
+  }
+
+  // Hide the picker, show the dashboard.
+  document.getElementById('user-picker-main').hidden = true;
+  document.getElementById('dashboard-main').hidden = false;
+  document.getElementById('topbar-user-actions').hidden = false;
+  document.getElementById('current-user-label').textContent = userId;
+  document.getElementById('switch-user-btn').onclick = () => {
+    setCurrentUserId('');
+    location.reload();
+  };
+
   const lessons = await loadLessonsIndex();
 
-  document.getElementById('user-greeting').textContent = `Hi ${progress.userName || 'Arthur'} —`;
+  document.getElementById('user-greeting').textContent = `Hi ${progress.userName || userId} —`;
   document.getElementById('stat-keystrokes').textContent = progress.stats.totalKeystrokes.toLocaleString();
   document.getElementById('stat-exercises').textContent = progress.stats.exercisesCompleted;
   document.getElementById('stat-time').textContent = formatTime(progress.stats.totalTimeSeconds);
@@ -54,6 +84,13 @@ export async function initDashboard() {
 
 // ---- Lesson player ----
 export async function initLesson() {
+  // Guard: if no user is selected, send the visitor back to the dashboard
+  // (which will show the picker).
+  if (!getCurrentUserId()) {
+    location.href = '/';
+    return;
+  }
+
   const params = new URLSearchParams(location.search);
   const lessonId = params.get('id');
   const startSlide = parseInt(params.get('slide') || '0', 10);
@@ -335,4 +372,51 @@ function openRemindersModal(progress, concepts, onChange) {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// ---- User picker (first-run / switch-user screen) ----
+async function renderUserPicker() {
+  document.getElementById('user-picker-main').hidden = false;
+  document.getElementById('dashboard-main').hidden = true;
+  document.getElementById('topbar-user-actions').hidden = true;
+
+  const users = await listUsers();
+  const cards = document.getElementById('user-cards');
+  cards.innerHTML = '';
+  if (users.length === 0) {
+    cards.innerHTML = '<div class="user-cards-empty">No one has joined yet — be the first.</div>';
+  } else {
+    for (const id of users) {
+      const card = document.createElement('button');
+      card.className = 'user-card';
+      card.type = 'button';
+      card.textContent = id;
+      card.onclick = () => {
+        setCurrentUserId(id);
+        location.reload();
+      };
+      cards.appendChild(card);
+    }
+  }
+
+  const input = document.getElementById('new-user-name');
+  const errEl = document.getElementById('user-add-error');
+  document.getElementById('add-user-btn').onclick = async () => {
+    const name = input.value.trim();
+    errEl.textContent = '';
+    if (!/^[a-zA-Z0-9_-]{1,40}$/.test(name)) {
+      errEl.textContent = 'Use 1–40 letters, digits, underscores, or hyphens.';
+      return;
+    }
+    const result = await createUser(name);
+    if (!result.ok) {
+      errEl.textContent = result.error || 'Could not create user.';
+      return;
+    }
+    setCurrentUserId(result.user);
+    location.reload();
+  };
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('add-user-btn').click();
+  });
 }

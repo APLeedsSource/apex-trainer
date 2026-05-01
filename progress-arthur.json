@@ -1,15 +1,27 @@
 {
   "userName": "Arthur",
-  "currentLesson": "02-collections",
-  "currentSlide": 7,
+  "currentLesson": "12-capstone-arlington",
+  "currentSlide": 26,
   "lessonsCompleted": [
     "00-foundations",
-    "01-data-types"
+    "01-data-types",
+    "02-collections",
+    "03-classes",
+    "04-loops",
+    "05-methods",
+    "06-properties",
+    "07-soql",
+    "08-dml",
+    "09-triggers",
+    "10-oop-pillars",
+    "11-async",
+    "12-capstone-arlington",
+    "13-tests"
   ],
   "stats": {
-    "totalKeystrokes": 1557,
-    "totalTimeSeconds": 6051,
-    "exercisesCompleted": 15
+    "totalKeystrokes": 2154,
+    "totalTimeSeconds": 80214,
+    "exercisesCompleted": 19
   },
   "exerciseHistory": [
     {
@@ -116,9 +128,37 @@
       "accuracy": 91,
       "seconds": 86,
       "completedAt": "2026-04-26T14:41:53.962Z"
+    },
+    {
+      "slideTitle": "Building a List",
+      "wpm": 26,
+      "accuracy": 74,
+      "seconds": 64,
+      "completedAt": "2026-04-27T14:24:15.024Z"
+    },
+    {
+      "slideTitle": "Building a Set",
+      "wpm": 27,
+      "accuracy": 75,
+      "seconds": 64,
+      "completedAt": "2026-04-27T14:25:30.653Z"
+    },
+    {
+      "slideTitle": "Building a Map",
+      "wpm": 33,
+      "accuracy": 85,
+      "seconds": 68,
+      "completedAt": "2026-04-27T14:27:20.667Z"
+    },
+    {
+      "slideTitle": "Looping a List",
+      "wpm": 29,
+      "accuracy": 88,
+      "seconds": 53,
+      "completedAt": "2026-04-27T14:29:26.665Z"
     }
   ],
   "weakConcepts": [],
-  "lastSavedAt": "2026-04-26T14:43:18.919Z",
+  "lastSavedAt": "2026-05-01T19:36:26.921Z",
   "mutedConcepts": []
 }
