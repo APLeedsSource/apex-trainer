@@ -1,13 +1,13 @@
 {
   "id": "16-caching",
-  "title": "Lesson 16 — Caching",
+  "title": "Lesson 16 \u2014 Caching",
   "slides": [
     {
       "type": "concept",
       "title": "Why caching exists",
       "body": [
         "Caching trades memory for speed. Save the result of a slow operation; the next caller gets it instantly instead of redoing the work.",
-        "Real example: Twitter's home timeline — your feed is computed once and served from cache to the millions of times you scroll. Recomputing per scroll would melt their servers."
+        "Real example: Twitter's home timeline \u2014 your feed is computed once and served from cache to the millions of times you scroll. Recomputing per scroll would melt their servers."
       ],
       "vocabulary": [
         {
@@ -26,24 +26,24 @@
     },
     {
       "type": "concept",
-      "title": "TTL — time to live",
+      "title": "TTL \u2014 time to live",
       "body": [
         "Every cache entry has an expiration. After TTL elapses, the entry is invalid; the next reader does the slow work and refreshes the cache.",
-        "Real example: your DNS resolver caches 'salesforce.com → 13.x.x.x' for ~5 minutes, so every webpage doesn't re-query DNS."
+        "Real example: your DNS resolver caches 'salesforce.com \u2192 13.x.x.x' for ~5 minutes, so every webpage doesn't re-query DNS."
       ],
       "vocabulary": [
         {
           "word": "TTL",
-          "def": "Time To Live — how long a cache entry remains valid before it expires."
+          "def": "Time To Live \u2014 how long a cache entry remains valid before it expires."
         }
       ]
     },
     {
       "type": "concept",
-      "title": "Cache invalidation — the hard part",
+      "title": "Cache invalidation \u2014 the hard part",
       "body": [
         "There are only two hard problems in computer science: cache invalidation, naming things, and off-by-one errors. (Old joke. Mostly true.)",
-        "When the underlying data changes, stale cache entries need to be cleared — or you'll serve old data. Get this wrong and you'll have very confused users."
+        "When the underlying data changes, stale cache entries need to be cleared \u2014 or you'll serve old data. Get this wrong and you'll have very confused users."
       ],
       "vocabulary": [
         {
@@ -56,7 +56,7 @@
       "type": "concept",
       "title": "Cache-aside pattern",
       "body": [
-        "Most common pattern: check cache first → on miss, do the slow work → store the result in cache → return it.",
+        "Most common pattern: check cache first \u2192 on miss, do the slow work \u2192 store the result in cache \u2192 return it.",
         "Real example: every well-built web app uses cache-aside for database reads. Redis sits in front of Postgres; the app checks Redis first."
       ],
       "vocabulary": []
@@ -65,7 +65,7 @@
       "type": "concept",
       "title": "Apex's static-variable cache",
       "body": [
-        "Apex static variables persist for the duration of ONE transaction. Anywhere in the same transaction, reads come from the static — no second SOQL.",
+        "Apex static variables persist for the duration of ONE transaction. Anywhere in the same transaction, reads come from the static \u2014 no second SOQL.",
         "Real example: a getCurrentUser() utility that queries User on first call, stores in a static, and returns the static on subsequent calls within the same trigger fire."
       ],
       "vocabulary": [
@@ -82,7 +82,7 @@
       "code": "public class UserCache {\n    private static User currentUser;\n    public static User get() {\n        if (currentUser == null) {\n            currentUser = [SELECT Id, Name FROM User WHERE Id = :UserInfo.getUserId()];\n        }\n        return currentUser;\n    }\n}",
       "lineExplanations": [
         "Class.",
-        "Static field — persists across calls within a transaction.",
+        "Static field \u2014 persists across calls within a transaction.",
         "Static getter.",
         "Cache miss check.",
         "Slow operation: SOQL query.",
@@ -164,8 +164,8 @@
       "type": "concept",
       "title": "@AuraEnabled(cacheable=true)",
       "body": [
-        "For methods called from Lightning Web Components. cacheable=true tells Lightning 'safe to cache this on the client'. Same input → same output, served from browser memory.",
-        "Real example: a list of US states. Identical for every page render — perfect to cache in the browser. Only true read-only methods should be cacheable."
+        "For methods called from Lightning Web Components. cacheable=true tells Lightning 'safe to cache this on the client'. Same input \u2192 same output, served from browser memory.",
+        "Real example: a list of US states. Identical for every page render \u2014 perfect to cache in the browser. Only true read-only methods should be cacheable."
       ],
       "vocabulary": [
         {
@@ -210,8 +210,8 @@
       "type": "concept",
       "title": "Custom Metadata as a config cache",
       "body": [
-        "Custom Metadata Types are deployable, queryable like SObjects, but cached by the platform — reads are essentially free, no SOQL counted.",
-        "Real example: feature flags, tax rates by country, integration settings — anything that changes rarely but is read often. Stripe-rate-by-country is a perfect Custom Metadata use case."
+        "Custom Metadata Types are deployable, queryable like SObjects, but cached by the platform \u2014 reads are essentially free, no SOQL counted.",
+        "Real example: feature flags, tax rates by country, integration settings \u2014 anything that changes rarely but is read often. Stripe-rate-by-country is a perfect Custom Metadata use case."
       ],
       "vocabulary": [
         {
@@ -238,13 +238,13 @@
       "type": "quiz",
       "question": "You have a method getTaxRate(state) called from many LWC pages. Tax rates change once a year. What annotation?",
       "options": [
-        "@AuraEnabled — without cacheable, hits the server every time.",
-        "@AuraEnabled(cacheable=true) — client-cached, safe for read-only.",
-        "@future — async won't help here.",
+        "@AuraEnabled \u2014 without cacheable, hits the server every time.",
+        "@AuraEnabled(cacheable=true) \u2014 client-cached, safe for read-only.",
+        "@future \u2014 async won't help here.",
         "No annotation needed."
       ],
       "correct": 1,
-      "explanation": "@AuraEnabled(cacheable=true). Read-only, deterministic per input — perfect for client-side caching."
+      "explanation": "@AuraEnabled(cacheable=true). Read-only, deterministic per input \u2014 perfect for client-side caching."
     },
     {
       "type": "type-along",
@@ -253,18 +253,18 @@
       "code": "public class UserContext {\n    private static User cachedUser;\n    public static User getCurrent() {\n        if (cachedUser != null) {\n            return cachedUser;\n        }\n        Cache.OrgPartition partition = Cache.Org.getPartition('local.userCache');\n        User fromCache = (User) partition.get('current');\n        if (fromCache != null) {\n            cachedUser = fromCache;\n            return cachedUser;\n        }\n        cachedUser = [\n            SELECT Id, Name, Email\n            FROM User\n            WHERE Id = :UserInfo.getUserId()\n        ];\n        partition.put('current', cachedUser, 600);\n        return cachedUser;\n    }\n}",
       "lineExplanations": [
         "Declare the helper class.",
-        "Static field — lives for the duration of one transaction. Tier 1 cache.",
-        "Public static getter — anywhere in the codebase, UserContext.getCurrent().",
+        "Static field \u2014 lives for the duration of one transaction. Tier 1 cache.",
+        "Public static getter \u2014 anywhere in the codebase, UserContext.getCurrent().",
         "Tier-1 hit check.",
         "Return the in-memory User. No work done, no SOQL.",
         "Close the tier-1 hit branch.",
-        "Get a handle on the Platform Cache partition. Tier 2 — survives across transactions.",
+        "Get a handle on the Platform Cache partition. Tier 2 \u2014 survives across transactions.",
         "Look up by key. Returns Object; cast back to User. Returns null on miss.",
         "Tier-2 hit check.",
         "Promote the value into tier-1 so subsequent calls in this transaction skip Platform Cache too.",
         "Return.",
         "Close the tier-2 hit branch.",
-        "Both caches missed — do the slow work. SOQL.",
+        "Both caches missed \u2014 do the slow work. SOQL.",
         "Just the fields the caller needs.",
         "From the User SObject.",
         "Bind the current user's id from UserInfo. Static method on a Salesforce-provided class.",
@@ -328,7 +328,7 @@
       "title": "What you now know",
       "body": [
         "Cache fundamentals (TTL, invalidation, cache-aside), Apex's transaction-scoped static cache, Platform Cache (Org/Session), @AuraEnabled(cacheable=true), Custom Metadata as config cache.",
-        "You've completed the entire trainer — original course (through the Arlington Capstone) plus all six extra topics. From here, pair what you've typed with hands-on Salesforce work; ship something small end-to-end and the patterns will cement."
+        "You've completed the entire trainer \u2014 original course (through the Arlington Capstone) plus all six extra topics. From here, pair what you've typed with hands-on Salesforce work; ship something small end-to-end and the patterns will cement."
       ]
     }
   ]

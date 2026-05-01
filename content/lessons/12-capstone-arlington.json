@@ -114,7 +114,7 @@
       "lineExplanations": [
         "Method takes a Salesforce Id, returns a single Service__c.",
         "Inline SOQL \u2014 bind the parameter with :serviceId, LIMIT 1 because we expect one match.",
-        "Blank line \u2014 Ari's style adds breathing room between query and return.",
+        "Blank line \u2014 adds breathing room between query and return.",
         "Return the matched record.",
         "Close the first method.",
         "Blank.",
@@ -438,7 +438,7 @@
     {
       "type": "type-along",
       "title": "VendorServiceTrigger",
-      "intro": "The real trigger from Ari's course. Fires before insert/update on Vendor_Service__c, queries the parent Vendor and Service in bulk, then calls VendorServiceHelper.generateVendorServiceName to set each junction record's Name. Pure data shaping \u2014 no DML needed because we're modifying records that are about to be saved.",
+      "intro": "A real-world trigger. Fires before insert/update on Vendor_Service__c, queries the parent Vendor and Service in bulk, then calls VendorServiceHelper.generateVendorServiceName to set each junction record's Name. Pure data shaping \u2014 no DML needed because we're modifying records that are about to be saved.",
       "code": "trigger VendorServiceTrigger on Vendor_Service__c (before insert, before update) {\n    List<Vendor_Service__c> vendorServices = trigger.new;\n    Set<Id> vendorIds = new Set<Id>();\n    Set<Id> serviceIds = new Set<Id>();\n    for(Vendor_Service__c vendorService: vendorServices){\n        vendorIds.add(vendorService.Vendor__c);\n        serviceIds.add(vendorService.Service__c);\n    }\n    Map<Id,Account> vendorMap = new Map<Id,Account>([select id,name from account where id in :vendorIds]);\n    Map<Id,Service__c> serviceMap = new Map<Id,Service__c>([select id,name from Service__c where id in :serviceIds]);\n    for(Vendor_Service__c vendorService: vendorServices){\n        vendorService.name = VendorServiceHelper.generateVendorServiceName(\n            vendorMap.get(vendorService.Vendor__c).name,\n            serviceMap.get(vendorService.Service__c).name\n        );\n    }\n}",
       "lineExplanations": [
         "trigger keyword + name + on the object + the events it cares about. Two events keep the rename consistent if a record is later edited.",
@@ -803,7 +803,7 @@
       "type": "concept",
       "title": "What's next",
       "body": [
-        "You've finished the core course (matching Ari's original curriculum). The trainer continues with extra topics: Test Classes, Governor Limits, APIs, and Caching \u2014 each one a deeper dive into a skill you'll use every day in real consulting work.",
+        "You've finished the core lessons. The trainer continues with extra topics: Test Classes, Governor Limits, APIs, and Caching \u2014 each one a deeper dive into a skill you'll use every day in real consulting work.",
         "Pair the trainer with hands-on work in a real Salesforce sandbox. Type-memorized patterns become muscle when you apply them to actual problems."
       ]
     }

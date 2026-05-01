@@ -1,12 +1,12 @@
 {
   "id": "14-governor-limits",
-  "title": "Lesson 14 — Governor Limits & Bulkification",
+  "title": "Lesson 14 \u2014 Governor Limits & Bulkification",
   "slides": [
     {
       "type": "concept",
       "title": "What governor limits are",
       "body": [
-        "Salesforce caps how many resources any single transaction can use — queries, DML rows, CPU time, heap memory.",
+        "Salesforce caps how many resources any single transaction can use \u2014 queries, DML rows, CPU time, heap memory.",
         "Real example: every multi-tenant SaaS has similar guardrails. AWS Lambda has memory and timeout limits. Cloudflare Workers cap CPU. The reason: one rogue tenant can't take down the whole platform."
       ],
       "vocabulary": [
@@ -16,7 +16,7 @@
         },
         {
           "word": "transaction",
-          "def": "One Apex execution unit — a single trigger fire, a single API call, a single batch chunk."
+          "def": "One Apex execution unit \u2014 a single trigger fire, a single API call, a single batch chunk."
         }
       ]
     },
@@ -24,8 +24,8 @@
       "type": "concept",
       "title": "The five limits you'll hit most",
       "body": [
-        "100 SOQL queries · 150 DML statements · 50,000 rows queried · 10,000 rows DMLed · 10s sync CPU time.",
-        "Real example: 99% of governor failures involve crossing the 100-SOQL or 150-DML thresholds — almost always because a query or DML is sitting inside a for-loop."
+        "100 SOQL queries \u00b7 150 DML statements \u00b7 50,000 rows queried \u00b7 10,000 rows DMLed \u00b7 10s sync CPU time.",
+        "Real example: 99% of governor failures involve crossing the 100-SOQL or 150-DML thresholds \u2014 almost always because a query or DML is sitting inside a for-loop."
       ],
       "vocabulary": []
     },
@@ -47,7 +47,7 @@
       "type": "concept",
       "title": "The cardinal sin: SOQL inside a loop",
       "body": [
-        "for (Lead l : leads) { Account a = [SELECT ... WHERE Id = :l.AccountId]; } → 200 leads = 200 queries = blown 100-SOQL limit.",
+        "for (Lead l : leads) { Account a = [SELECT ... WHERE Id = :l.AccountId]; } \u2192 200 leads = 200 queries = blown 100-SOQL limit.",
         "This is THE most common production failure pattern in junior Apex. The fix is bulkification."
       ],
       "vocabulary": []
@@ -55,12 +55,12 @@
     {
       "type": "type-along",
       "title": "The broken pattern (don't write this)",
-      "intro": "Type this — it COMPILES, but blows the 100-SOQL limit on any trigger of 100+ records.",
+      "intro": "Type this \u2014 it COMPILES, but blows the 100-SOQL limit on any trigger of 100+ records.",
       "code": "for (Lead l : Trigger.new) {\n    Account a = [SELECT Id FROM Account WHERE Id = :l.AccountId LIMIT 1];\n    System.debug(a.Id);\n}",
       "lineExplanations": [
         "Loop over up to 200 Leads.",
         "SOQL inside the loop. Up to 200 queries. Past 100, runtime exception.",
-        "Even valid logic — but the structure dooms it."
+        "Even valid logic \u2014 but the structure dooms it."
       ],
       "lineConcepts": [
         [
@@ -79,10 +79,10 @@
     {
       "type": "type-along",
       "title": "The bulkified fix",
-      "intro": "Type this. Collect Ids → ONE query → process from a Map.",
+      "intro": "Type this. Collect Ids \u2192 ONE query \u2192 process from a Map.",
       "code": "Set<Id> acctIds = new Set<Id>();\nfor (Lead l : Trigger.new) {\n    if (l.AccountId != null) { acctIds.add(l.AccountId); }\n}\nMap<Id, Account> accts = new Map<Id, Account>(\n    [SELECT Id FROM Account WHERE Id IN :acctIds]\n);",
       "lineExplanations": [
-        "Set to collect parent Account Ids — Set dedupes automatically.",
+        "Set to collect parent Account Ids \u2014 Set dedupes automatically.",
         "First loop: gather Ids only.",
         "Skip nulls; otherwise add the Id.",
         "Close.",
@@ -116,7 +116,7 @@
     },
     {
       "type": "concept",
-      "title": "DML inside a loop — same failure mode",
+      "title": "DML inside a loop \u2014 same failure mode",
       "body": [
         "Looping 'update someRecord;' 200 times = 200 DML statements. Past 150 = blown limit.",
         "Fix: build a List of records to update in the loop. ONE 'update myList;' after the loop = 1 DML statement."
@@ -132,7 +132,7 @@
         "Collect records that need an update.",
         "Loop and mutate.",
         "Set the field.",
-        "Add to the to-update list — no DML yet.",
+        "Add to the to-update list \u2014 no DML yet.",
         "Close.",
         "ONE DML statement updates them all at once."
       ],
@@ -174,7 +174,7 @@
       "type": "concept",
       "title": "Limits.* methods",
       "body": [
-        "Apex exposes runtime: Limits.getQueries(), Limits.getDmlStatements(), Limits.getCpuTime() — and Limits.getLimitQueries() for the cap.",
+        "Apex exposes runtime: Limits.getQueries(), Limits.getDmlStatements(), Limits.getCpuTime() \u2014 and Limits.getLimitQueries() for the cap.",
         "Real example: production-grade code logs Limits.getCpuTime() at key points for performance debugging when slow trigger fires."
       ],
       "vocabulary": []
@@ -206,7 +206,7 @@
       "type": "recall",
       "front": "What's the single most common reason Apex code fails in production?",
       "back": "A SOQL query or DML statement inside a for-loop, hit by a 200-record trigger.",
-      "detail": "Bulkification (collect → query once → process) is the cure. Internalize this pattern; it shows up every day in real Apex work."
+      "detail": "Bulkification (collect \u2192 query once \u2192 process) is the cure. Internalize this pattern; it shows up every day in real Apex work."
     },
     {
       "type": "quiz",
@@ -223,18 +223,18 @@
     {
       "type": "type-along",
       "title": "Capstone: Bulkified contact rollup",
-      "intro": "A junior dev's 'count contacts per account' code blew up on the first 200-record import — they put a SOQL inside the trigger loop. Build the bulkified version: collect ids first, ONE query, ONE DML, no governor explosions.",
+      "intro": "A junior dev's 'count contacts per account' code blew up on the first 200-record import \u2014 they put a SOQL inside the trigger loop. Build the bulkified version: collect ids first, ONE query, ONE DML, no governor explosions.",
       "code": "List<Contact> incomingContacts = Trigger.new;\nSet<Id> acctIds = new Set<Id>();\nfor (Contact c : incomingContacts) {\n    if (c.AccountId != null) {\n        acctIds.add(c.AccountId);\n    }\n}\nMap<Id, Account> accountsById = new Map<Id, Account>(\n    [SELECT Id, NumContacts__c FROM Account WHERE Id IN :acctIds]\n);\nfor (Contact c : incomingContacts) {\n    Account parent = accountsById.get(c.AccountId);\n    if (parent == null) continue;\n    if (parent.NumContacts__c == null) parent.NumContacts__c = 0;\n    parent.NumContacts__c++;\n}\nupdate accountsById.values();\nSystem.debug('SOQL used: ' + Limits.getQueries());",
       "lineExplanations": [
         "Pull the new Contacts off the trigger context.",
-        "Set to collect parent Account ids — Set dedupes automatically.",
+        "Set to collect parent Account ids \u2014 Set dedupes automatically.",
         "First pass: walk Contacts, gathering ids only.",
         "Skip null AccountIds.",
         "Add the AccountId. Duplicates are silently ignored.",
         "Close the if.",
         "Close the first loop.",
         "Map<Id, Account> built directly from a SOQL result. ONE query.",
-        "Bind the set of ids — IN :acctIds is the bulk lookup pattern.",
+        "Bind the set of ids \u2014 IN :acctIds is the bulk lookup pattern.",
         "Close the map construction.",
         "Second pass: walk Contacts, working from the map (no per-iteration query).",
         "Look up the parent in the map by Id.",
@@ -242,7 +242,7 @@
         "Initialize counter if null.",
         "Increment. ++ adds 1.",
         "Close the second loop.",
-        "ONE bulk DML — update everything at once. accountsById.values() is the parent List<Account>.",
+        "ONE bulk DML \u2014 update everything at once. accountsById.values() is the parent List<Account>.",
         "Inspect runtime SOQL usage. Should print 1, well under the 100 limit."
       ],
       "lineConcepts": [
@@ -296,8 +296,8 @@
       "type": "concept",
       "title": "What you now know",
       "body": [
-        "Why governor limits exist (multitenancy), the five you'll hit most, the bulkification pattern (collect → one query → one DML), and Limits.* introspection.",
-        "Next: APIs — making outbound HTTP calls and exposing your own Apex as REST endpoints."
+        "Why governor limits exist (multitenancy), the five you'll hit most, the bulkification pattern (collect \u2192 one query \u2192 one DML), and Limits.* introspection.",
+        "Next: APIs \u2014 making outbound HTTP calls and exposing your own Apex as REST endpoints."
       ]
     }
   ]

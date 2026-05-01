@@ -1,10 +1,10 @@
 {
   "id": "00-foundations",
-  "title": "Lesson 0 — Coding Foundations",
+  "title": "Lesson 0 \u2014 Coding Foundations",
   "slides": [
     {
       "type": "concept",
-      "title": "Welcome — how this game works",
+      "title": "Welcome \u2014 how this game works",
       "body": [
         "This game teaches Apex by having you TYPE code patterns instead of memorizing them. Code appears in light grey. You type each character. Correct keystrokes turn solid; wrong keys flash red and don't advance.",
         "Why typing? Muscle memory is more durable than recall. After typing a pattern enough times, your fingers know it before your brain does."
@@ -19,20 +19,32 @@
         "A program is built from VARIABLES (named buckets that hold values) and FUNCTIONS (named blocks of instructions you can re-run). Almost everything else is built on those two ideas."
       ],
       "vocabulary": [
-        { "word": "statement", "def": "One instruction in a program, usually one line, ending with a semicolon." },
-        { "word": "variable", "def": "A named storage location that holds a value." },
-        { "word": "function", "def": "A reusable block of instructions identified by a name." }
+        {
+          "word": "statement",
+          "def": "One instruction in a program, usually one line, ending with a semicolon."
+        },
+        {
+          "word": "variable",
+          "def": "A named storage location that holds a value."
+        },
+        {
+          "word": "function",
+          "def": "A reusable block of instructions identified by a name."
+        }
       ]
     },
     {
       "type": "concept",
       "title": "Apex is typed, and case-insensitive",
       "body": [
-        "TYPED means: when you create a variable, you must declare what kind of value it holds — a number, text, a date, etc.",
-        "CASE-INSENSITIVE means: 'myAge' and 'MyAge' are the same to the compiler. But still pick one style and be consistent — other developers will care."
+        "TYPED means: when you create a variable, you must declare what kind of value it holds \u2014 a number, text, a date, etc.",
+        "CASE-INSENSITIVE means: 'myAge' and 'MyAge' are the same to the compiler. But still pick one style and be consistent \u2014 other developers will care."
       ],
       "vocabulary": [
-        { "word": "typed", "def": "The language requires you to declare what kind of value each variable holds." }
+        {
+          "word": "typed",
+          "def": "The language requires you to declare what kind of value each variable holds."
+        }
       ]
     },
     {
@@ -44,7 +56,11 @@
         "System.debug() prints a message. 'System' is a class Salesforce gives you. 'debug' is a method on it. The text in single quotes is what you want printed. Semicolon ; ends the statement."
       ],
       "lineConcepts": [
-        ["statement", "semicolon", "string-quotes"]
+        [
+          "statement",
+          "semicolon",
+          "string-quotes"
+        ]
       ]
     },
     {
@@ -52,38 +68,55 @@
       "title": "Anatomy of a variable",
       "body": [
         "Three parts in order: the TYPE, the NAME, the VALUE.",
-        "Example: Integer myAge = 30;  →  Integer is the type, myAge is the name, 30 is the value, ; ends it."
+        "Example: Integer myAge = 30;  \u2192  Integer is the type, myAge is the name, 30 is the value, ; ends it."
       ],
       "vocabulary": [
-        { "word": "type", "def": "What KIND of value a variable holds — Integer, String, Boolean, etc." },
-        { "word": "value", "def": "The actual data stored — 30, 'hello', true, etc." }
+        {
+          "word": "type",
+          "def": "What KIND of value a variable holds \u2014 Integer, String, Boolean, etc."
+        },
+        {
+          "word": "value",
+          "def": "The actual data stored \u2014 30, 'hello', true, etc."
+        }
       ]
     },
     {
       "type": "concept",
       "title": "camelCase vs PascalCase",
       "body": [
-        "Variables and methods use camelCase: lowercase first word, capitalize each next word — myAge, isLearning.",
-        "Types and class names use PascalCase: capitalize EVERY word — Integer, String, Account."
+        "Variables and methods use camelCase: lowercase first word, capitalize each next word \u2014 myAge, isLearning.",
+        "Types and class names use PascalCase: capitalize EVERY word \u2014 Integer, String, Account."
       ],
       "vocabulary": [
-        { "word": "camelCase", "def": "thisIsCamelCase — first word lowercase, each next word capitalized." },
-        { "word": "PascalCase", "def": "ThisIsPascalCase — every word capitalized, including the first." }
+        {
+          "word": "camelCase",
+          "def": "thisIsCamelCase \u2014 first word lowercase, each next word capitalized."
+        },
+        {
+          "word": "PascalCase",
+          "def": "ThisIsPascalCase \u2014 every word capitalized, including the first."
+        }
       ]
     },
     {
       "type": "type-along",
       "title": "Three variables, three types",
       "intro": "Type each line. Notice the same shape: TYPE name = value;",
-      "code": "Integer myAge = 30;\nString myName = 'Arthur';\nBoolean isLearning = true;",
+      "code": "Integer myAge = 30;\nString myName = 'Alex';\nBoolean isLearning = true;",
       "lineExplanations": [
         "Integer holds whole numbers. 'myAge' is the name. 30 is the value. The = assigns the value to the variable.",
-        "String holds text. Apex strings use SINGLE quotes — never double quotes (a common bug from other languages).",
-        "Boolean holds only two possible values: true or false. No quotes — true and false are language keywords."
+        "String holds text. Apex strings use SINGLE quotes \u2014 never double quotes (a common bug from other languages).",
+        "Boolean holds only two possible values: true or false. No quotes \u2014 true and false are language keywords."
       ],
       "lineConcepts": [
-        ["variable-declaration", "type"],
-        ["string-quotes"],
+        [
+          "variable-declaration",
+          "type"
+        ],
+        [
+          "string-quotes"
+        ],
         []
       ]
     },
@@ -91,7 +124,7 @@
       "type": "recall",
       "front": "What does this line do?\n\nInteger myAge = 30;",
       "back": "Declares a variable named myAge of type Integer, and assigns it the value 30.",
-      "detail": "Three parts: TYPE (Integer) · NAME (myAge) · VALUE (30). The = is the assignment operator."
+      "detail": "Three parts: TYPE (Integer) \u00b7 NAME (myAge) \u00b7 VALUE (30). The = is the assignment operator."
     },
     {
       "type": "quiz",
@@ -110,10 +143,13 @@
       "title": "Curly braces { } group code",
       "body": [
         "When you see { }, they're saying 'the stuff between us belongs together.' Used for class bodies, method bodies, loops, and if-blocks.",
-        "Indentation inside { } is for human readability — Apex itself ignores it. Other developers will care a lot. Use it consistently."
+        "Indentation inside { } is for human readability \u2014 Apex itself ignores it. Other developers will care a lot. Use it consistently."
       ],
       "vocabulary": [
-        { "word": "block", "def": "Code grouped inside { } that runs together as a unit." }
+        {
+          "word": "block",
+          "def": "Code grouped inside { } that runs together as a unit."
+        }
       ]
     },
     {
@@ -124,13 +160,19 @@
       "lineExplanations": [
         "Declare an Integer variable named 'score' with value 85.",
         "if (condition) starts a conditional. The parentheses hold the test. The { opens the block that runs when the test is true.",
-        "This line runs ONLY if the test was true. The four spaces are for humans — Apex ignores them.",
+        "This line runs ONLY if the test was true. The four spaces are for humans \u2014 Apex ignores them.",
         "The closing } ends the if-block. Anything after this } runs regardless of the score."
       ],
       "lineConcepts": [
-        ["variable-declaration"],
-        ["block"],
-        ["string-quotes"],
+        [
+          "variable-declaration"
+        ],
+        [
+          "block"
+        ],
+        [
+          "string-quotes"
+        ],
         []
       ]
     },
@@ -138,12 +180,18 @@
       "type": "concept",
       "title": "Parameter vs Argument",
       "body": [
-        "A PARAMETER is the placeholder a method declares — like 'Decimal speed' in 'drive(Decimal speed)'.",
-        "An ARGUMENT is the actual value you pass when calling — like 60 in 'drive(60)'. Same value, two perspectives."
+        "A PARAMETER is the placeholder a method declares \u2014 like 'Decimal speed' in 'drive(Decimal speed)'.",
+        "An ARGUMENT is the actual value you pass when calling \u2014 like 60 in 'drive(60)'. Same value, two perspectives."
       ],
       "vocabulary": [
-        { "word": "parameter", "def": "A named slot a method declares — defined where the method is written." },
-        { "word": "argument", "def": "The actual value you pass to a method when calling it." }
+        {
+          "word": "parameter",
+          "def": "A named slot a method declares \u2014 defined where the method is written."
+        },
+        {
+          "word": "argument",
+          "def": "The actual value you pass to a method when calling it."
+        }
       ]
     },
     {
@@ -160,8 +208,14 @@
         "On Salesforce RECORDS (SObjects like Account, Contact) we say FIELD. ATTRIBUTE is a more generic word for either."
       ],
       "vocabulary": [
-        { "word": "property", "def": "A named piece of data attached to a class instance." },
-        { "word": "field", "def": "A named piece of data on a Salesforce record (an SObject)." }
+        {
+          "word": "property",
+          "def": "A named piece of data attached to a class instance."
+        },
+        {
+          "word": "field",
+          "def": "A named piece of data on a Salesforce record (an SObject)."
+        }
       ]
     },
     {
@@ -172,19 +226,28 @@
         "In object-oriented languages like Apex, a function defined inside a class is called a METHOD. Apex code always lives inside classes, so you'll mostly hear 'method'."
       ],
       "vocabulary": [
-        { "word": "method", "def": "A named, reusable block of code defined inside a class." }
+        {
+          "word": "method",
+          "def": "A named, reusable block of code defined inside a class."
+        }
       ]
     },
     {
       "type": "concept",
       "title": "Class vs Object",
       "body": [
-        "A CLASS is the blueprint — like the idea of a Car.",
-        "An OBJECT (also called an instance) is one actual thing built from the blueprint — your specific red Honda. 'Object' and 'instance' are interchangeable."
+        "A CLASS is the blueprint \u2014 like the idea of a Car.",
+        "An OBJECT (also called an instance) is one actual thing built from the blueprint \u2014 your specific red Honda. 'Object' and 'instance' are interchangeable."
       ],
       "vocabulary": [
-        { "word": "class", "def": "A blueprint that defines what data and methods objects of its kind have." },
-        { "word": "object", "def": "An instance built from a class. Has its own copies of the class's properties." }
+        {
+          "word": "class",
+          "def": "A blueprint that defines what data and methods objects of its kind have."
+        },
+        {
+          "word": "object",
+          "def": "An instance built from a class. Has its own copies of the class's properties."
+        }
       ]
     },
     {
@@ -198,15 +261,18 @@
       "title": "Constructor",
       "body": [
         "A special method that runs automatically when you create a new object from a class.",
-        "Its job is to set up the object's initial state — assigning starting values to its properties."
+        "Its job is to set up the object's initial state \u2014 assigning starting values to its properties."
       ],
       "vocabulary": [
-        { "word": "constructor", "def": "A special method that runs when an object is created, used to set initial state." }
+        {
+          "word": "constructor",
+          "def": "A special method that runs when an object is created, used to set initial state."
+        }
       ]
     },
     {
       "type": "type-along",
-      "title": "Putting it together — a tiny method",
+      "title": "Putting it together \u2014 a tiny method",
       "intro": "A complete Apex class with one method. Type it; explanations tag each line. You'll see this exact shape over and over.",
       "code": "public class Greeter {\n    public static void sayHello(String name) {\n        System.debug('Hello, ' + name);\n    }\n}",
       "lineExplanations": [
@@ -216,11 +282,23 @@
         "This } closes the method. The next } closes the class. Always match opens with closes."
       ],
       "lineConcepts": [
-        ["class-vs-object", "public-modifier"],
-        ["method-shape", "void", "parameter-vs-argument"],
-        ["string-concat", "string-quotes"],
+        [
+          "class-vs-object",
+          "public-modifier"
+        ],
+        [
+          "method-shape",
+          "void",
+          "parameter-vs-argument"
+        ],
+        [
+          "string-concat",
+          "string-quotes"
+        ],
         [],
-        ["block"]
+        [
+          "block"
+        ]
       ]
     },
     {

@@ -1,18 +1,18 @@
 {
   "id": "07-soql",
-  "title": "Lesson 7 — SOQL: Reading Salesforce Data",
+  "title": "Lesson 7 \u2014 SOQL: Reading Salesforce Data",
   "slides": [
     {
       "type": "concept",
       "title": "What SOQL is",
       "body": [
         "SOQL = Salesforce Object Query Language. It's how Apex (and Flow, and Reports) reads data out of the Salesforce database.",
-        "Real example: looks like SQL but specialized for Salesforce — every CRM and ORM in the world has a similar query language. If you know basic SQL, SOQL feels familiar."
+        "Real example: looks like SQL but specialized for Salesforce \u2014 every CRM and ORM in the world has a similar query language. If you know basic SQL, SOQL feels familiar."
       ],
       "vocabulary": [
         {
           "word": "SOQL",
-          "def": "Salesforce Object Query Language — Apex's database query syntax."
+          "def": "Salesforce Object Query Language \u2014 Apex's database query syntax."
         }
       ]
     },
@@ -28,7 +28,7 @@
     {
       "type": "type-along",
       "title": "Your first SOQL query",
-      "intro": "Type this. The [...] brackets are inline SOQL — runs against your org and returns a List.",
+      "intro": "Type this. The [...] brackets are inline SOQL \u2014 runs against your org and returns a List.",
       "code": "List<Account> accts = [SELECT Id, Name FROM Account LIMIT 5];\nfor (Account a : accts) {\n    System.debug(a.Name);\n}",
       "lineExplanations": [
         "Inline SOQL inside [...]. Returns up to 5 Account records as a List<Account>. LIMIT keeps you safe from accidentally pulling millions of rows.",
@@ -71,7 +71,7 @@
         "Variable receives the query result. The opening [ starts the SOQL.",
         "SELECT lists fields.",
         "FROM names the object.",
-        "WHERE filters: only rows where BillingState equals 'CA'. Single quotes for the literal — same rule as String literals.",
+        "WHERE filters: only rows where BillingState equals 'CA'. Single quotes for the literal \u2014 same rule as String literals.",
         "LIMIT caps the count.",
         "Closing ] and semicolon."
       ],
@@ -99,7 +99,7 @@
       "title": "ORDER BY and operators",
       "body": [
         "ORDER BY sorts. Operators in WHERE: = != > < >= <= LIKE IN.",
-        "Real example: a sales rep dashboard might query 'opportunities in my pipeline ordered by close date desc' — that's ORDER BY CloseDate DESC."
+        "Real example: a sales rep dashboard might query 'opportunities in my pipeline ordered by close date desc' \u2014 that's ORDER BY CloseDate DESC."
       ],
       "vocabulary": []
     },
@@ -138,10 +138,10 @@
     },
     {
       "type": "concept",
-      "title": "Bind variables — using Apex values in SOQL",
+      "title": "Bind variables \u2014 using Apex values in SOQL",
       "body": [
-        "To use a variable inside a SOQL query, prefix it with a colon: WHERE Id = :recordId. This is called a 'bind' — Apex substitutes the value safely.",
-        "Real example: every dynamic query in production code uses binds. NEVER concatenate strings into SOQL — that's the SOQL-injection equivalent and Apex security review will block your package."
+        "To use a variable inside a SOQL query, prefix it with a colon: WHERE Id = :recordId. This is called a 'bind' \u2014 Apex substitutes the value safely.",
+        "Real example: every dynamic query in production code uses binds. NEVER concatenate strings into SOQL \u2014 that's the SOQL-injection equivalent and Apex security review will block your package."
       ],
       "vocabulary": [
         {
@@ -160,7 +160,7 @@
         "Variable for the result.",
         "SELECT three fields.",
         "FROM Contact.",
-        "WHERE AccountId = :acctId — bind the Apex variable into the query.",
+        "WHERE AccountId = :acctId \u2014 bind the Apex variable into the query.",
         "Close brackets.",
         "Print how many contacts came back."
       ],
@@ -202,7 +202,7 @@
       "code": "List<Account> accts = [\n    SELECT Id, Name, (SELECT Id, Email FROM Contacts)\n    FROM Account\n    LIMIT 5\n];\nfor (Account a : accts) {\n    System.debug(a.Name + ' has ' + a.Contacts.size() + ' contacts.');\n}",
       "lineExplanations": [
         "Result variable.",
-        "SELECT main fields PLUS (subquery for Contacts). Note 'Contacts' is plural — that's the relationship name.",
+        "SELECT main fields PLUS (subquery for Contacts). Note 'Contacts' is plural \u2014 that's the relationship name.",
         "FROM Account.",
         "Cap at 5.",
         "Close brackets.",
@@ -250,7 +250,7 @@
         "Variable.",
         "Account.Name and Account.BillingCity walk up the relationship to the parent's fields.",
         "FROM Contact.",
-        "WHERE clause can also walk up — filter contacts whose parent Account is in Tech.",
+        "WHERE clause can also walk up \u2014 filter contacts whose parent Account is in Tech.",
         "Cap at 10.",
         "Close brackets."
       ],
@@ -294,25 +294,25 @@
     {
       "type": "type-along",
       "title": "Capstone: Account 360 query",
-      "intro": "Sales reps want a one-shot account-360 view — the Account's industry context PLUS its child contacts ordered by last name, all in a single round-trip. Build the query and unpack the results without making a second SOQL call.",
+      "intro": "Sales reps want a one-shot account-360 view \u2014 the Account's industry context PLUS its child contacts ordered by last name, all in a single round-trip. Build the query and unpack the results without making a second SOQL call.",
       "code": "Id accountId = '001D000000IqhSL';\nList<Account> results = [\n    SELECT\n        Id,\n        Name,\n        Industry,\n        BillingCity,\n        (SELECT Id, Email FROM Contacts ORDER BY LastName)\n    FROM Account\n    WHERE Id = :accountId\n    LIMIT 1\n];\nif (!results.isEmpty()) {\n    Account acct = results[0];\n    System.debug(acct.Name + ' (' + acct.Industry + ')');\n    for (Contact c : acct.Contacts) {\n        System.debug(' - ' + c.Email);\n    }\n}",
       "lineExplanations": [
-        "An Account Id — could be passed in, looked up, or hardcoded for testing.",
+        "An Account Id \u2014 could be passed in, looked up, or hardcoded for testing.",
         "Multi-line SOQL inside square brackets. Use a List<Account> even when you expect 0 or 1 rows.",
         "SELECT clause begins.",
         "Id is always implicitly required.",
         "Name field.",
-        "Industry — one of the most-used picklists for segmentation.",
-        "BillingCity — typical address field.",
+        "Industry \u2014 one of the most-used picklists for segmentation.",
+        "BillingCity \u2014 typical address field.",
         "Subquery for child Contacts. 'Contacts' (plural) is the relationship name on Account. ORDER BY sorts the children.",
         "FROM clause.",
         "Bind the Apex variable into the query with :accountId. NEVER concatenate.",
-        "Cap at 1 row — we expect a single Account.",
+        "Cap at 1 row \u2014 we expect a single Account.",
         "Close the SOQL statement.",
-        "Guard before reading from the list — empty results would NPE on results[0].",
+        "Guard before reading from the list \u2014 empty results would NPE on results[0].",
         "Pull the single Account out.",
         "Print 'Acme (Technology)'-style header.",
-        "Walk the child Contacts — already loaded by the subquery, no additional SOQL.",
+        "Walk the child Contacts \u2014 already loaded by the subquery, no additional SOQL.",
         "Print each email indented.",
         "Close the inner loop.",
         "Close the outer if."
@@ -364,7 +364,7 @@
       "title": "What you now know",
       "body": [
         "SELECT, WHERE, ORDER BY, LIMIT, bind variables, parent-to-child subqueries, and child-to-parent dot notation.",
-        "Next: DML — how Apex WRITES data back to the Salesforce database (insert, update, delete)."
+        "Next: DML \u2014 how Apex WRITES data back to the Salesforce database (insert, update, delete)."
       ]
     }
   ]

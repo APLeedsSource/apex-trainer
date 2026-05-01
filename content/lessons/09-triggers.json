@@ -91,7 +91,7 @@
     {
       "type": "type-along",
       "title": "Detecting a field change",
-      "intro": "Ari's classic before-update pattern: when an Account's ShippingState changes, copy it to BillingState. Compare Trigger.new (incoming) against Trigger.oldMap (current DB) to detect the change \u2014 no DML needed because we're modifying records that haven't been saved yet.",
+      "intro": "A classic before-update pattern: when an Account's ShippingState changes, copy it to BillingState. Compare Trigger.new (incoming) against Trigger.oldMap (current DB) to detect the change \u2014 no DML needed because we're modifying records that haven't been saved yet.",
       "code": "trigger AccountTrigger on Account (before update) {\n    for (Account acct : Trigger.new) {\n        Account oldAccount = Trigger.oldMap.get(acct.Id);\n        if (acct.ShippingState != oldAccount.ShippingState) {\n            acct.BillingState = acct.ShippingState;\n        }\n    }\n}",
       "lineExplanations": [
         "Trigger declaration on Account, before update only.",
@@ -155,7 +155,7 @@
     {
       "type": "type-along",
       "title": "Bulkified pattern",
-      "intro": "Ari's grouping pattern. We need to update every contact's MailingState whenever its parent Account's BillingState changes. Naive code does a SOQL inside a loop \u2014 ~50,000 checks for 100 accounts \u00d7 500 contacts. The fix: query once, group by AccountId in a Map<Id, List<Contact>>, then process per-account.",
+      "intro": "Grouping pattern. We need to update every contact's MailingState whenever its parent Account's BillingState changes. Naive code does a SOQL inside a loop \u2014 ~50,000 checks for 100 accounts \u00d7 500 contacts. The fix: query once, group by AccountId in a Map<Id, List<Contact>>, then process per-account.",
       "code": "Set<Id> accountIds = new Set<Id>();\nfor (Account acct : accounts) {\n    accountIds.add(acct.Id);\n}\n\nMap<Id, List<Contact>> accountIdToContacts = new Map<Id, List<Contact>>();\nList<Contact> contacts = [\n    SELECT Id, MailingState, AccountId\n    FROM Contact\n    WHERE AccountId IN :accountIds\n];\nfor (Contact con : contacts) {\n    if (!accountIdToContacts.containsKey(con.AccountId)) {\n        accountIdToContacts.put(con.AccountId, new List<Contact>());\n    }\n    accountIdToContacts.get(con.AccountId).add(con);\n}",
       "lineExplanations": [
         "Set of account ids \u2014 Set dedupes and gives O(1) IN-clause performance.",
@@ -234,7 +234,7 @@
     {
       "type": "type-along",
       "title": "Handler delegation",
-      "intro": "Ari's pattern: the trigger itself is thin \u2014 it just dispatches by event to a handler class. The handler holds the logic, which keeps it testable as plain Apex (no trigger context needed) and reusable from anywhere.",
+      "intro": "Best-practice pattern: the trigger itself is thin \u2014 it just dispatches by event to a handler class. The handler holds the logic, which keeps it testable as plain Apex (no trigger context needed) and reusable from anywhere.",
       "code": "trigger AccountTrigger on Account (before insert, before update, after insert, after update) {\n    if (Trigger.isBefore) {\n        AccountTriggerHandler.handleBeforeTrigger(Trigger.new, Trigger.oldMap);\n    } else if (Trigger.isAfter) {\n        AccountTriggerHandler.handleAfterTrigger(Trigger.new, Trigger.oldMap);\n    }\n}\n\npublic class AccountTriggerHandler {\n    public static void handleBeforeTrigger(List<Account> accounts, Map<Id, Account> oldMap) {\n        matchBillingToShipping(accounts, oldMap);\n    }\n    public static void handleAfterTrigger(List<Account> accounts, Map<Id, Account> oldMap) {\n        // post-DML logic \u2014 updating related contacts, async jobs, etc.\n    }\n    public static void matchBillingToShipping(List<Account> accounts, Map<Id, Account> oldMap) {\n        for (Account acct : accounts) {\n            Account oldAcct = oldMap.get(acct.Id);\n            if (acct.ShippingState != oldAcct.ShippingState) {\n                acct.BillingState = acct.ShippingState;\n            }\n        }\n    }\n}",
       "lineExplanations": [
         "Trigger on Account listening to all four events.",

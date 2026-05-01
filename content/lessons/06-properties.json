@@ -59,7 +59,7 @@
       "type": "type-along",
       "title": "Using the property",
       "intro": "Type this. From the outside, properties read and write exactly like a field.",
-      "code": "User u = new User();\nu.name = 'Arthur';\nu.age = 35;\nSystem.debug(u.name);",
+      "code": "User u = new User();\nu.name = 'Alex';\nu.age = 35;\nSystem.debug(u.name);",
       "lineExplanations": [
         "Construct.",
         "Write to .name \u2014 the auto-generated setter stores the value.",
@@ -129,7 +129,7 @@
     {
       "type": "type-along",
       "title": "Setter that validates",
-      "intro": "Ari's color-validation example. The class accepts only RED or WHITE. Any other value silently falls back to WHITE \u2014 the property's setter enforces the invariant so callers can't store bogus state.",
+      "intro": "A color-validation example. The class accepts only RED or WHITE. Any other value silently falls back to WHITE \u2014 the property's setter enforces the invariant so callers can't store bogus state.",
       "code": "public class Automobile {\n    public static final String OPTION_COLOR_RED = 'red';\n    public static final String OPTION_COLOR_WHITE = 'white';\n    private String colorValue;\n    public String color {\n        get { return colorValue; }\n        set {\n            if (value == OPTION_COLOR_RED || value == OPTION_COLOR_WHITE) {\n                colorValue = value;\n            } else {\n                colorValue = OPTION_COLOR_WHITE;\n            }\n        }\n    }\n}\n\nAutomobile car = new Automobile();\ncar.color = 'green';\nSystem.debug(car.color);",
       "lineExplanations": [
         "Class declaration.",
@@ -261,7 +261,7 @@
       "type": "type-along",
       "title": "Capstone: Order with computed total + normalized email",
       "intro": "Build an Order class with two properties that do real work: customerEmail normalizes input on every set (trim + lowercase), and total computes itself from subtotal + taxRate on every read. The same getter/setter pattern Salesforce uses on its own validation-heavy fields.",
-      "code": "public class Order {\n    private String emailValue;\n    public String customerEmail {\n        get { return emailValue; }\n        set {\n            emailValue = value;\n            if (emailValue != null) emailValue = emailValue.toLowerCase().trim();\n        }\n    }\n    public Decimal subtotal { get; set; }\n    public Decimal taxRate { get; set; }\n    public Decimal total {\n        get { return subtotal + (subtotal * taxRate); }\n    }\n}\nOrder o = new Order();\no.customerEmail = '  ARTHUR@LEEDSSOURCE.COM  ';\no.subtotal = 100;\no.taxRate = 0.08;\nSystem.debug(o.customerEmail);\nSystem.debug(o.total);",
+      "code": "public class Order {\n    private String emailValue;\n    public String customerEmail {\n        get { return emailValue; }\n        set {\n            emailValue = value;\n            if (emailValue != null) emailValue = emailValue.toLowerCase().trim();\n        }\n    }\n    public Decimal subtotal { get; set; }\n    public Decimal taxRate { get; set; }\n    public Decimal total {\n        get { return subtotal + (subtotal * taxRate); }\n    }\n}\nOrder o = new Order();\no.customerEmail = '  USER@EXAMPLE.COM  ';\no.subtotal = 100;\no.taxRate = 0.08;\nSystem.debug(o.customerEmail);\nSystem.debug(o.total);",
       "lineExplanations": [
         "Declare the Order class.",
         "Backing field for the normalized email \u2014 private so callers can't bypass the property.",
@@ -282,7 +282,7 @@
         "Set the email \u2014 note the messy whitespace and uppercase. The setter will clean it.",
         "Set subtotal.",
         "Set tax rate.",
-        "Print: 'arthur@leedssource.com' (normalized).",
+        "Print: 'user@example.com' (normalized).",
         "Print: 108 (computed: 100 + 100*0.08)."
       ],
       "lineConcepts": [

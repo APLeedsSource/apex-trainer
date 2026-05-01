@@ -75,7 +75,7 @@
       "type": "type-along",
       "title": "Building a Set",
       "intro": "Type this. Watch what happens when we try to add a duplicate.",
-      "code": "Set<String> emails = new Set<String>();\nemails.add('arthur@leedssource.com');\nemails.add('arthur@leedssource.com');\nSystem.debug(emails.size());",
+      "code": "Set<String> emails = new Set<String>();\nemails.add('user@example.com');\nemails.add('user@example.com');\nSystem.debug(emails.size());",
       "lineExplanations": [
         "Declare a Set of Strings. Same shape as List, just the word changes.",
         "Add an email. The set now has 1 entry.",
@@ -159,11 +159,11 @@
       "type": "type-along",
       "title": "Looping a List",
       "intro": "Type this. The for-each loop reads cleanly: 'for each name in names, do X.'",
-      "code": "List<String> names = new List<String>{'Arthur', 'Ari', 'Tuan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
+      "code": "List<String> names = new List<String>{'Alex', 'Sam', 'Jordan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
       "lineExplanations": [
         "Inline list literal \u2014 { 'a', 'b' } seeds the list with values right at construction. Cleaner than three separate .add() calls.",
         "for (String name : names) \u2014 for each name in names. 'name' is a fresh variable that holds one item per iteration.",
-        "Runs once per name. Prints 'Hello Arthur', then 'Hello Ari', then 'Hello Tuan'. The order matches the List's order."
+        "Runs once per name. Prints 'Hello Alex', then 'Hello Sam', then 'Hello Jordan'. The order matches the List's order."
       ],
       "lineConcepts": [
         [
@@ -282,7 +282,7 @@
     {
       "type": "type-along",
       "title": "Capstone: State population map",
-      "intro": "Build a Map of state codes to populations, find the big states (>10M people), then sort them alphabetically and print each with its population. Demonstrates Map + List + Set together \u2014 exactly Ari's live demo from session 1.",
+      "intro": "Build a Map of state codes to populations, find the big states (>10M people), then sort them alphabetically and print each with its population. Demonstrates Map + List + Set together in a single small program.",
       "code": "Map<String, Integer> stateToPopMap = new Map<String, Integer>();\nstateToPopMap.put('MA', 6000000);\nstateToPopMap.put('FL', 23000000);\nstateToPopMap.put('RI', 1000000);\n\nList<String> bigStates = new List<String>();\nfor (String state : stateToPopMap.keySet()) {\n    Integer population = stateToPopMap.get(state);\n    if (population > 10000000) {\n        bigStates.add(state);\n    }\n}\n\nList<String> sortedStates = new List<String>();\nsortedStates.addAll(stateToPopMap.keySet());\nsortedStates.sort();\nfor (String state : sortedStates) {\n    System.debug(state + ': ' + stateToPopMap.get(state));\n}",
       "lineExplanations": [
         "Construct an empty Map keyed by 2-letter state code, valued by integer population.",

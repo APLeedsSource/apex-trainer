@@ -1,13 +1,13 @@
 {
   "id": "04-loops",
-  "title": "Lesson 4 — Loops & Iteration",
+  "title": "Lesson 4 \u2014 Loops & Iteration",
   "slides": [
     {
       "type": "concept",
       "title": "Why loops exist",
       "body": [
         "A loop runs the same block of code many times. Without loops, you'd write the same line 100 times to process 100 records.",
-        "Real example: Spotify processes ~100 million song-plays per day. Every analytics pipeline that touches that data is built on loops — one block of logic, run once per record."
+        "Real example: Spotify processes ~100 million song-plays per day. Every analytics pipeline that touches that data is built on loops \u2014 one block of logic, run once per record."
       ],
       "vocabulary": [
         {
@@ -20,7 +20,7 @@
       "type": "concept",
       "title": "Apex's three loop shapes",
       "body": [
-        "1) Counter for-loop — when you know how many times to repeat. 2) For-each loop — when you have a collection. 3) While loop — when you don't know how many times.",
+        "1) Counter for-loop \u2014 when you know how many times to repeat. 2) For-each loop \u2014 when you have a collection. 3) While loop \u2014 when you don't know how many times.",
         "Plus a Salesforce-special: the SOQL for-loop, which streams query results without loading them all into memory at once."
       ],
       "vocabulary": []
@@ -72,11 +72,11 @@
       "type": "type-along",
       "title": "Walking a list",
       "intro": "Type this. A clean for-each over a list of names.",
-      "code": "List<String> names = new List<String>{'Arthur', 'Ari', 'Tuan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
+      "code": "List<String> names = new List<String>{'Alex', 'Sam', 'Jordan'};\nfor (String name : names) {\n    System.debug('Hello ' + name);\n}",
       "lineExplanations": [
-        "Inline list literal — three names ready to iterate.",
+        "Inline list literal \u2014 three names ready to iterate.",
         "for-each: 'name' is a fresh variable that holds one list item per iteration.",
-        "Body runs three times: 'Hello Arthur', 'Hello Ari', 'Hello Tuan'."
+        "Body runs three times: 'Hello Alex', 'Hello Sam', 'Hello Jordan'."
       ],
       "lineConcepts": [
         [
@@ -94,18 +94,18 @@
       "title": "The SOQL for-loop",
       "body": [
         "Apex-only superpower: for (Account a : [SELECT ... FROM Account]) { ... }. Streams records from the database in batches of 200, never loading all into memory.",
-        "Real example: a nightly batch processing 50,000 accounts. With a regular query that's 50,000 records on the heap (governor-limit failure). With a SOQL for-loop, it's 200 at a time — safe."
+        "Real example: a nightly batch processing 50,000 accounts. With a regular query that's 50,000 records on the heap (governor-limit failure). With a SOQL for-loop, it's 200 at a time \u2014 safe."
       ],
       "vocabulary": []
     },
     {
       "type": "type-along",
       "title": "Streaming SOQL",
-      "intro": "Type this. The brackets [...] are inline SOQL — Apex's database query syntax.",
+      "intro": "Type this. The brackets [...] are inline SOQL \u2014 Apex's database query syntax.",
       "code": "for (Account a : [SELECT Id, Name FROM Account LIMIT 200]) {\n    System.debug(a.Name);\n}",
       "lineExplanations": [
         "Inline SOQL inside the for-each. Apex fetches up to 200 Account records and streams them to the loop variable 'a'.",
-        "Read the Name field off each Account. No List variable was ever created — the loop is the consumer."
+        "Read the Name field off each Account. No List variable was ever created \u2014 the loop is the consumer."
       ],
       "lineConcepts": [
         [
@@ -121,7 +121,7 @@
       "title": "The while-loop",
       "body": [
         "Shape: while (condition) { ... }. Repeats as long as the condition is true.",
-        "Real example: retry-with-backoff logic — keep retrying until the API succeeds OR you've hit the max attempts. Uber's payment service uses this pattern when calling external authorization."
+        "Real example: retry-with-backoff logic \u2014 keep retrying until the API succeeds OR you've hit the max attempts. Uber's payment service uses this pattern when calling external authorization."
       ],
       "vocabulary": [
         {
@@ -137,9 +137,9 @@
       "code": "Integer attempts = 0;\nwhile (attempts < 5) {\n    System.debug('Try ' + attempts);\n    attempts++;\n}",
       "lineExplanations": [
         "Counter starts at 0.",
-        "while (attempts < 5) — condition checked before each iteration. False at 5, loop exits.",
+        "while (attempts < 5) \u2014 condition checked before each iteration. False at 5, loop exits.",
         "Body runs while condition is true.",
-        "++ increments — without this we'd loop forever."
+        "++ increments \u2014 without this we'd loop forever."
       ],
       "lineConcepts": [
         [
@@ -161,7 +161,7 @@
       "title": "break and continue",
       "body": [
         "'break' immediately exits the loop. 'continue' skips to the next iteration.",
-        "Real example: searching a list for the first match — break out of the loop the moment you find it instead of walking the rest. continue is for skipping invalid records (null, wrong type) without exiting."
+        "Real example: searching a list for the first match \u2014 break out of the loop the moment you find it instead of walking the rest. continue is for skipping invalid records (null, wrong type) without exiting."
       ],
       "vocabulary": [
         {
@@ -225,7 +225,7 @@
       "type": "concept",
       "title": "The cardinal sin: SOQL inside a loop",
       "body": [
-        "NEVER put a SOQL query inside a for-each loop body. Each iteration runs another query — 200 records means 200 queries, double the governor limit (100/transaction).",
+        "NEVER put a SOQL query inside a for-each loop body. Each iteration runs another query \u2014 200 records means 200 queries, double the governor limit (100/transaction).",
         "Real example: the #1 production-breaking pattern in junior Apex code. Bulkification is the cure (we'll go deep in the Triggers and Governor Limits lessons)."
       ],
       "vocabulary": []
@@ -238,9 +238,9 @@
       "lineExplanations": [
         "Cap the number of attempts.",
         "Counter that increments on each pass.",
-        "Outcome flag — flips to true if any attempt succeeds.",
+        "Outcome flag \u2014 flips to true if any attempt succeeds.",
         "while-loop runs until the counter hits the cap.",
-        "Increment first thing — guarantees the counter advances every pass (no accidental infinite loop).",
+        "Increment first thing \u2014 guarantees the counter advances every pass (no accidental infinite loop).",
         "Simulate a flaky operation: ~30% success rate.",
         "If this attempt succeeded, handle and exit.",
         "Set the success flag so the post-loop check knows.",
@@ -296,7 +296,7 @@
       "title": "What you now know",
       "body": [
         "Three loop shapes (counter, for-each, while), the SOQL for-loop superpower, and break/continue for control flow.",
-        "Next: Methods & Modifiers — how Apex code is organized into reusable, callable units."
+        "Next: Methods & Modifiers \u2014 how Apex code is organized into reusable, callable units."
       ]
     }
   ]

@@ -1,6 +1,6 @@
 {
   "id": "15-apis",
-  "title": "Lesson 15 — APIs",
+  "title": "Lesson 15 \u2014 APIs",
   "slides": [
     {
       "type": "concept",
@@ -12,7 +12,7 @@
       "vocabulary": [
         {
           "word": "API",
-          "def": "A contract one program exposes for other programs to call — a defined set of inputs and outputs."
+          "def": "A contract one program exposes for other programs to call \u2014 a defined set of inputs and outputs."
         }
       ]
     },
@@ -26,11 +26,11 @@
       "vocabulary": [
         {
           "word": "REST",
-          "def": "Representational State Transfer — the most common HTTP API style. Verbs (GET/POST/...) on URLs identify operations."
+          "def": "Representational State Transfer \u2014 the most common HTTP API style. Verbs (GET/POST/...) on URLs identify operations."
         },
         {
           "word": "endpoint",
-          "def": "A specific URL on the API server that does one thing — like /accounts/123."
+          "def": "A specific URL on the API server that does one thing \u2014 like /accounts/123."
         }
       ]
     },
@@ -38,22 +38,22 @@
       "type": "concept",
       "title": "Status codes you'll see",
       "body": [
-        "200 OK · 201 Created · 204 No Content · 400 Bad Request · 401 Unauthorized · 403 Forbidden · 404 Not Found · 429 Rate Limited · 500 Server Error.",
+        "200 OK \u00b7 201 Created \u00b7 204 No Content \u00b7 400 Bad Request \u00b7 401 Unauthorized \u00b7 403 Forbidden \u00b7 404 Not Found \u00b7 429 Rate Limited \u00b7 500 Server Error.",
         "Real example: any time you've seen 'Error 404' on a webpage, that's the same status code an API would return. Same vocabulary, browser or program."
       ],
       "vocabulary": []
     },
     {
       "type": "concept",
-      "title": "JSON — the data format",
+      "title": "JSON \u2014 the data format",
       "body": [
-        "Most modern APIs send and receive JSON. It's a text format with keys, values, lists, and nested objects — readable by humans and easy for any language to parse.",
+        "Most modern APIs send and receive JSON. It's a text format with keys, values, lists, and nested objects \u2014 readable by humans and easy for any language to parse.",
         "Example: { \"name\": \"Acme\", \"contacts\": [{ \"email\": \"x@y.com\" }] }"
       ],
       "vocabulary": [
         {
           "word": "JSON",
-          "def": "JavaScript Object Notation — text format used as the body of most modern API requests and responses."
+          "def": "JavaScript Object Notation \u2014 text format used as the body of most modern API requests and responses."
         }
       ]
     },
@@ -67,13 +67,13 @@
       "vocabulary": [
         {
           "word": "OAuth",
-          "def": "Standard for user-permissioned authentication — user grants your app access without sharing their password."
+          "def": "Standard for user-permissioned authentication \u2014 user grants your app access without sharing their password."
         }
       ]
     },
     {
       "type": "concept",
-      "title": "Apex callouts — the players",
+      "title": "Apex callouts \u2014 the players",
       "body": [
         "Three classes: Http (the dispatcher), HttpRequest (what you send), HttpResponse (what you get back).",
         "Pattern: build a request, send it via Http().send(request), inspect the response."
@@ -88,7 +88,7 @@
       "lineExplanations": [
         "Construct an HttpRequest. Empty so far.",
         "Set the URL we're calling.",
-        "HTTP verb — GET to read.",
+        "HTTP verb \u2014 GET to read.",
         "Construct the dispatcher.",
         "Send the request, capture the response.",
         "Inspect the status code. 200 = success."
@@ -135,7 +135,7 @@
         "POST method.",
         "Bearer auth header.",
         "Tell the server we're sending JSON.",
-        "Set the body — JSON string. In real code, build this with JSON.serialize() instead.",
+        "Set the body \u2014 JSON string. In real code, build this with JSON.serialize() instead.",
         "Send it. Construct Http inline to keep it tight."
       ],
       "lineConcepts": [
@@ -168,7 +168,7 @@
       "type": "concept",
       "title": "Parsing the JSON response",
       "body": [
-        "JSON.deserialize(jsonString, MyClass.class) maps a JSON string into an Apex class instance. JSON.deserializeUntyped returns a Map<String, Object> — useful when shape is unknown.",
+        "JSON.deserialize(jsonString, MyClass.class) maps a JSON string into an Apex class instance. JSON.deserializeUntyped returns a Map<String, Object> \u2014 useful when shape is unknown.",
         "Real example: Stripe's response shape is documented; you build a matching Apex class and JSON.deserialize directly into it."
       ],
       "vocabulary": [
@@ -207,14 +207,14 @@
       "vocabulary": [
         {
           "word": "Named Credential",
-          "def": "Salesforce admin config storing endpoint URL and auth — referenced from Apex via 'callout:Name' so secrets stay out of code."
+          "def": "Salesforce admin config storing endpoint URL and auth \u2014 referenced from Apex via 'callout:Name' so secrets stay out of code."
         }
       ]
     },
     {
       "type": "type-along",
       "title": "Calling via Named Credential",
-      "intro": "Type this. The 'callout:Stripe' prefix replaces the literal URL — Salesforce handles auth automatically.",
+      "intro": "Type this. The 'callout:Stripe' prefix replaces the literal URL \u2014 Salesforce handles auth automatically.",
       "code": "HttpRequest req = new HttpRequest();\nreq.setEndpoint('callout:Stripe/v1/charges');\nreq.setMethod('GET');\nHttpResponse res = new Http().send(req);",
       "lineExplanations": [
         "Construct.",
@@ -262,7 +262,7 @@
         "@RestResource with the URL pattern. This class is now an HTTP endpoint.",
         "Class must be global (visible across packages and clients).",
         "@HttpGet marks the method that handles GET requests.",
-        "Handler — global static, returns whatever you want serialized.",
+        "Handler \u2014 global static, returns whatever you want serialized.",
         "Body. The framework auto-serializes the return as JSON.",
         "Closes."
       ],
@@ -292,7 +292,7 @@
       "type": "concept",
       "title": "Governor limits on callouts",
       "body": [
-        "100 callouts per transaction. 120-second timeout per callout. Triggers can NEVER make callouts directly — must go async (covered in the Async Apex lesson).",
+        "100 callouts per transaction. 120-second timeout per callout. Triggers can NEVER make callouts directly \u2014 must go async (covered in the Async Apex lesson).",
         "Real example: forgetting the trigger-can't-callout rule is the #1 'why doesn't this work' question for new Apex devs."
       ]
     },
@@ -300,7 +300,7 @@
       "type": "recall",
       "front": "Why must callouts from triggers go through async (Queueable / @future)?",
       "back": "Triggers run inside the database transaction; making a slow external call would block the database write. Salesforce blocks it.",
-      "detail": "Pattern: trigger collects ids → enqueues a Queueable → the Queueable runs the callout in its own transaction."
+      "detail": "Pattern: trigger collects ids \u2192 enqueues a Queueable \u2192 the Queueable runs the callout in its own transaction."
     },
     {
       "type": "quiz",
@@ -308,7 +308,7 @@
       "options": [
         "Hardcoded in each Apex class.",
         "In a custom setting in plain text.",
-        "In a Named Credential — referenced as 'callout:Name'.",
+        "In a Named Credential \u2014 referenced as 'callout:Name'.",
         "In a constant in a utility class."
       ],
       "correct": 2,
@@ -317,12 +317,12 @@
     {
       "type": "type-along",
       "title": "Capstone: Stripe charge POST via Named Credential",
-      "intro": "A customer just clicked 'Pay' in your storefront. Build the Apex callout that posts the charge to Stripe — using a Named Credential so the secret never lives in code, parsing the JSON response, and branching on the status code. The exact shape every payment integration uses.",
+      "intro": "A customer just clicked 'Pay' in your storefront. Build the Apex callout that posts the charge to Stripe \u2014 using a Named Credential so the secret never lives in code, parsing the JSON response, and branching on the status code. The exact shape every payment integration uses.",
       "code": "HttpRequest req = new HttpRequest();\nreq.setEndpoint('callout:Stripe/v1/charges');\nreq.setMethod('POST');\nreq.setHeader('Content-Type', 'application/x-www-form-urlencoded');\nString body = 'amount=2500&currency=usd&source=tok_visa&description=Order+1234';\nreq.setBody(body);\nHttpResponse res = new Http().send(req);\nif (res.getStatusCode() == 200) {\n    Map<String, Object> parsed = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());\n    String chargeId = (String) parsed.get('id');\n    System.debug('Charge succeeded: ' + chargeId);\n} else {\n    System.debug('Charge failed: ' + res.getStatusCode() + ' - ' + res.getBody());\n}",
       "lineExplanations": [
         "Build a fresh HttpRequest. Empty so far.",
-        "Endpoint via Named Credential — 'callout:Stripe' resolves to the real URL with auth attached. No secrets in code.",
-        "POST verb — we're creating a charge.",
+        "Endpoint via Named Credential \u2014 'callout:Stripe' resolves to the real URL with auth attached. No secrets in code.",
+        "POST verb \u2014 we're creating a charge.",
         "Stripe's charge endpoint expects form-encoded, not JSON.",
         "Build the form-encoded body. amount is in cents (2500 = $25.00).",
         "Attach the body to the request.",
@@ -373,7 +373,7 @@
       "title": "What you now know",
       "body": [
         "REST basics, status codes, JSON, callouts (Http/HttpRequest/HttpResponse), Named Credentials, exposing Apex as REST, callout governor limits.",
-        "Next: Caching — how to make APIs and queries fast and cheap by avoiding repeated work."
+        "Next: Caching \u2014 how to make APIs and queries fast and cheap by avoiding repeated work."
       ]
     }
   ]

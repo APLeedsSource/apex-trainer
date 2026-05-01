@@ -1,13 +1,13 @@
 {
   "id": "13-tests",
-  "title": "Lesson 13 — Test Classes",
+  "title": "Lesson 13 \u2014 Test Classes",
   "slides": [
     {
       "type": "concept",
       "title": "Why we test",
       "body": [
         "Tests catch regressions before they hit production. Without them, every deploy is a guess.",
-        "Real example: Salesforce REQUIRES 75% Apex code coverage to deploy to production. No tests, no deploy. Stripe runs ~1 million automated tests on every PR — same idea, larger scale."
+        "Real example: Salesforce REQUIRES 75% Apex code coverage to deploy to production. No tests, no deploy. Stripe runs ~1 million automated tests on every PR \u2014 same idea, larger scale."
       ],
       "vocabulary": [
         {
@@ -25,7 +25,7 @@
       "title": "Test class anatomy",
       "body": [
         "Mark the class with @isTest. Each test method is also marked @isTest (or named testMyThing). They take no params and return void.",
-        "Test classes don't count against your code-limit allotment — write all the tests you want."
+        "Test classes don't count against your code-limit allotment \u2014 write all the tests you want."
       ],
       "vocabulary": []
     },
@@ -33,14 +33,14 @@
       "type": "type-along",
       "title": "Your first test",
       "intro": "Type this. Tests an imaginary Greeter.hello() method.",
-      "code": "@isTest\npublic class GreeterTest {\n    @isTest\n    static void testHello() {\n        String result = Greeter.hello('Arthur');\n        System.assertEquals('Hi Arthur', result);\n    }\n}",
+      "code": "@isTest\npublic class GreeterTest {\n    @isTest\n    static void testHello() {\n        String result = Greeter.hello('Alex');\n        System.assertEquals('Hi Alex', result);\n    }\n}",
       "lineExplanations": [
         "@isTest at the class level marks the whole class as test-only.",
         "Class declaration.",
         "@isTest at the method level marks this as a runnable test.",
         "Test method: static, void, no params.",
         "Call the method under test, capture the return.",
-        "assertEquals(expected, actual) — fails the test if they differ.",
+        "assertEquals(expected, actual) \u2014 fails the test if they differ.",
         "Close.",
         "Close."
       ],
@@ -183,7 +183,7 @@
         "Class-level test annotation.",
         "Class.",
         "@TestSetup runs once before the test methods.",
-        "Setup method — must be static and void, takes no params.",
+        "Setup method \u2014 must be static and void, takes no params.",
         "Build a lead.",
         "Insert it. The record now exists for all tests.",
         "Close setup.",
@@ -249,7 +249,7 @@
         "Create an INVALID lead (no required fields).",
         "Wrap the code we expect to throw.",
         "Try the insert.",
-        "If we reach here, no exception fired — fail explicitly.",
+        "If we reach here, no exception fired \u2014 fail explicitly.",
         "Catch the expected DmlException.",
         "Reaching the catch is the success path.",
         "Close."
@@ -287,7 +287,7 @@
       "type": "recall",
       "front": "Why does Salesforce require 75% test coverage to deploy to production?",
       "back": "Forces every team to ship at least minimal verification with their code, so changes can't silently break the org.",
-      "detail": "Coverage doesn't prove correctness — but zero coverage almost always means zero confidence. 75% is the industry's pragmatic floor."
+      "detail": "Coverage doesn't prove correctness \u2014 but zero coverage almost always means zero confidence. 75% is the industry's pragmatic floor."
     },
     {
       "type": "quiz",
@@ -304,10 +304,10 @@
     {
       "type": "type-along",
       "title": "Capstone: Test class for CustomerService",
-      "intro": "Write a complete test class for the CustomerService.register method from Lesson 5 — a happy path that registers a valid customer and a negative path that rejects bad input. This is exactly the shape every Apex deploy needs to clear the 75% coverage gate.",
-      "code": "@isTest\npublic class CustomerServiceTest {\n    @TestSetup\n    static void setup() {\n        Account a = new Account(Name='Test Co');\n        insert a;\n    }\n    @isTest\n    static void registersValidCustomer() {\n        Test.startTest();\n        Boolean result = CustomerService.register('arthur@example.com', 'Arthur');\n        Test.stopTest();\n        System.assertEquals(true, result, 'Valid input should register');\n    }\n    @isTest\n    static void rejectsInvalidEmail() {\n        Boolean result = CustomerService.register('not-an-email', 'Arthur');\n        System.assertEquals(false, result, 'Bad email should be rejected');\n    }\n}",
+      "intro": "Write a complete test class for the CustomerService.register method from Lesson 5 \u2014 a happy path that registers a valid customer and a negative path that rejects bad input. This is exactly the shape every Apex deploy needs to clear the 75% coverage gate.",
+      "code": "@isTest\npublic class CustomerServiceTest {\n    @TestSetup\n    static void setup() {\n        Account a = new Account(Name='Test Co');\n        insert a;\n    }\n    @isTest\n    static void registersValidCustomer() {\n        Test.startTest();\n        Boolean result = CustomerService.register('alex@example.com', 'Alex');\n        Test.stopTest();\n        System.assertEquals(true, result, 'Valid input should register');\n    }\n    @isTest\n    static void rejectsInvalidEmail() {\n        Boolean result = CustomerService.register('not-an-email', 'Alex');\n        System.assertEquals(false, result, 'Bad email should be rejected');\n    }\n}",
       "lineExplanations": [
-        "Class-level @isTest marks the whole class as test-only — doesn't count toward your code limit.",
+        "Class-level @isTest marks the whole class as test-only \u2014 doesn't count toward your code limit.",
         "Class declaration.",
         "@TestSetup creates shared data once for the whole class run.",
         "Setup method must be static, void, no params.",
@@ -322,7 +322,7 @@
         "Assert the boolean result. Third arg is the failure message.",
         "Close the happy-path test.",
         "Second test annotation.",
-        "Negative path — bad email should return false.",
+        "Negative path \u2014 bad email should return false.",
         "Call with malformed email.",
         "Assert the rejection. No startTest/stopTest needed since there's no async.",
         "Close the negative test.",
@@ -390,7 +390,7 @@
       "title": "What you now know",
       "body": [
         "@isTest classes and methods, assertions, Test.startTest/stopTest, @TestSetup, and negative tests.",
-        "Next: Governor Limits — the Salesforce-imposed caps that shape every Apex pattern you'll ever write."
+        "Next: Governor Limits \u2014 the Salesforce-imposed caps that shape every Apex pattern you'll ever write."
       ]
     }
   ]

@@ -6,7 +6,7 @@ A type-to-learn game for Apex and coding fundamentals.
 
 An interactive local app that teaches Apex (and general coding concepts) by having you TYPE known patterns instead of memorizing them. Code is displayed in light grey; you type each character; correct keystrokes turn solid; wrong ones flash red. After each line completes, an explanation reveals on the right.
 
-Built around Ari Leeds's "Apex OOP Lessons" course, with extra lessons added for foundations, definitions, system design, APIs, and caching.
+Covers core Apex concepts (data types, collections, classes, loops, methods, properties, SOQL, DML, triggers, OOP, async) plus real-world topics (governor limits, APIs, caching) and a capstone Salesforce consulting project.
 
 ## Install (any Mac)
 

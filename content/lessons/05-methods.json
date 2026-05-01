@@ -63,10 +63,10 @@
       "type": "type-along",
       "title": "Calling the method",
       "intro": "Type this. Static methods are called as ClassName.method(...).",
-      "code": "String msg = Greeter.hello('Arthur');\nSystem.debug(msg);",
+      "code": "String msg = Greeter.hello('Alex');\nSystem.debug(msg);",
       "lineExplanations": [
-        "Greeter.hello('Arthur') invokes the static method. 'Arthur' is the argument; the parameter 'name' inside the method receives this value.",
-        "Prints 'Hi Arthur'."
+        "Greeter.hello('Alex') invokes the static method. 'Alex' is the argument; the parameter 'name' inside the method receives this value.",
+        "Prints 'Hi Alex'."
       ],
       "lineConcepts": [
         [
@@ -141,7 +141,7 @@
     {
       "type": "type-along",
       "title": "Public fa\u00e7ade, private internals",
-      "intro": "Ari's example: the actual `drive` method is private \u2014 too low-level for callers. We expose `driveSlow` and `driveFast` as public fa\u00e7ades that call into it. The class controls how it's used; callers get clean, intent-revealing entry points.",
+      "intro": "A common real-world pattern: the actual `drive` method is private \u2014 too low-level for callers to use directly. Expose `driveSlow` and `driveFast` as public fa\u00e7ades that call into it. The class controls how it's used; callers get clean, intent-revealing entry points.",
       "code": "public class Automobile {\n    private void drive(Decimal speed) {\n        System.debug('Driving at ' + speed + ' mph');\n    }\n    public void driveSlow() {\n        drive(10);\n    }\n    public void driveFast() {\n        drive(100);\n    }\n}\n\nAutomobile car = new Automobile();\ncar.driveSlow();\ncar.driveFast();",
       "lineExplanations": [
         "Class declaration.",

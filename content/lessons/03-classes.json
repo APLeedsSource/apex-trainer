@@ -390,7 +390,7 @@
     {
       "type": "type-along",
       "title": "Capstone: Automobile and CarBuilder",
-      "intro": "Ari's live example. The Automobile class is the factory blueprint \u2014 static constants for color options, instance properties for what THIS car is, an instance method for what it can do. The CarBuilder class consumes Automobile to build a red sedan and take it for a test drive.",
+      "intro": "A classic factory-pattern example. The Automobile class is the blueprint \u2014 static constants for color options, instance properties for what THIS car is, an instance method for what it can do. The CarBuilder class consumes Automobile to build a red sedan and take it for a test drive.",
       "code": "public class Automobile {\n    public static final String OPTION_COLOR_RED = 'red';\n    public static final String OPTION_COLOR_WHITE = 'white';\n    public String color;\n    public Integer numberOfDoors;\n    public void drive(Decimal speed) {\n        System.debug('Driving at ' + speed + ' mph');\n    }\n}\n\npublic class CarBuilder {\n    public Automobile buildRedSedan() {\n        Automobile redSedan = new Automobile();\n        redSedan.color = Automobile.OPTION_COLOR_RED;\n        redSedan.numberOfDoors = 4;\n        redSedan.drive(60);\n        return redSedan;\n    }\n}\n\nCarBuilder builder = new CarBuilder();\nAutomobile myCar = builder.buildRedSedan();",
       "lineExplanations": [
         "The Automobile class \u2014 the blueprint. Its static items belong to the factory; instance items belong to each car built.",

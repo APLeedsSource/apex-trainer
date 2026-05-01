@@ -150,12 +150,12 @@
       "type": "type-along",
       "title": "String basics",
       "intro": "Type these. Notice: single quotes always. The + operator joins strings.",
-      "code": "String firstName = 'Arthur';\nString lastName = 'Papernik';\nString fullName = firstName + ' ' + lastName;\nSystem.debug(fullName);",
+      "code": "String firstName = 'Alex';\nString lastName = 'Papernik';\nString fullName = firstName + ' ' + lastName;\nSystem.debug(fullName);",
       "lineExplanations": [
         "Declare a String. Single quotes \u2014 never double.",
         "Another String. Apex Strings can hold any text, any length up to a few million characters.",
-        "Concatenation: join two Strings with +. The ' ' is a literal space. Without it you'd get 'ArthurPapernik'.",
-        "Print 'Arthur Papernik'."
+        "Concatenation: join two Strings with +. The ' ' is a literal space. Without it you'd get 'AlexSmith'.",
+        "Print 'Alex Smith'."
       ],
       "lineConcepts": [
         [

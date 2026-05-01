@@ -278,7 +278,7 @@
     {
       "type": "type-along",
       "title": "Implementing multiple interfaces",
-      "intro": "Ari's tip: a class can implement more than one interface at once \u2014 comma-separated. The class then must provide method bodies for ALL methods declared by all the interfaces. Common pattern in async Apex: a class that's both Schedulable AND Database.Batchable.",
+      "intro": "A class can implement more than one interface at once \u2014 comma-separated. The class then must provide method bodies for ALL methods declared by all the interfaces. Common pattern in async Apex: a class that's both Schedulable AND Database.Batchable.",
       "code": "public class FeeRunner implements Schedulable, Database.Batchable<SObject> {\n    public void execute(SchedulableContext ctx) {\n        Database.executeBatch(this);\n    }\n    public Database.QueryLocator start(Database.BatchableContext bc) {\n        return Database.getQueryLocator('SELECT Id FROM Account');\n    }\n    public void execute(Database.BatchableContext bc, List<SObject> scope) {\n    }\n    public void finish(Database.BatchableContext bc) {\n    }\n}",
       "lineExplanations": [
         "Class implements TWO interfaces \u2014 comma-separated. Now the class must satisfy both contracts.",
@@ -355,7 +355,7 @@
       "type": "type-along",
       "title": "Capstone: Notification interface (Email + Slack)",
       "intro": "Your platform needs to send notifications via either email OR Slack. Use an interface so the same calling code works for both \u2014 the textbook strategy pattern, which is exactly how Salesforce's own framework code stays swappable for different integrations.",
-      "code": "public interface Sender {\n    void send(String to, String message);\n}\npublic class EmailSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Email -> ' + to + ': ' + message);\n    }\n}\npublic class SlackSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Slack -> ' + to + ': ' + message);\n    }\n}\nList<Sender> senders = new List<Sender>{new EmailSender(), new SlackSender()};\nfor (Sender s : senders) {\n    s.send('arthur@leedssource.com', 'Welcome to Salesforce!');\n}",
+      "code": "public interface Sender {\n    void send(String to, String message);\n}\npublic class EmailSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Email -> ' + to + ': ' + message);\n    }\n}\npublic class SlackSender implements Sender {\n    public void send(String to, String message) {\n        System.debug('Slack -> ' + to + ': ' + message);\n    }\n}\nList<Sender> senders = new List<Sender>{new EmailSender(), new SlackSender()};\nfor (Sender s : senders) {\n    s.send('user@example.com', 'Welcome to Salesforce!');\n}",
       "lineExplanations": [
         "Define the contract \u2014 interfaces have only signatures, no bodies.",
         "Every implementer must provide this method.",
