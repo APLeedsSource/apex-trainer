@@ -139,7 +139,23 @@ app.post('/api/sync', (req, res) => {
         return runNext(i + 1);
       }
       if (err) {
-        return res.status(500).json({ ok: false, output, error: String(err) });
+        // Log the failure to the server console so the user (or whoever's
+        // helping them) can see exactly what broke without opening DevTools.
+        console.error('---');
+        console.error('[SYNC FAILED] user=' + userId);
+        console.error('[SYNC FAILED] step: ' + ['git'].concat(args).join(' '));
+        console.error('[SYNC FAILED] stderr: ' + (stderr || '(empty)').trim());
+        console.error('[SYNC FAILED] stdout: ' + (stdout || '(empty)').trim());
+        console.error('[SYNC FAILED] error: ' + String(err).trim());
+        console.error('---');
+        return res.status(500).json({
+          ok: false,
+          failedStep: ['git'].concat(args).join(' '),
+          stderr: (stderr || '').trim(),
+          stdout: (stdout || '').trim(),
+          error: String(err),
+          output
+        });
       }
       runNext(i + 1);
     });

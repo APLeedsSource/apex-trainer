@@ -73,10 +73,14 @@ export async function initDashboard() {
     try {
       const result = await syncToGitHub(`progress: ${progress.currentLesson} slide ${progress.currentSlide}`);
       btn.textContent = result.ok ? 'Synced ✓' : 'Sync failed';
-      if (!result.ok) console.error(result);
+      if (!result.ok) {
+        console.error(result);
+        showSyncErrorModal(result);
+      }
     } catch (e) {
       btn.textContent = 'Sync failed';
       console.error(e);
+      showSyncErrorModal({ error: String(e), failedStep: '(network)', stderr: '', stdout: '' });
     }
     setTimeout(() => { btn.disabled = false; btn.textContent = 'Sync to GitHub'; }, 2500);
   };
@@ -372,6 +376,54 @@ function openRemindersModal(progress, concepts, onChange) {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// ---- Sync error modal: surface what actually broke when Sync fails so the
+// user can either fix it themselves or paste the details to whoever is helping.
+function showSyncErrorModal(result) {
+  const failedStep = result.failedStep || '(unknown step)';
+  const stderr = (result.stderr || '').trim();
+  const stdout = (result.stdout || '').trim();
+  const error = (result.error || '').trim();
+
+  const detailsBlob = [
+    'Failed step: ' + failedStep,
+    '',
+    'Error: ' + error,
+    '',
+    'Stderr:',
+    stderr || '(empty)',
+    '',
+    'Stdout:',
+    stdout || '(empty)'
+  ].join('\n');
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <h2>Sync to GitHub failed</h2>
+    <div class="modal-sub">Your progress is still saved on this machine - only the upload to GitHub failed. Below is the exact error from Git so you can see what went wrong.</div>
+    <div class="muted-list" style="max-height: 300px; overflow: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; white-space: pre-wrap; padding: 12px;">${escapeHtml(detailsBlob)}</div>
+    <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button class="btn copy-btn">Copy details</button>
+      <button class="btn btn-primary close-btn">Close</button>
+    </div>
+  `;
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+  modal.querySelector('.copy-btn').onclick = async (e) => {
+    try {
+      await navigator.clipboard.writeText(detailsBlob);
+      e.target.textContent = 'Copied ✓';
+      setTimeout(() => { e.target.textContent = 'Copy details'; }, 1500);
+    } catch {
+      e.target.textContent = 'Copy failed';
+    }
+  };
+  modal.querySelector('.close-btn').onclick = () => backdrop.remove();
+  backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.remove(); };
 }
 
 // ---- User picker (first-run / switch-user screen) ----
