@@ -1,0 +1,53 @@
+{
+  "userName": "Brendan",
+  "currentLesson": "01-data-types",
+  "currentSlide": 0,
+  "lessonsCompleted": [
+    "00-foundations"
+  ],
+  "stats": {
+    "totalKeystrokes": 318,
+    "totalTimeSeconds": 1194,
+    "exercisesCompleted": 5
+  },
+  "exerciseHistory": [
+    {
+      "slideTitle": "Your very first line of code",
+      "wpm": 28,
+      "accuracy": 90,
+      "seconds": 13,
+      "completedAt": "2026-05-04T17:50:25.927Z"
+    },
+    {
+      "slideTitle": "Your very first line of code",
+      "wpm": 31,
+      "accuracy": 90,
+      "seconds": 11,
+      "completedAt": "2026-05-04T17:50:46.177Z"
+    },
+    {
+      "slideTitle": "Three variables, three types",
+      "wpm": 46,
+      "accuracy": 97,
+      "seconds": 18,
+      "completedAt": "2026-05-04T17:52:00.277Z"
+    },
+    {
+      "slideTitle": "Your first if-statement",
+      "wpm": 32,
+      "accuracy": 97,
+      "seconds": 27,
+      "completedAt": "2026-05-04T17:53:32.679Z"
+    },
+    {
+      "slideTitle": "Putting it together — a tiny method",
+      "wpm": 41,
+      "accuracy": 97,
+      "seconds": 34,
+      "completedAt": "2026-05-04T17:57:37.214Z"
+    }
+  ],
+  "weakConcepts": [],
+  "mutedConcepts": [],
+  "lastSavedAt": "2026-05-04T17:58:41.582Z"
+}
