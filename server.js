@@ -125,7 +125,7 @@ app.post('/api/sync', (req, res) => {
   const steps = [
     ['git', ['add', file]],
     ['git', ['commit', '-m', msg]],
-    ['git', ['pull', '--rebase']],
+    ['git', ['pull', '--rebase', '--autostash']],
     ['git', ['push']]
   ];
   const output = [];
