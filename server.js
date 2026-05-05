@@ -135,7 +135,10 @@ app.post('/api/sync', (req, res) => {
     execFile(cmd, args, { cwd: ROOT }, (err, stdout, stderr) => {
       output.push({ step: args.join(' '), stdout, stderr, code: err ? err.code : 0 });
       // git commit returns non-zero if nothing to commit; treat as soft success.
-      if (err && args[0] === 'commit' && /nothing to commit/i.test(stdout + stderr)) {
+      // Git emits different phrasings depending on whether other unrelated files
+      // are modified ("no changes added to commit") or the tree is fully clean
+      // ("nothing to commit"). Match all common variants.
+      if (err && args[0] === 'commit' && /(nothing to commit|no changes added to commit|nothing added to commit)/i.test(stdout + stderr)) {
         return runNext(i + 1);
       }
       if (err) {
